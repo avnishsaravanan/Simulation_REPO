@@ -1,14 +1,15 @@
-//function to declare new object variables
-//function to assign defualt values
+//function to declare new object variables - done
+//function to assign defualt values - for mass, velocity values, position
 //function beforeRender() to change position in simulation
 //function for converting between axes
 
 let inputParameters = [];
 let object;
 let objectCoordinate;
-let objects = []; e
+let objects = [];
 let objectindex = 0;
 let velocities = [];
+let masses = [];
 
 function axial_velocity(velocity, index) {
     if (!!veloX) {veloX = velocity[0] * Math.cos(radians_degrees(velocity[1]))}
@@ -57,6 +58,7 @@ function createObject (event) {
     veloZ = velocity[0] * Math.sin(radians_degrees(velocity[2]));
     velocities.push({x : veloX, y : veloY, z : veloZ});*/
     console.log(velocities);
+    masses[objectindex] = parameters.elements["mass"].value;
 
     objects.push(object);
     objectindex += 1;
@@ -87,8 +89,14 @@ function editObject (event, editindex) {
     }
 
 document.addEventListener("DOMContentLoaded", function() {
-    let detector = document.querySelector("#setParameters");
-    detector.addEventListener("submit", function() {
+    let detector1 = document.querySelector("#setParameters");
+    detector1.addEventListener("submit", function() {
         createObject(event);
+    }) 
+    let detector2 = document.querySelector("#editParameters");
+    detector2.addEventListener("submit", function() {
+        editObject(event, selectedObj);
+
 
     }) });
+
