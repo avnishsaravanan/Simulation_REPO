@@ -6,7 +6,7 @@
 let inputParameters = [];
 let object;
 let objectCoordinate;
-let objects = [];
+let objects = []; e
 let objectindex = 0;
 let velocities = [];
 
