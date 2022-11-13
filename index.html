@@ -1,14 +1,18 @@
 <html>
     <head>
-        <script src="basis.js"></script>
-        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="bundle.js"></script>
+        
     </head>
     <body>
     <div class="elementCreator">
         <form id="setParameters">
-            <input type="text" name="bodyname" maxlength="10" size="20"></input><br>
+            <label for="bodyname">Body Name</label><br>
+            <input type="text" name="bodyname" maxlength="10" size="20"></input><br>\
+            <label for="size">Diameter</label><br>
             <input type="number" name="size" size="20"></input><br>
+            <label for="mass">mass</label><br>
             <input type="number" name="mass" size="10"></input><br>
+            <label for="res">Resolution</label><br>
             <input type="number" name="res" size="10"></input>
             
             <h3>Position XYZ</h3>
@@ -27,11 +31,14 @@
         </form>
     </div>
     <div class="elementEditor"></div></div>
-    
+        
     <form id="editParameters" hidden>
         
+        <label for="size">Diameter</label><br>
         <input type="number" name="size" size="20"></input><br>
+        <label for="mass">Mass</label><br>
         <input type="number" name="mass" size="10"></input><br>
+        <label for="res">Resolution</label><br>
         <input type="number" name="res" size="10"></input>
         
         <h3>Position XYZ</h3>
@@ -50,8 +57,6 @@
     </form>
 <p><div class="objects-list">
 </div></p>
-<canvas id="renderCanvas">
-    
-</canvas>
-    </body>
+<canvas id="renderCanvas"></canvas>
+</body>
 </html>
