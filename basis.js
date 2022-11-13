@@ -3,6 +3,8 @@
 //function beforeRender() to change position in simulation
 //function for converting between axes
 
+let BABYLON = require("https://cdn.babylonjs.com/babylon.js");
+
 let inputParameters = [];
 let object;
 let objectCoordinate;
@@ -28,6 +30,10 @@ function radians_degrees (input, path) {
     else {
         return pi * input/180 };
 }
+
+const engine = BABYLON.Engine
+const canvas = document.querySelector("#renderCanvas");
+const scene = BABYLON.Scene(canvas, true);
 
 function createObject (event) {
     event.preventDefault();
@@ -65,6 +71,21 @@ function createObject (event) {
     return scene;
     }
 
+function objectlist () {
+    let list = document.querySelector(".objects-list");
+    let classname = (`Object ${objectindex}`);
+    list.classList.add(classname);
+    let newclass = document.querySelector(`objects-list > ${newclass}`);
+    newclass.setAttribute("id", `${objectindex}`);
+    label = document.createElement("h3");
+    newclass.appendChild(label);
+    label.innerHTML = (`Object ${objectindex}`);
+
+    /*alternate path:
+    let list = document.querySelector("objects-list")
+    list.appendChild(newclass);*/
+}
+
 function editObject (event, editindex) {
     event.preventDefault();
     const parameters = event.target;
@@ -94,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
         createObject(event);
     }) 
     let detector2 = document.querySelector("#editParameters");
+    //create div list for all the objects
     detector2.addEventListener("submit", function() {
         editObject(event, selectedObj);
 

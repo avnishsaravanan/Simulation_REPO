@@ -1,6 +1,7 @@
 <html>
     <head>
         <script src="basis.js"></script>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
     </head>
     <body>
     <div class="elementCreator">
@@ -26,7 +27,7 @@
         </form>
     </div>
     <div class="elementEditor"></div></div>
-    <button type="submit">Edit object parameters</button>
+    
     <form id="editParameters" hidden>
         
         <input type="number" name="size" size="20"></input><br>
@@ -47,5 +48,10 @@
         <input type="number" name="angle_yz"></input><br>
         <button type="submit">Save parameters</button>
     </form>
+<p><div class="objects-list">
+</div></p>
+<canvas id="renderCanvas">
+    
+</canvas>
     </body>
 </html>
