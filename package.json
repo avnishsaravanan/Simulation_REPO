@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "babylonjs": "^5.32.1"
+    "babylonjs": "^5.32.1",
+    "requirejs": "^2.3.6"
   }
 }
