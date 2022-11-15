@@ -1,0 +1,84 @@
+html,
+      body {
+        overflow: scroll;
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+      }
+      label {
+        display: inline-block;
+        width: 110px;
+        color: #535353;
+      }
+      input {
+        padding: 5px 10px;
+      }
+      #renderCanvas {
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+      }
+      .header {
+        grid-area: header;
+        text-align:center;
+        padding: 10px 0;
+        font-size: 15px;
+      }
+      .toggle {
+        grid-area: toggle;
+        text-align: center;
+      }
+      .simequation {
+        grid-area: relati;
+        text-align:center;
+        padding: 7px;
+      }
+      .addel {
+        grid-area: addel;
+        text-align:center;
+        padding: 7px;
+      }
+
+      .item3 {
+        grid-area: listel;
+        text-align:center;
+      }
+
+      .item4 {
+        grid-area: editel;
+        text-align:left;
+        padding: 7px;
+      }
+
+      .item5 {
+        grid-area: simul;
+        text-align:center;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-areas:
+          "header header header header header"
+          "toggle relati relati relati addel"
+          "listel listel editel editel editel"
+          "simul simul simul simul simul";
+        gap: 5px;
+        background-color: #2196f3;
+        padding: 5px;
+      }
+      @media (max-width: 600px) {
+        .grid-container  {
+          grid-template-areas: 
+            'header header header header header' 
+            'toggle toggle toggle addel addel' 
+            'relati  relati relati relati relati' 
+            'listel listel listel listel listel'
+            'editel editel editel editel editel'
+            'simul simul simul simul simul';
+        }
+      }
+
+      .grid-container > div {
+        background-color: rgba(255, 255, 255, 0.8);
+      }

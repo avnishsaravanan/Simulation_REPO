@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+ 
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/simstyles.css" />
+    <link rel="stylesheet" href="css/toggle.css" />
+    <title>Relativity Simulations</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  </head>
+ 
+  <body>
+    <div class="grid-container">
+      
+      <div class="header">
+        <h2>Relativity Simulations</h2>
+        <h3><em>by</em> Avnish Saravanan (MYP V)</h3>
+      </div>
+      
+      <div class="toggle">
+        <div class="toggle-button-cover">
+            <div class="button r" id="button-1">
+              <input type="checkbox" class="checkbox" />
+              <div class="knobs"></div>
+              <div class="layer"></div>
+            </div>
+        </div>
+      </div>        
+      
+      <div class="simequation">
+        <b>Relativity Equation for Simulation</b><br>
+        <form id="relati">
+          <label class="radiocontainer">General
+            <input type="radio" id="sim-gen" name="simselect" value="SIMGEN">
+            <span class="checkmark"></span>
+          </label>
+          <label class="radiocontainer">Special
+            <input type="radio" id="sim-spl" name="simselect" value="SIMSPL">
+            <span class="checkmark"></span>
+          </label>
+          <label class="radiocontainer">Newtonian
+            <input type="radio" id="sim-new" name="simselect" value="SIMNEW" checked="checked">
+            <span class="checkmark"></span>
+          </label><br>
+        </form>
+      </div>
+      
+      <div class="addel">
+        <input type="submit" value="Add Element"></input>
+      </div>      
+
+      <div class="item3">
+        <b>List of Objects</b><br><br>
+        <label class="checkcontainer">sphere1
+          <input type="checkbox" checked="checked">
+          <span class="checkmark"></span>
+        </label><br><br>
+        <label class="checkcontainer">sphere2
+          <input type="checkbox">
+          <span class="checkmark"></span>
+        </label><br><br>
+        <!--label class="checkcontainer">Three
+          <input type="checkbox">
+          <span class="checkmark"></span>
+        </label><br><br>
+        <label class="checkcontainer">Four
+          <input type="checkbox">
+          <span class="checkmark"></span>
+        </label><br><br-->
+      </div>
+      
+      <div class="item4">
+      <div class="elementEditor">
+        <form id="editParameters">
+              <label for="bodyname">Element Name</label>
+              <input type="text" name="bodyname" maxlength="10" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
+              <label for="size">Diameter</label>
+              <input type="number" name="size" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
+              <label for="mass">Mass</label>
+              <input type="number" name="mass" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
+              <label for="res">Colour</label>
+              <input type="number" name="res" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
+              <br>
+              <b>Position XYZ  </b>
+              <input type="number" name="x" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="y" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="z" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <br><br>
+              <b>Velocity</b><br><br>
+              <label for="speed">Axial speed</label>
+              <input type="number" name="speed" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br>
+              <label for="angle_xy">X-Y angle</label>
+              <input type="number" name="angle_xy" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br>
+              <label for="speed">Y-Z angle</label>
+              <input type="number" name="angle_yz" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br><br>
+              <input type="submit" value="Save"></input>
+          </form>
+        </div>
+      </div>
+
+      <div class="item5">
+        <b>Simulation</b><br><br>
+        <canvas id="renderCanvas"></canvas>
+
+        <script>
+          let inputParameters = [];
+          let object; 
+          let objectCoordinate;
+          let objects = [];
+          let objectindex = 0;
+          let velocities = [];
+          let masses = [];
+          
+          function axial_velocity(velocity, index) {
+              if (!!velocity[1]) {veloX = velocity[0] * Math.cos(radians_degrees(velocity[1]))}
+              else {veloX = velocities[index].x};
+              if (!!velocity[1]) {veloY = velocity[0] * Math.sin(radians_degrees(velocity[1]))}
+              else {veloY = velocities[index].y};
+              if (!!velocity[2]) {veloZ = velocity[0] * Math.sin(radians_degrees(velocity[2]))}
+              else {veloZ = velocities[index].z}
+              velocities[index] = {x : veloX, y : veloY, z : veloZ};
+          }
+          
+          function radians_degrees (input, path) {
+              const pi = Math.PI;
+              if (path == 0) {
+                  return input * (180/pi)}
+              else {
+                  return pi * input/180 }};
+          
+          function objectlist_gen (index) {
+             let list = document.querySelector("#objects-list")
+             let newclass = document.createElement("li");
+             newclass.setAttribute("id", `${objectindex}`);
+             let label = document.createElement("h4");
+             label.innerHTML = (`Object ${index}`); 
+             newclass.appendChild(label);
+             list.appendChild(`#${objectindex}`);
+             
+          /*alternate path:
+          let list = document.querySelector(".objects-list");
+          list.classList.add(classname);*/
+          }
+          
+          function firstObject (scene) {
+               objects[objectindex] = BABYLON.MeshBuilder.CreateSphere("Object 1", {diameter: 3, segments: 10}, scene);
+               objects[objectindex].position = new BABYLON.Vector3(1, 1, 1);
+               objectindex += 1};
+          
+          function createObject (event) {
+              const parameters = event.target;
+              //const parameters = document.querySelector("#parameters");
+          
+              inputParameters[objectindex] = {};
+              inputParameters[objectindex].diameter = parameters.elements["size"].value;
+              if (parameters.elements["res"].value) {
+                  inputParameters[objectindex].segments = parameters.elements["res"].value}
+              else {inputParameters[objectindex].segments = 32};
+              console.log(inputParameters[objectindex]);
+          
+              bodyName = parameters.elements["bodyname"].value;
+              objectCoordinate = new BABYLON.Vector3(parameters.elements["x"].value, parameters.elements["y"].value, parameters.elements["z"].value);
+                 
+              objects[objectindex] = BABYLON.MeshBuilder.CreateSphere(bodyName, inputParameters[objectindex], scene);
+              objects[objectindex].position = objectCoordinate;
+          
+              velo = [parameters.elements["speed"].value, parameters.elements["angle_xy"].value, parameters.elements["angle_yz"].value];
+              axial_velocity(velo, objectindex);
+              console.log(velocities);
+              masses[objectindex] = parameters.elements["mass"].value;
+          
+              objectlist_gen((objectindex + 1));
+              objectindex += 1;
+              } 
+          
+          
+          const canvas = document.querySelector("#renderCanvas");
+          const engine = new BABYLON.Engine(canvas, true);
+          var scene = new BABYLON.Scene(engine);
+          const camera = new BABYLON.ArcRotateCamera("camera1", 1, 1, 1, new BABYLON.Vector3.Zero(), scene);
+          camera.attachControl(canvas, true);
+          const light = new BABYLON.HemisphericLight ("light1", new BABYLON.Vector3(1, 1, 1), scene); 
+          firstObject(scene);
+          
+          document.addEventListener("DOMContentLoaded", function() {
+              console.log("DOM loaded");
+              let form1 = document.querySelector("#setParameters");
+              console.log("looped");
+              let form2 = document.querySelector("#editParameters");
+              
+              form1.addEventListener("submit", function() {
+              event.preventDefault();
+              createObject(event);
+              console.log("function run");
+              }) });
+          
+          engine.runRenderLoop (function() {
+              scene.render();
+               console.log("rendered");
+              });    
+          
+          </script>
+      </div>
+    </div>
+  </body>
+  <footer>
+
+  </footer>
+</html>
