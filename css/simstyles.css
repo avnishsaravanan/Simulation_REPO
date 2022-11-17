@@ -40,18 +40,18 @@ html,
         padding: 7px;
       }
 
-      .item3 {
+      .listel {
         grid-area: listel;
         text-align:center;
       }
 
-      .item4 {
+      .editel {
         grid-area: editel;
         text-align:left;
         padding: 7px;
       }
 
-      .item5 {
+      .simul {
         grid-area: simul;
         text-align:center;
       }

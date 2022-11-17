@@ -3,6 +3,7 @@
     position: relative;
     width: 70px;
     height: 50px;
+    left: 10px;
     box-sizing: border-box;
   }
   
@@ -12,14 +13,14 @@
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
+    left: 10px;
   }
   
   .button {
     position: relative;
     top: 50%;
-    width: 74px;
-    height: 36px;
+    width: 84px;
+    height: 37px;
     margin: -20px auto 0 auto;
     overflow: hidden;
   }
@@ -33,7 +34,7 @@
     border-radius: 2px;
   }
   
-  .checkbox {
+  .autouser {
     position: relative;
     width: 100%;
     height: 100%;
@@ -56,7 +57,7 @@
   }
   
   /* Button 1 */
-  #button-1 .knobs:before {
+  #simmodetoggle .knobs:before {
     content: "AUTO";
     position: absolute;
     top: 5px;
@@ -74,24 +75,24 @@
     transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
   }
   
-  #button-1 .checkbox:checked + .knobs:before {
+  #simmodetoggle .autouser:checked + .knobs:before {
     content: "USER";
-    left: 42px;
+    left: 37px;
     background-color: #368100;
   }
   
-  #button-1 .checkbox:checked ~ .layer {
+  #simmodetoggle .autouser:checked ~ .layer {
     background-color: #e4ffce;
   }
   
-  #button-1 .knobs,
-  #button-1 .knobs:before,
-  #button-1 .layer {
+  #simmodetoggle .knobs,
+  #simmodetoggle .knobs:before,
+  #simmodetoggle .layer {
     transition: 0.3s ease all;
   }
   
   .radiocontainer {
-    display: block;
+    display:inline-flex;
     position: relative;
     padding-left: 35px;
     margin-bottom: 12px;
@@ -163,10 +164,10 @@
   }
 
   .checkcontainer {
-    display: block;
-    position: relative;
-    padding-left: 35px;
-    margin-bottom: 5px;
+    display: inline-block;
+    position:relative;
+    padding-left: 15px;
+    margin-bottom: 1px;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -187,7 +188,7 @@
   .checkcontainer .checkmark {
     position: absolute;
     top: 0;
-    left: 5px;
+    left: 15px;
     height: 25px;
     width: 25px;
     background-color: #eee;

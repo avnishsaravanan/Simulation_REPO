@@ -5,8 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/simstyles.css" />
     <link rel="stylesheet" href="css/toggle.css" />
+    <script src="./codes/interaction.js"></script>
+
     <title>Relativity Simulations</title>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
   </head>
  
   <body>
@@ -18,9 +19,9 @@
       </div>
       
       <div class="toggle">
-        <div class="toggle-button-cover">
-            <div class="button r" id="button-1">
-              <input type="checkbox" class="checkbox" />
+        <div class="toggle-button-cover"><br>
+            <div class="button r" id="simmodetoggle">
+              <input type="checkbox" class="autouser" id="autouser"/>
               <div class="knobs"></div>
               <div class="layer"></div>
             </div>
@@ -28,11 +29,11 @@
       </div>        
       
       <div class="simequation">
-        <b>Relativity Equation for Simulation</b><br>
-        <form id="relati">
-          <label class="radiocontainer">General
+        <b>Relativity Equation for Simulation</b><br><br>
+        <form id="relati" name="relati">
+          <label class="radiocontainer">
             <input type="radio" id="sim-gen" name="simselect" value="SIMGEN">
-            <span class="checkmark"></span>
+            <span class="checkmark"></span>General
           </label>
           <label class="radiocontainer">Special
             <input type="radio" id="sim-spl" name="simselect" value="SIMSPL">
@@ -46,31 +47,35 @@
       </div>
       
       <div class="addel">
-        <input type="submit" value="Add Element"></input>
+        <input type="submit" value="Add Element" id="addbtn"></input>
       </div>      
 
-      <div class="item3">
-        <b>List of Objects</b><br><br>
-        <label class="checkcontainer">sphere1
-          <input type="checkbox" checked="checked">
-          <span class="checkmark"></span>
-        </label><br><br>
-        <label class="checkcontainer">sphere2
-          <input type="checkbox">
-          <span class="checkmark"></span>
-        </label><br><br>
-        <!--label hidden="hidden" class="checkcontainer">Three
-          <input type="checkbox">
-          <span class="checkmark"></span>
-        </label><br><br>
-        <label class="checkcontainer">Four
-          <input type="checkbox">
-          <span class="checkmark"></span>
-        </label><br><br-->
-        <input type="submit" value="Run Simulation"></input>
+      <div class="listel">
+        <br><b>List of Objects</b><br>
+        <p id="line1"><label class="checkcontainer" id="obj1">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere1</label></p>
+        <p id="line2"><label class="checkcontainer" id="obj2">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere2</label></p>
+        <p id="line3" hidden="hidden"><label class="checkcontainer" id="obj3">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere3</label></p>
+        <p id="line4" hidden="hidden"><label class="checkcontainer" id="obj4">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere4</label></p>
+        <p id="line5" hidden="hidden"><label class="checkcontainer" id="obj5">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere5</label></p>
+        <p id="line6" hidden="hidden"><label class="checkcontainer" id="obj6">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere6</label></p>
+        <p id="line7" hidden="hidden"><label class="checkcontainer" id="obj7">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere7</label></p>
+         <p id="line8" hidden="hidden"><label class="checkcontainer" id="obj8">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere8</label></p>
+        <p id="line9" hidden="hidden"><label class="checkcontainer" id="obj9">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere9</label></p>
+        <p id="line10" hidden="hidden"><label class="checkcontainer" id="obj10">
+          <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere10</label></p>
+        <input type="submit" value="Run Simulation"></input><br>
       </div>
       
-      <div class="item4">
+      <div class="editel">
       <div class="elementEditor">
         <form id="editParameters">
               <label for="bodyname">Element Name</label>
@@ -99,111 +104,14 @@
         </div>
       </div>
 
-      <div class="item5">
+      <div class="simul">
         <b>Simulation</b><br><br>
         <canvas id="renderCanvas"></canvas>
-
-        <script>
-          let inputParameters = [];
-          let object; 
-          let objectCoordinate;
-          let objects = [];
-          let objectindex = 0;
-          let velocities = [];
-          let masses = [];
-          
-          function axial_velocity(velocity, index) {
-              if (!!velocity[1]) {veloX = velocity[0] * Math.cos(radians_degrees(velocity[1]))}
-              else {veloX = velocities[index].x};
-              if (!!velocity[1]) {veloY = velocity[0] * Math.sin(radians_degrees(velocity[1]))}
-              else {veloY = velocities[index].y};
-              if (!!velocity[2]) {veloZ = velocity[0] * Math.sin(radians_degrees(velocity[2]))}
-              else {veloZ = velocities[index].z}
-              velocities[index] = {x : veloX, y : veloY, z : veloZ};
-          }
-          
-          function radians_degrees (input, path) {
-              const pi = Math.PI;
-              if (path == 0) {
-                  return input * (180/pi)}
-              else {
-                  return pi * input/180 }};
-          
-          function objectlist_gen (index) {
-             let list = document.querySelector("#objects-list")
-             let newclass = document.createElement("li");
-             newclass.setAttribute("id", `${objectindex}`);
-             let label = document.createElement("h4");
-             label.innerHTML = (`Object ${index}`); 
-             newclass.appendChild(label);
-             list.appendChild(`#${objectindex}`);
-             
-          /*alternate path:
-          let list = document.querySelector(".objects-list");
-          list.classList.add(classname);*/
-          }
-          
-          function firstObject (scene) {
-               objects[objectindex] = BABYLON.MeshBuilder.CreateSphere("Object 1", {diameter: 3, segments: 10}, scene);
-               objects[objectindex].position = new BABYLON.Vector3(1, 1, 1);
-               objectindex += 1};
-          
-          function createObject (event) {
-              const parameters = event.target;
-              //const parameters = document.querySelector("#parameters");
-          
-              inputParameters[objectindex] = {};
-              inputParameters[objectindex].diameter = parameters.elements["size"].value;
-              if (parameters.elements["res"].value) {
-                  inputParameters[objectindex].segments = parameters.elements["res"].value}
-              else {inputParameters[objectindex].segments = 32};
-              console.log(inputParameters[objectindex]);
-          
-              bodyName = parameters.elements["bodyname"].value;
-              objectCoordinate = new BABYLON.Vector3(parameters.elements["x"].value, parameters.elements["y"].value, parameters.elements["z"].value);
-                 
-              objects[objectindex] = BABYLON.MeshBuilder.CreateSphere(bodyName, inputParameters[objectindex], scene);
-              objects[objectindex].position = objectCoordinate;
-          
-              velo = [parameters.elements["speed"].value, parameters.elements["angle_xy"].value, parameters.elements["angle_yz"].value];
-              axial_velocity(velo, objectindex);
-              console.log(velocities);
-              masses[objectindex] = parameters.elements["mass"].value;
-          
-              objectlist_gen((objectindex + 1));
-              objectindex += 1;
-              } 
-          
-          
-          const canvas = document.querySelector("#renderCanvas");
-          const engine = new BABYLON.Engine(canvas, true);
-          var scene = new BABYLON.Scene(engine);
-          const camera = new BABYLON.ArcRotateCamera("camera1", 1, 1, 1, new BABYLON.Vector3.Zero(), scene);
-          camera.attachControl(canvas, true);
-          const light = new BABYLON.HemisphericLight ("light1", new BABYLON.Vector3(1, 1, 1), scene); 
-          firstObject(scene);
-          
-          document.addEventListener("DOMContentLoaded", function() {
-              console.log("DOM loaded");
-              let form1 = document.querySelector("#setParameters");
-              console.log("looped");
-              let form2 = document.querySelector("#editParameters");
-              
-              form1.addEventListener("submit", function() {
-              event.preventDefault();
-              createObject(event);
-              console.log("function run");
-              }) });
-          
-          engine.runRenderLoop (function() {
-              scene.render();
-               console.log("rendered");
-              });    
-          
-          </script>
-          
+        <script src="./result/simulation.bundle.js"></script>
       </div>
+
     </div>
+
   </body>
   <footer>
 
