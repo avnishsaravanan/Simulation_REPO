@@ -51,7 +51,7 @@
       </div>      
 
       <div class="listel">
-        <br><b>List of Objects</b><br>
+        <p style="text-align:center; margin:auto;"><b>List of Objects</b></p><br>
         <p id="line1"><label class="checkcontainer" id="obj1">
           <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere1</label></p>
         <p id="line2"><label class="checkcontainer" id="obj2">
@@ -76,7 +76,7 @@
       </div>
       
       <div class="editel">
-      <div class="elementEditor">
+        <p style="text-align:center; margin:auto;"><b>Object Parameters</b></p><br>
         <form id="editParameters">
               <label for="bodyname">Element Name</label>
               <input type="text" name="bodyname" maxlength="10" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
@@ -87,27 +87,78 @@
               <label for="res">Colour</label>
               <input type="number" name="res" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
               <br>
-              <b>Position XYZ  </b>
-              <input type="number" name="x" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="y" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="z" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <label for="posxyx">Position XYZ</label>
+              <input type="number" name="posxyx" id="posx" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="posxyx" id="posy" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="posxyx" id="posz" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
               <br><br>
-              <b>Velocity</b><br><br>
+              <b>Velocity</b><br>
               <label for="speed">Axial speed</label>
               <input type="number" name="speed" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br>
               <label for="angle_xy">X-Y angle</label>
               <input type="number" name="angle_xy" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br>
               <label for="speed">Y-Z angle</label>
               <input type="number" name="angle_yz" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br><br>
-              <input type="submit" value="Save"></input>
+              <p style="text-align:center; margin:auto;"><input type="submit" value="Save"></input></p>
           </form>
-        </div>
+      </div>
+
+      <div class="evepln">
+        <p style="text-align:center; margin:auto;"><b>Event Plotter</b></p><br>
+        <form id="eventpln">
+          <fieldset>
+            <legend>Event #1</legend>
+            <span>time(ss)</span>
+            <input type="number" id="e1time" name="e1time" value=30 required="required" style="width:33px; height:15px;"><br><br>
+            <span>X  Y  Z</span>
+              <input type="number" name="e1xyz" id="e1x" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="e1xyz" id="e1y" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="e1xyz" id="e1z" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <br>
+          </fieldset>
+          <fieldset>
+            <legend>Event #2</legend>
+            <span>time(ss)</span>
+            <input type="number" id="e1time" name="e2time" value=30 required="required" style="width:33px; height:15px;"><br><br>
+            <span>X  Y  Z</span>
+              <input type="number" name="e2xyz" id="e2x" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="e2xyz" id="e2y" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="e2xyz" id="e2z" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <br>
+          </fieldset><br>
+        </form>
+      </div>
+
+      <div class="solvea">
+        <p style="text-align:center; margin:auto;"><b>Solve for :</b>
+          <select id="solvefx" name="solvefx" style="width:70px; height:25px;">
+            <option value="deltax">delta x</option>
+            <option value="deltax1">delta x'</option>
+            <option value="deltat">delta t</option>
+            <option value="deltat1">delta t'</option>
+          </select><br>
+          <!--input type="submit" value="Select" id="solbtn"-->
+        </p><br>
+        <form id="deltafx">
+          <span>delta x </span>
+          <input type="number" id="deltax" name="deltax" value=30 required="required" style="width:33px; height:15px;">
+          <span>delta x'</span>
+          <input type="number" id="deltax1" name="deltax1" value=30 required="required" style="width:33px; height:15px;"><br><br>
+          <span>delta t </span>
+          <input type="number" id="deltat" name="deltat" value=30 required="required" style="width:33px; height:15px;">
+          <span>delta t' </span>
+          <input type="number" id="deltat1" name="deltat1" value=30 required="required" style="width:33px; height:15px;"><br><br>
+          <span>energy(E)</span>
+          <input type="number" id="energy" name="energy" value=30 required="required" style="width:33px; height:15px;"><br>
+          </form>
       </div>
 
       <div class="simul">
-        <b>Simulation</b><br><br>
+        <p id="siminfo" style="text-align:left; margin:auto;">
+          <b>Simulation is currently running for objects 'Sphere1' and 'Sphere2'</b>
+        </p><br><br>
         <canvas id="renderCanvas"></canvas>
-        <script src="./result/simulation.bundle.js"></script>
+        <!--script src="./result/simulation.bundle.js"></script-->
       </div>
 
     </div>

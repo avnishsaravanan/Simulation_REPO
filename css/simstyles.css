@@ -8,7 +8,7 @@ html,
       }
       label {
         display: inline-block;
-        width: 110px;
+        width: 120px;
         color: #535353;
       }
       input {
@@ -43,6 +43,7 @@ html,
       .listel {
         grid-area: listel;
         text-align:center;
+        padding: 7px;
       }
 
       .editel {
@@ -51,9 +52,22 @@ html,
         padding: 7px;
       }
 
+      .evepln {
+        grid-area: evepln;
+        text-align: left;
+        padding: 7px;
+      }
+
+      .solvea {
+        grid-area: solvea;
+        text-align: center;
+        padding: 7px;
+      }
+
       .simul {
         grid-area: simul;
         text-align:center;
+        padding: 7px;
       }
 
       .grid-container {
@@ -61,7 +75,8 @@ html,
         grid-template-areas:
           "header header header header header"
           "toggle relati relati relati addel"
-          "listel listel editel editel editel"
+          "listel listel editel editel evepln"
+          "listel listel editel editel solvea"
           "simul simul simul simul simul";
         gap: 5px;
         background-color: #2196f3;
@@ -75,6 +90,7 @@ html,
             'relati  relati relati relati relati' 
             'listel listel listel listel listel'
             'editel editel editel editel editel'
+            'evepln evepln evepln solvea solvea'
             'simul simul simul simul simul';
         }
       }
