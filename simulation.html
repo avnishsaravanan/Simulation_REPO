@@ -78,28 +78,28 @@
       <div class="editel">
         <p style="text-align:center; margin:auto;"><b>Object Parameters</b></p><br>
         <form id="editParameters">
-              <label for="bodyname">Element Name</label>
-              <input type="text" name="bodyname" maxlength="10" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
-              <label for="size">Diameter</label>
-              <input type="number" name="size" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
-              <label for="mass">Mass</label>
-              <input type="number" name="mass" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
-              <label for="res">Colour</label>
-              <input type="number" name="res" placeholder="type here" required="required" style="width:100px; height:15px;"></input><br>
+              <label for="objname">Object Name</label>
+              <input type="text" name="objname" maxlength="10" placeholder="{objname}" required="required" style="width:100px; height:15px;" disabled></input><br>
+              <label for="objsize">Diameter</label>
+              <input type="number" name="objsize" placeholder="1-10" required="required" min="1" max="10" style="width:100px; height:15px; text-align: right;" disabled></input><br>
+              <label for="objmass">Mass</label>
+              <input type="number" name="objmass" placeholder=".01-100" required="required" min="0.01" max="100" style="width:100px; height:15px; text-align: right;" disabled></input><br>
+              <label for="objcolor">Colour</label>
+              <input type="color" name="objcolor" value="#0091ff" required="required" disabled></input><br>
               <br>
               <label for="posxyx">Position XYZ</label>
-              <input type="number" name="posxyx" id="posx" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="posxyx" id="posy" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="posxyx" id="posz" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+              <input type="number" name="posxyx" id="posx" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="posxyx" id="posy" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="posxyx" id="posz" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
               <br><br>
-              <b>Velocity</b><br>
+              <a style="color: #535353;"><b>Velocity</b></a><br>
               <label for="speed">Axial speed</label>
-              <input type="number" name="speed" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br>
+              <input type="number" name="speed" placeholder=".001-.999" required="required" min="0.001" max="0.999"style="width:100px; height: 15px; text-align: right;" disabled></input><br>
               <label for="angle_xy">X-Y angle</label>
-              <input type="number" name="angle_xy" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br>
+              <input type="number" name="angle_xy" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br>
               <label for="speed">Y-Z angle</label>
-              <input type="number" name="angle_yz" placeholder="0-180" required="required" style="width:33px; height: 15px;"></input><br><br>
-              <p style="text-align:center; margin:auto;"><input type="submit" value="Save"></input></p>
+              <input type="number" name="angle_yz" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br><br>
+              <p style="text-align:center; margin:auto;"><input type="submit" value="Save" disabled></input></p>
           </form>
       </div>
 
@@ -107,30 +107,30 @@
         <p style="text-align:center; margin:auto;"><b>Event Plotter</b></p><br>
         <form id="eventpln">
           <fieldset>
-            <legend>Event #1</legend>
-            <span>time(ss)</span>
-            <input type="number" id="e1time" name="e1time" value=30 required="required" style="width:33px; height:15px;"><br><br>
-            <span>X  Y  Z</span>
-              <input type="number" name="e1xyz" id="e1x" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="e1xyz" id="e1y" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="e1xyz" id="e1z" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+            <legend style="color: #535353;">Event #1</legend>
+            <label for="e1time">time(ss)</label>
+            <input type="number" id="e1time" name="e1time" value=10 placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
+            <label for="e1xyz">XYZ</label>
+              <input type="number" name="e1xyz" id="e1x" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e1xyz" id="e1y" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e1xyz" id="e1z" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
               <br>
           </fieldset>
           <fieldset>
-            <legend>Event #2</legend>
-            <span>time(ss)</span>
-            <input type="number" id="e1time" name="e2time" value=30 required="required" style="width:33px; height:15px;"><br><br>
-            <span>X  Y  Z</span>
-              <input type="number" name="e2xyz" id="e2x" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="e2xyz" id="e2y" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
-              <input type="number" name="e2xyz" id="e2z" placeholder="0-180" required="required" style="width:33px; height:15px;"></input>
+            <legend style="color: #535353;">Event #2</legend>
+            <label for="e2time">time(ss)</label>
+            <input type="number" id="e2time" name="e2time" value=10 placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
+            <label for="e2xyz">X  Y  Z</label>
+              <input type="number" name="e2xyz" id="e2x" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e2xyz" id="e2y" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e2xyz" id="e2z" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
               <br>
-          </fieldset><br>
+          </fieldset>
         </form>
       </div>
 
       <div class="solvea">
-        <p style="text-align:center; margin:auto;"><b>Solve for :</b>
+        <label for="solvefx"><b>Solve for :</b></label>
           <select id="solvefx" name="solvefx" style="width:70px; height:25px;">
             <option value="deltax">delta x</option>
             <option value="deltax1">delta x'</option>
@@ -138,19 +138,21 @@
             <option value="deltat1">delta t'</option>
           </select><br>
           <!--input type="submit" value="Select" id="solbtn"-->
-        </p><br>
+        <br>
         <form id="deltafx">
-          <span>delta x </span>
-          <input type="number" id="deltax" name="deltax" value=30 required="required" style="width:33px; height:15px;">
-          <span>delta x'</span>
-          <input type="number" id="deltax1" name="deltax1" value=30 required="required" style="width:33px; height:15px;"><br><br>
-          <span>delta t </span>
-          <input type="number" id="deltat" name="deltat" value=30 required="required" style="width:33px; height:15px;">
-          <span>delta t' </span>
-          <input type="number" id="deltat1" name="deltat1" value=30 required="required" style="width:33px; height:15px;"><br><br>
-          <span>energy(E)</span>
-          <input type="number" id="energy" name="energy" value=30 required="required" style="width:33px; height:15px;"><br>
-          </form>
+          <label for="deltax">delta x</label>
+          <input type="number" id="deltax" name="deltax" value=0 style="width:33px; height:15px; text-align: right;" readonly>
+          <label for="deltax1">delta x'</label>
+          <input type="number" id="deltax1" name="deltax1" value=0 style="width:33px; height:15px; text-align: right;" readonly><br>
+          <label for="deltat">delta t</label>
+          <input type="number" id="deltat" name="deltat" value=0 style="width:33px; height:15px; text-align: right;" readonly>
+          <label for="deltat">delta t'</label>
+          <input type="number" id="deltat1" name="deltat1" value=0 style="width:33px; height:15px; text-align: right;" readonly><br>
+          <label for="energy">energy(E)</label>
+          <input type="number" id="energy" name="energy" value=0 style="width:33px; height:15px; text-align: right;" readonly>
+          <label for="energy1">energy(E1)</label>
+          <input type="number" id="energy1" name="energy1" value=0 style="width:33px; height:15px; text-align: right;" readonly><br>
+        </form>
       </div>
 
       <div class="simul">

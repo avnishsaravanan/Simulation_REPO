@@ -8,11 +8,11 @@ html,
       }
       label {
         display: inline-block;
-        width: 120px;
+        width: 100px;
         color: #535353;
       }
       input {
-        padding: 5px 10px;
+        padding: 5px 5px;
       }
       #renderCanvas {
         width: 100%;
@@ -46,6 +46,10 @@ html,
         padding: 7px;
       }
 
+      .listel label {
+        width: 120px;
+      }
+
       .editel {
         grid-area: editel;
         text-align:left;
@@ -58,10 +62,18 @@ html,
         padding: 7px;
       }
 
+      .evepln label {
+        width: 50px;
+      }
+
       .solvea {
         grid-area: solvea;
-        text-align: center;
-        padding: 7px;
+        text-align: left;
+        padding: 10px;
+      }
+
+      .solvea label {
+        width: 75px;
       }
 
       .simul {
@@ -73,11 +85,11 @@ html,
       .grid-container {
         display: grid;
         grid-template-areas:
-          "header header header header header"
-          "toggle relati relati relati addel"
-          "listel listel editel editel evepln"
-          "listel listel editel editel solvea"
-          "simul simul simul simul simul";
+          "header header header header header header"
+          "toggle relati relati relati relati addel"
+          "listel listel editel editel evepln evepln"
+          "listel listel editel editel solvea solvea"
+          "simul simul simul simul simul simul";
         gap: 5px;
         background-color: #2196f3;
         padding: 5px;
@@ -85,13 +97,13 @@ html,
       @media (max-width: 600px) {
         .grid-container  {
           grid-template-areas: 
-            'header header header header header' 
-            'toggle toggle toggle addel addel' 
-            'relati  relati relati relati relati' 
-            'listel listel listel listel listel'
-            'editel editel editel editel editel'
-            'evepln evepln evepln solvea solvea'
-            'simul simul simul simul simul';
+            'header header header header header header' 
+            'toggle toggle toggle addel addel addel' 
+            'relati  relati relati relati relati relati' 
+            'listel listel listel listel listel listel'
+            'editel editel editel editel editel editel'
+            'evepln evepln evepln solvea solvea solvea'
+            'simul simul simul simul simul simul';
         }
       }
 

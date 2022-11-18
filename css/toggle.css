@@ -163,6 +163,12 @@
     cursor: pointer;
   }
 
+  input[type=button]:disabled, input[type=submit]:disabled, input[type=reset] :disabled{
+    background-color: #585858;
+    color: white;
+    cursor:not-allowed;
+  }
+
   .checkcontainer {
     display: inline-block;
     position:relative;
