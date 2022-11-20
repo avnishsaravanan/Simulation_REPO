@@ -4,6 +4,9 @@ module.exports = {
     entry: {
         index: './codes/home.js',
         simulation: './codes/simulation.js',
+        basis: './codes/basis.js',
+        inputs: './codes/inputs.js',
+        
         /*index: {
             import: './codes/home.js',
             dependOn: 'shared',

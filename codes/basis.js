@@ -6,7 +6,6 @@
 let BABYLON = require('babylonjs');
 
 let inputParameters = [];
-let object; 
 let objectCoordinate;
 let objects = [];
 let objectindex = 0;

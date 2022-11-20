@@ -8,6 +8,7 @@
     <script src="./codes/interaction.js"></script>
 
     <title>Relativity Simulations</title>
+    <script src = "./result/inputs.bundle.js"></script>
   </head>
  
   <body>
@@ -109,7 +110,7 @@
           <fieldset>
             <legend style="color: #535353;">Event #1</legend>
             <label for="e1time">time(ss)</label>
-            <input type="number" id="e1time" name="e1time" value=10 placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
+            <input type="number" id="e1time" name="e1time" value="10" placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
             <label for="e1xyz">XYZ</label>
               <input type="number" name="e1xyz" id="e1x" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
               <input type="number" name="e1xyz" id="e1y" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
@@ -119,7 +120,7 @@
           <fieldset>
             <legend style="color: #535353;">Event #2</legend>
             <label for="e2time">time(ss)</label>
-            <input type="number" id="e2time" name="e2time" value=10 placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
+            <input type="number" id="e2time" name="e2time" value="10" placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
             <label for="e2xyz">X  Y  Z</label>
               <input type="number" name="e2xyz" id="e2x" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
               <input type="number" name="e2xyz" id="e2y" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
@@ -132,25 +133,25 @@
       <div class="solvea">
         <label for="solvefx"><b>Solve for :</b></label>
           <select id="solvefx" name="solvefx" style="width:70px; height:25px;">
-            <option value="deltax">delta x</option>
-            <option value="deltax1">delta x'</option>
-            <option value="deltat">delta t</option>
-            <option value="deltat1">delta t'</option>
+            <option value="deltax">Δ d</option>
+            <option value="deltax1">Δ d'</option>
+            <option value="deltat">Δ t</option>
+            <option value="deltat1">Δ t'</option>
           </select><br>
           <!--input type="submit" value="Select" id="solbtn"-->
         <br>
         <form id="deltafx">
-          <label for="deltax">delta x</label>
+          <label for="deltax">Δ d</label>
           <input type="number" id="deltax" name="deltax" value=0 style="width:33px; height:15px; text-align: right;" readonly>
-          <label for="deltax1">delta x'</label>
+          <label for="deltax1">Δ d'</label>
           <input type="number" id="deltax1" name="deltax1" value=0 style="width:33px; height:15px; text-align: right;" readonly><br>
-          <label for="deltat">delta t</label>
+          <label for="deltat">Δ t</label>
           <input type="number" id="deltat" name="deltat" value=0 style="width:33px; height:15px; text-align: right;" readonly>
-          <label for="deltat">delta t'</label>
+          <label for="deltat">Δ t'</label>
           <input type="number" id="deltat1" name="deltat1" value=0 style="width:33px; height:15px; text-align: right;" readonly><br>
-          <label for="energy">energy(E)</label>
+          <label for="energy">energy(E1)</label>
           <input type="number" id="energy" name="energy" value=0 style="width:33px; height:15px; text-align: right;" readonly>
-          <label for="energy1">energy(E1)</label>
+          <label for="energy1">energy(E2)</label>
           <input type="number" id="energy1" name="energy1" value=0 style="width:33px; height:15px; text-align: right;" readonly><br>
         </form>
       </div>
@@ -164,7 +165,7 @@
       </div>
 
     </div>
-
+    
   </body>
   <footer>
 
