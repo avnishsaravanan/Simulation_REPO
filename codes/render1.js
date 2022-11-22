@@ -1,6 +1,6 @@
 let BABYLON = require("babylonjs");
 const { ssao2PixelShader } = require("babylonjs/Shaders/ssao2.fragment");
-let stores = require("./simulation.js");
+let stores = require("./simulation.j");
 let result = require("./inputs.js").result;
 
 let checked = [];
@@ -41,5 +41,7 @@ function createScene () {
     let current1 = synthObject(scene, checked[1]);
     current1.position = positions[checked[1]];
 
-    
+
+
+
     }
