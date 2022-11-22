@@ -111,7 +111,7 @@
   }
   
   /* Create a custom radio button */
-  .radiocontainer .checkmark {
+  .radiocontainer .bulletmark {
     position: absolute;
     top: 0;
     left: 0;
@@ -122,29 +122,29 @@
   }
   
   /* On mouse-over, add a grey background color */
-  .radiocontainer:hover input ~ .checkmark {
+  .radiocontainer:hover input ~ .bulletmark {
     background-color: #ccc;
   }
   
   /* When the radio button is checked, add a blue background */
-  .radiocontainer input:checked ~ .checkmark {
+  .radiocontainer input:checked ~ .bulletmark {
     background-color: #2196F3;
   }
   
   /* Create the indicator (the dot/circle - hidden when not checked) */
-  .radiocontainer .checkmark:after {
+  .radiocontainer .bulletmark:after {
     content: "";
     position: absolute;
     display: none;
   }
   
   /* Show the indicator (dot/circle) when checked */
-  .radiocontainer input:checked ~ .checkmark:after {
+  .radiocontainer input:checked ~ .bulletmark:after {
     display: block;
   }
   
   /* Style the indicator (dot/circle) */
-  .radiocontainer .checkmark:after {
+  .radiocontainer .bulletmark:after {
      top: 9px;
     left: 9px;
     width: 8px;
@@ -162,7 +162,9 @@
     margin: 4px 2px;
     cursor: pointer;
   }
-
+  input[type=button]:hover, input[type=submit]:hover, input[type=reset] :hover{
+    background-color: #2521f3;
+  }
   input[type=button]:disabled, input[type=submit]:disabled, input[type=reset] :disabled{
     background-color: #585858;
     color: white;
@@ -234,3 +236,7 @@
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
   }
+
+  /* #editParameters {
+    pointer-events:none;
+  } */
