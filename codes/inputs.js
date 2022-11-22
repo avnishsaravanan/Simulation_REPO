@@ -17,7 +17,7 @@ coaxial_displacement = velos.coaxial_displacement;
     window.onload = init;
     function init(){
 
-let runbutton = document.querySelector("#runbutton");
+let runbutton = document.querySelector("#run");
 
 let checked = [1, 2];
 let dt_PA;
