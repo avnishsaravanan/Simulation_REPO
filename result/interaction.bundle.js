@@ -1,3 +1,5 @@
+/******/ (() => { // webpackBootstrap
+var __webpack_exports__ = {};
 (function(window, document, undefined){
     // to wait until all elements are loaded
 
@@ -157,3 +159,5 @@
 
       */
 })(window, document, undefined);
+/******/ })()
+;

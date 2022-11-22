@@ -5,10 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/simstyles.css" />
     <link rel="stylesheet" href="css/toggle.css" />
-    <script src="./codes/interaction.js"></script>
+    <script src = "./result/inputs.bundle.js"></script>
+    <script src = "./result/interaction.bundle.js"></script>
 
     <title>Relativity Simulations</title>
-    <script src = "./result/inputs.bundle.js"></script>
+    
   </head>
  
   <body>
@@ -34,15 +35,15 @@
         <form id="relati" name="relati">
           <label class="radiocontainer">
             <input type="radio" id="sim-gen" name="simselect" value="SIMGEN">
-            <span class="checkmark"></span>General
+            <span class="bulletmark"></span>General
           </label>
           <label class="radiocontainer">Special
             <input type="radio" id="sim-spl" name="simselect" value="SIMSPL">
-            <span class="checkmark"></span>
+            <span class="bulletmark"></span>
           </label>
           <label class="radiocontainer">Newtonian
             <input type="radio" id="sim-new" name="simselect" value="SIMNEW" checked="checked">
-            <span class="checkmark"></span>
+            <span class="bulletmark"></span>
           </label><br>
         </form>
       </div>
@@ -73,34 +74,33 @@
           <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere9</label></p>
         <p id="line10" hidden="hidden"><label class="checkcontainer" id="obj10">
           <input type="checkbox" checked="checked"><span class="checkmark"></span>Sphere10</label></p>
-        <p id="line11">
-        <input id="runbutton"type="submit" value="Run Simulation"></input><br></p>
+        <input type="submit" value="Run Simulation"></input><br>
       </div>
       
       <div class="editel">
         <p style="text-align:center; margin:auto;"><b>Object Parameters</b></p><br>
         <form id="editParameters">
               <label for="objname">Object Name</label>
-              <input type="text" name="objname" maxlength="10" placeholder="{objname}" required="required" style="width:100px; height:15px;" disabled></input><br>
+              <input type="text" name="objparams" id="objname" maxlength="10" placeholder="{objname}" required="required" style="width:100px; height:15px;" disabled></input><br>
               <label for="objsize">Diameter</label>
-              <input type="number" name="objsize" placeholder="1-10" required="required" min="1" max="10" style="width:100px; height:15px; text-align: right;" disabled></input><br>
+              <input type="number" name="objparams" id="objsize" placeholder="1-10" required="required" min="1" max="10" style="width:100px; height:15px; text-align: right;" disabled></input><br>
               <label for="objmass">Mass</label>
-              <input type="number" name="objmass" placeholder=".01-100" required="required" min="0.01" max="100" style="width:100px; height:15px; text-align: right;" disabled></input><br>
+              <input type="number" name="objparams" id="objmass" placeholder=".01-100" required="required" min="0.01" max="100" style="width:100px; height:15px; text-align: right;" disabled></input><br>
               <label for="objcolor">Colour</label>
-              <input type="color" name="objcolor" value="#0091ff" required="required" disabled></input><br>
+              <input type="color" name="objparams" id="objcolor" value="#0091ff" required="required" disabled></input><br>
               <br>
               <label for="posxyx">Position XYZ</label>
-              <input type="number" name="posxyx" id="posx" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
-              <input type="number" name="posxyx" id="posy" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
-              <input type="number" name="posxyx" id="posz" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="objparams" id="objposx" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="objparams" id="objposy" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="objparams" id="objposz" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
               <br><br>
               <a style="color: #535353;"><b>Velocity</b></a><br>
               <label for="speed">Axial speed</label>
-              <input type="number" name="speed" placeholder=".001-.999" required="required" min="0.001" max="0.999"style="width:100px; height: 15px; text-align: right;" disabled></input><br>
+              <input type="number" name="objparams" id="speed" placeholder=".001-.999" required="required" min=0.001 max=0.999 style="width:100px; height: 15px; text-align: right;" disabled></input><br>
               <label for="angle_xy">X-Y angle</label>
-              <input type="number" name="angle_xy" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br>
-              <label for="speed">Y-Z angle</label>
-              <input type="number" name="angle_yz" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br><br>
+              <input type="number" name="objparams" id="xyangle" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br>
+              <label for="angle_yz">Y-Z angle</label>
+              <input type="number" name="objparams" id="yzangle" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br><br>
               <p style="text-align:center; margin:auto;"><input type="submit" value="Save" disabled></input></p>
           </form>
       </div>

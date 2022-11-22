@@ -120,7 +120,7 @@ var __webpack_exports__ = {};
           
               velo = [parameters.elements["speed"].value, parameters.elements["angle_xy"].value, parameters.elements["angle_yz"].value];
               axial_velocity(velo, objectindex);
-              
+              console.log(velocities);
               masses[objectindex] = parameters.elements["mass"].value;
           
               objectlist_gen((objectindex + 1));

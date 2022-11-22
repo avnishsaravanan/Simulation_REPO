@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 5:
+/***/ 6:
 /***/ ((module) => {
 
  //arguments/parameters: velocity vector, event positions, object positions
@@ -124,7 +124,7 @@ var __webpack_exports__ = {};
     // to wait until all elements are loaded
     window.onload = init;
     function init(){
-let equations = __webpack_require__(5);
+let equations = __webpack_require__(6);
 
 let dt_PA;
 let dt_QA;
