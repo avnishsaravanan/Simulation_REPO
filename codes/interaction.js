@@ -17,6 +17,7 @@
         const simmode = document.getElementById('autouser');
         const simselect = document.querySelectorAll('#relati input');
         const addelement =  document.getElementById('addbtn');
+        const objectslist = document.querySelectorAll('simobject');
         let arrsimobject = 
           {0:"Sphere3", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.3, 8:30, 9:45};
                 
@@ -50,7 +51,7 @@
           this.disabled=true;
           //clear object list
           checkclear=true;
-          document.getElementsByName('simobject').forEach(function(elem) {
+          objectslist.forEach(function(elem) {
             if (elem.checked == true) {
               simulateClick(elem);
             }
@@ -65,41 +66,48 @@
         // initialize saveparameters interactions
         // create new object 
         // update object 
-        let formElem = document.getElementById("editParameters");
+        let formElem = document.getElementById('editParameters');
         formElem.addEventListener("submit", formSubmitHandler);
         function formSubmitHandler(event) {
           event.preventDefault();
-          saveparameters("add");
+          if (checkclear === false) {
+            saveparameters("up");
+          } else {
+            saveparameters("add");
+          }
         }
 
         function saveparameters(addup){
+          x=0;
+          document.getElementsByName('objparams').forEach(function(elem){
+            arrsimobject[x] = elem.value;
+            x+=1;
+          });
           if (addup === "add") {
-            x=0;
-            document.getElementsByName('objparams').forEach(function(elem){
-              arrsimobject[x] = elem.value;
-              x+=1;
-            });
             arrsimobjects.push(arrsimobject);
             //document.querySelectorAll('#editParameters input[text], #editParameters input[number]').forEach(elem => elem.value === null);
             //document.querySelectorAll('#editParameters input[submit]').forEach(elem => elem.disabled = true);
             refreshobjlist(arrsimobjects.length);
-            document.getElementsByName('simobject').forEach(function(elem) {
+            if (arrsimobjects.length < 10) {
+              addelement.disabled = false;
+            }
+          } else {
+            console.log(objindex);
+          }            
+            objectslist.forEach(function(elem) {
               if (elem.id == ("obj"+arrsimobjects.length)) {
                 simulateClick(elem);
               }
             });
             
-            if (arrsimobjects.length < 10) {
-              addelement.disabled = false;
-            }            
           
-          } else {
-            console.log(objindex);
-          }
+          
+
         }
 
 
         // initialize checkbox interactions
+
         // find how many checked and action accordingly 
         //  none , one , two , attempt  third 
         // if params not saved 
