@@ -7,10 +7,11 @@
           let inputParameters = [];
           let object; 
           let objectCoordinate;
-          let objects = [];
+          let objects = []; 
           let objectindex = 0;
           let velocities = [];
           let masses = [];
+          let positions = [];
           
           function axial_velocity(velocity, index) {
               if (!!velocity[1]) {veloX = velocity[0] * Math.cos(radians_degrees(velocity[1]));}
@@ -61,10 +62,10 @@
           
               bodyName = parameters.elements["bodyname"].value;
               objectCoordinate = new BABYLON.Vector3(parameters.elements["x"].value, parameters.elements["y"].value, parameters.elements["z"].value);
-                 
+              positions[objectindex] = objectCoordinate;
+
               objects[objectindex] = BABYLON.MeshBuilder.CreateSphere(bodyName, inputParameters[objectindex], scene);
-              objects[objectindex].position = objectCoordinate;
-          
+                       
               velo = [parameters.elements["speed"].value, parameters.elements["angle_xy"].value, parameters.elements["angle_yz"].value];
               axial_velocity(velo, objectindex);
               console.log(velocities);
@@ -104,3 +105,6 @@
           window.addEventListener("resize", function () {
             engine.resize();
           });
+
+          module.exports = { positions: positions,
+                             velocities: velocities }
