@@ -219,7 +219,7 @@ coaxial_displacement = velos.coaxial_displacement;
 axial_velocity = velos.axial_velocity;
 let result;
 
-velocities.push(velo1.forEach (function(veloset) { axial_velocity(veloset) } ));
+velocities.push(velo1.forEach (function(veloset) { axial_velocity(veloset); } ));
 
 (function(window, document, undefined){
     // to wait until all elements are loaded
@@ -444,9 +444,9 @@ function radians_degrees (input, path) {
         return pi * input/180; }}
 
 function axial_velocity(velo) {
-    let veloX = velo[0] * Math.cos(radians_degrees(velocity[1]));
-    let veloY = velo[0] * Math.sin(radians_degrees(velocity[1]));
-    let veloZ = velo[0] * Math.sin(radians_degrees(velocity[2]));
+    let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
+    let veloY = velo[0] * Math.sin(radians_degrees(velo[1]));
+    let veloZ = velo[0] * Math.sin(radians_degrees(velo[2]));
     return {x : veloX, y : veloY, z : veloZ};
 }
 
