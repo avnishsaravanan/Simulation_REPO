@@ -26,7 +26,7 @@
         const simmode = document.getElementById('autouser');
         const simselect = document.querySelectorAll('#relati input');
         const addelement =  document.getElementById('addbtn');
-        const objectslist = document.querySelectorAll('simobject');
+        const objectslist = document.getElementsByName('simobject');
         let arrsimobject = 
           {0:"Sphere3", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.3, 8:30, 9:45};
                 
