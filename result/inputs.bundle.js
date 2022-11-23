@@ -24,9 +24,12 @@
     ];
     let velocities = [[0.8, 30, 45], [0.5, 50, 80]];
     let positions = [[30, 30, 30], [50, 50, 50]];
-    let masses = [30, 50]
+    let masses = [30, 50];
+    
     window.onload = init;
       function init(){
+
+        console.log("function rec")
         
         let simulmode = "auto"; //can be a  global variable ?
         let checkclear = false;
@@ -103,15 +106,16 @@
             arrsimobjects.push(arrsimobject);
             velocities.push([arrsimobject[7], 
                              arrsimobject[8], 
-                             arrsimobject[9]])
+                             arrsimobject[9]]);
             positions.push([arrsimobject[4],
                             arrsimobject[5],
-                            arrsimobject[6]])
+                            arrsimobject[6]]);
             masses.push(arrsimobject[2]);
                       
             module.exports = {arrsimobjects: arrsimobjects,
                               velocities: velocities,
-                              positions: positions };
+                              positions: positions,
+                              masses: masses };
             
             //document.querySelectorAll('#editParameters input[text], #editParameters input[number]').forEach(elem => elem.value === null);
             //document.querySelectorAll('#editParameters input[submit]').forEach(elem => elem.disabled = true);
@@ -173,7 +177,10 @@
           //alert("not canceled");
         }
       }
-
+      module.exports = { arrsimobjects: arrsimobjects,
+                         velocities: velocities,
+                         positions: positions, 
+                         masses: masses}
 
 
       /* for reference later 
@@ -203,25 +210,26 @@
 //detail queryselectors if necessary
 //imports - 
 
-let BABYLON = __webpack_require__(1);
-let interaction = __webpack_require__(2);
-let velo1 = interaction.velocities;
-let masses = interaction.masses;
-let positions = interaction.positions;
-let velocities = [];
-
-let equations = __webpack_require__(6);
-
-let velos = __webpack_require__(7);
-coaxial_velocity = velos.coaxial_velocity;
-displacement = velos.displacement;
-coaxial_displacement = velos.coaxial_displacement;
-axial_velocity = velos.axial_velocity;
-let result;
-
-velocities.push(velo1.forEach (function(veloset) { axial_velocity(veloset) } ));
-
 (function(window, document, undefined){
+
+    let BABYLON = __webpack_require__(1);
+    let interaction = __webpack_require__(2);
+    let masses = interaction.masses;
+    let velo1 = interaction.velocities;
+    let positions = interaction.positions;
+    let velocities = [];
+    
+    let equations = __webpack_require__(6);
+    
+    let velos = __webpack_require__(7);
+    coaxial_velocity = velos.coaxial_velocity;
+    displacement = velos.displacement;
+    coaxial_displacement = velos.coaxial_displacement;
+    axial_velocity = velos.axial_velocity;
+    let result;
+    
+    masses.push(1);
+    velocities.push(velo1.forEach(function(elem) { axial_velocity(elem) } ));
     // to wait until all elements are loaded
     window.onload = init;
     function init(){

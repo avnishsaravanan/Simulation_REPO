@@ -1,25 +1,26 @@
 //detail queryselectors if necessary
 //imports - 
 
-let BABYLON = require("babylonjs");
-let interaction = require("./interaction.js");
-let velo1 = interaction.velocities;
-let masses = interaction.masses;
-let positions = interaction.positions;
-let velocities = [];
-
-let equations = require("./SR_Functions1.js");
-
-let velos = require("./velocity_codes");
-coaxial_velocity = velos.coaxial_velocity;
-displacement = velos.displacement;
-coaxial_displacement = velos.coaxial_displacement;
-axial_velocity = velos.axial_velocity;
-let result;
-
-velocities.push(velo1.forEach (function(veloset) { axial_velocity(veloset) } ));
-
 (function(window, document, undefined){
+
+    let BABYLON = require("babylonjs");
+    let interaction = require("./interaction.js");
+    let masses = interaction.masses;
+    let velo1 = interaction.velocities;
+    let positions = interaction.positions;
+    let velocities = [];
+    
+    let equations = require("./SR_Functions1.js");
+    
+    let velos = require("./velocity_codes");
+    coaxial_velocity = velos.coaxial_velocity;
+    displacement = velos.displacement;
+    coaxial_displacement = velos.coaxial_displacement;
+    axial_velocity = velos.axial_velocity;
+    let result;
+    
+    masses.push(1);
+    velocities.push(velo1.forEach(function(elem) { axial_velocity(elem) } ));
     // to wait until all elements are loaded
     window.onload = init;
     function init(){
