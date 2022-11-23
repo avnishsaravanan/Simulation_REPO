@@ -7,6 +7,7 @@ module.exports = {
         simulation: './codes/simulation.js',
         basis: './codes/basis.js',
         inputs: './codes/inputs.js',
+        render1:'./codes/render1.js'
         
         /*index: {
             import: './codes/home.js',

@@ -9,6 +9,9 @@
       {0:"Sphere1", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.8, 8:30, 9:45},
       {0:"Sphere2", 1:8, 2:50, 3:"#535353", 4:50, 5:50, 6:50, 7:0.5, 8:50, 9:80}
     ];
+    let velocities = [[0.8, 30, 45], [0.5, 50, 80]];
+    let positions = [[30, 30, 30], [50, 50, 50]];
+    let masses = [30, 50]
     window.onload = init;
       function init(){
         
@@ -85,6 +88,18 @@
           });
           if (addup === "add") {
             arrsimobjects.push(arrsimobject);
+            velocities.push([arrsimobject[7], 
+                             arrsimobject[8], 
+                             arrsimobject[9]])
+            positions.push([arrsimobject[4],
+                            arrsimobject[5],
+                            arrsimobject[6]])
+            masses.push(arrsimobject[2]);
+                      
+            module.exports = {arrsimobjects: arrsimobjects,
+                              velocities: velocities,
+                              positions: positions };
+            
             //document.querySelectorAll('#editParameters input[text], #editParameters input[number]').forEach(elem => elem.value === null);
             //document.querySelectorAll('#editParameters input[submit]').forEach(elem => elem.disabled = true);
             refreshobjlist(arrsimobjects.length);

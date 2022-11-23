@@ -1,5 +1,9 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+/******/ 	var __webpack_modules__ = ({
+
+/***/ 2:
+/***/ ((module) => {
+
 (function(window, document, undefined){
     // to wait until all elements are loaded
 
@@ -11,6 +15,9 @@ var __webpack_exports__ = {};
       {0:"Sphere1", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.8, 8:30, 9:45},
       {0:"Sphere2", 1:8, 2:50, 3:"#535353", 4:50, 5:50, 6:50, 7:0.5, 8:50, 9:80}
     ];
+    let velocities = [[0.8, 30, 45], [0.5, 50, 80]];
+    let positions = [[30, 30, 30], [50, 50, 50]];
+    let masses = [30, 50]
     window.onload = init;
       function init(){
         
@@ -19,6 +26,7 @@ var __webpack_exports__ = {};
         const simmode = document.getElementById('autouser');
         const simselect = document.querySelectorAll('#relati input');
         const addelement =  document.getElementById('addbtn');
+        const objectslist = document.querySelectorAll('simobject');
         let arrsimobject = 
           {0:"Sphere3", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.3, 8:30, 9:45};
                 
@@ -52,7 +60,7 @@ var __webpack_exports__ = {};
           this.disabled=true;
           //clear object list
           checkclear=true;
-          document.getElementsByName('simobject').forEach(function(elem) {
+          objectslist.forEach(function(elem) {
             if (elem.checked == true) {
               simulateClick(elem);
             }
@@ -67,41 +75,60 @@ var __webpack_exports__ = {};
         // initialize saveparameters interactions
         // create new object 
         // update object 
-        let formElem = document.getElementById("editParameters");
+        let formElem = document.getElementById('editParameters');
         formElem.addEventListener("submit", formSubmitHandler);
         function formSubmitHandler(event) {
           event.preventDefault();
-          saveparameters("add");
+          if (checkclear === false) {
+            saveparameters("up");
+          } else {
+            saveparameters("add");
+          }
         }
 
         function saveparameters(addup){
+          x=0;
+          document.getElementsByName('objparams').forEach(function(elem){
+            arrsimobject[x] = elem.value;
+            x+=1;
+          });
           if (addup === "add") {
-            x=0;
-            document.getElementsByName('objparams').forEach(function(elem){
-              arrsimobject[x] = elem.value;
-              x+=1;
-            });
             arrsimobjects.push(arrsimobject);
+            velocities.push([arrsimobject[7], 
+                             arrsimobject[8], 
+                             arrsimobject[9]])
+            positions.push([arrsimobject[4],
+                            arrsimobject[5],
+                            arrsimobject[6]])
+            masses.push(arrsimobject[2]);
+                      
+            module.exports = {arrsimobjects: arrsimobjects,
+                              velocities: velocities,
+                              positions: positions };
+            
             //document.querySelectorAll('#editParameters input[text], #editParameters input[number]').forEach(elem => elem.value === null);
             //document.querySelectorAll('#editParameters input[submit]').forEach(elem => elem.disabled = true);
             refreshobjlist(arrsimobjects.length);
-            document.getElementsByName('simobject').forEach(function(elem) {
+            if (arrsimobjects.length < 10) {
+              addelement.disabled = false;
+            }
+          } else {
+            console.log(objindex);
+          }            
+            objectslist.forEach(function(elem) {
               if (elem.id == ("obj"+arrsimobjects.length)) {
                 simulateClick(elem);
               }
             });
             
-            if (arrsimobjects.length < 10) {
-              addelement.disabled = false;
-            }            
           
-          } else {
-            console.log(objindex);
-          }
+          
+
         }
 
 
         // initialize checkbox interactions
+
         // find how many checked and action accordingly 
         //  none , one , two , attempt  third 
         // if params not saved 
@@ -159,5 +186,41 @@ var __webpack_exports__ = {};
 
       */
 })(window, document, undefined);
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(2);
+/******/ 	
 /******/ })()
 ;

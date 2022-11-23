@@ -3,7 +3,19 @@
 //total velocity
 //total displacement
 
-const { isFunctionDeclaration } = require("typescript");
+function radians_degrees (input, path) {
+    const pi = Math.PI;
+    if (path == 0) {
+        return input * (180/pi);}
+    else {
+        return pi * input/180; }}
+
+function axial_velocity(velo) {
+    let veloX = velo[0] * Math.cos(radians_degrees(velocity[1]));
+    let veloY = velo[0] * Math.sin(radians_degrees(velocity[1]));
+    let veloZ = velo[0] * Math.sin(radians_degrees(velocity[2]));
+    return {x : veloX, y : veloY, z : veloZ};
+}
 
 function displacement(term2, term1) {
     if (!term1) { term1 = [0, 0, 0] };
@@ -37,4 +49,5 @@ function coaxial_velocity(relvelo, pos2, pos1) {
 }
 module.exports = {coaxial_velocity: coaxial_velocity,
                   displacement: displacement,
-                  coaxial_displacement: coaxial_displacement }
+                  coaxial_displacement: coaxial_displacement,
+                  axial_velocity: axial_velocity }

@@ -1,16 +1,16 @@
 let BABYLON = require("babylonjs");
-const { ssao2PixelShader } = require("babylonjs/Shaders/ssao2.fragment");
-let stores = require("./simulation.j");
+
+let interaction = require("./interaction.js");
 let result = require("./inputs.js").result;
 
 let checked = [];
-let objects = stores.objects;
-let velocities = stores.velocities;
-let positions = stores.positions;
-let masses = stores.masses;
+let objects = interaction.arrsimobjects;
+let velocities = interaction.velocities;
+let positions = interaction.positions;
+let masses = interaction.masses;
 
-let canvas = document.querySelector("#renderCanvas");
-let engine = new BABYLON.Engine(canvas, true);
+const canvas = document.querySelector("#renderCanvas");
+const engine = new BABYLON.Engine(canvas, true);
 let scene = BABYLON.Scene(engine);
 
 function synthObject (scene, synthindex) {
@@ -34,14 +34,11 @@ function createScene () {
                      [new BABYLON.Vector3(0, 0, -1),
                      new BABYLON.Vector3(0, 0, 1) ]]
     
-    originset = BABYLON.MeshBuilder.CreateLineSystem('originset', {points: origin}, scene);
+    originset = BABYLON.MeshBuilder.CreateLineSystem('originset', {points: originpts}, scene);
         
     let current0 = synthObject(scene, checked[0]);
     current0.position = positions[checked[0]];
     let current1 = synthObject(scene, checked[1]);
     current1.position = positions[checked[1]];
-
-
-
 
     }

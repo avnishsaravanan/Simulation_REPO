@@ -2,22 +2,30 @@
 //imports - 
 
 let BABYLON = require("babylonjs");
-let stores = require("./simulation.js");
-positions = stores.positions 
-velocities = stores.velocities;
-masses = stores.masses; 
+let interaction = require("./interaction.js");
+let velo1 = interaction.velocities;
+let masses = interaction.masses;
+let positions = interaction.positions;
+let velocities = [];
+
 let equations = require("./SR_Functions1.js");
+
 let velos = require("./velocity_codes");
 coaxial_velocity = velos.coaxial_velocity;
 displacement = velos.displacement;
 coaxial_displacement = velos.coaxial_displacement;
+axial_velocity = velos.axial_velocity;
+let result;
+
+velocities.push(velo1.forEach (function(veloset) { axial_velocity(veloset) } ));
 
 (function(window, document, undefined){
     // to wait until all elements are loaded
     window.onload = init;
     function init(){
 
-let runbutton = document.querySelector("#run");
+const runbutton = document.querySelector("#simbtn");
+runbutton.onclick = function() {
 
 let checked = [1, 2];
 let dt_PA;
@@ -95,7 +103,7 @@ input = { dt_P: dt_PA,
 if (!input.colinear_veloA) { colinear_veloA.total = relvelo.total };
 
 console.log(input, "from input js");
-let result = new equations(input);
+result = new equations(input);
 if (!input.dt_Q) { result.case1(); result.case3() }
 if (!input.dt_P) { result.case2(); result.case4() }
 
@@ -121,7 +129,6 @@ dx.value = result.content.dp_P;
 dx1.value = result.content.dp_Q;
 e1.value = result.content.energy1;
 e2.value = result.content.energy2;
-
+}
 runbutton.onclick(() => module.exports = {result: result});
-
 }})(window, document, undefined);
