@@ -14,11 +14,12 @@ function axial_velocity(velo) {
     let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
     let veloY = velo[0] * Math.sin(radians_degrees(velo[1]));
     let veloZ = velo[0] * Math.sin(radians_degrees(velo[2]));
+    console.log("done, from first call");
     return {x : veloX, y : veloY, z : veloZ};
 }
 
 function displacement(term2, term1) {
-    if (!term1) { term1 = [0, 0, 0] };
+    if (!term1) { term1 = [0, 0, 0]; }
     dis = {};
     dis.x = term2[0] - term1[0];
     dis.y = term2[1] - term1[1];
@@ -45,9 +46,9 @@ function coaxial_velocity(relvelo, pos2, pos1) {
     coaxial_velo.y = (relvelo.y / dis.x) / (relvelo.x / dis.y) * relvelo.y;
     coaxial_velo.z = (relvelo.z / dis.y) / (relvelo.y / dis.z) * relvelo.z;
     coaxial_velo.total = Math.sqrt((coaxial_velo.x)**2 + (coaxial_velo.y)**2 + (coaxial_velo.z)**2);
-    return coaxial_velo };
+    return coaxial_velo; }
 }
 module.exports = {coaxial_velocity: coaxial_velocity,
                   displacement: displacement,
                   coaxial_displacement: coaxial_displacement,
-                  axial_velocity: axial_velocity }
+                  axial_velocity: axial_velocity };

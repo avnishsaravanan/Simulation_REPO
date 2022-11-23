@@ -17,9 +17,12 @@
     ];
     let velocities = [[0.8, 30, 45], [0.5, 50, 80]];
     let positions = [[30, 30, 30], [50, 50, 50]];
-    let masses = [30, 50]
+    let masses = [30, 50];
+    
     window.onload = init;
       function init(){
+
+        console.log("function rec")
         
         let simulmode = "auto"; //can be a  global variable ?
         let checkclear = false;
@@ -96,15 +99,16 @@
             arrsimobjects.push(arrsimobject);
             velocities.push([arrsimobject[7], 
                              arrsimobject[8], 
-                             arrsimobject[9]])
+                             arrsimobject[9]]);
             positions.push([arrsimobject[4],
                             arrsimobject[5],
-                            arrsimobject[6]])
+                            arrsimobject[6]]);
             masses.push(arrsimobject[2]);
                       
             module.exports = {arrsimobjects: arrsimobjects,
                               velocities: velocities,
-                              positions: positions };
+                              positions: positions,
+                              masses: masses };
             
             //document.querySelectorAll('#editParameters input[text], #editParameters input[number]').forEach(elem => elem.value === null);
             //document.querySelectorAll('#editParameters input[submit]').forEach(elem => elem.disabled = true);
@@ -120,9 +124,7 @@
                 simulateClick(elem);
               }
             });
-            
-          
-          
+                  
 
         }
 
@@ -148,11 +150,25 @@
         
 
         // initialize run simulation interactions 
+        simrun = document.getElementById('simbtn');
+        simrun.onclick = function() {
+          addScript('renderCanvas','./render1.bundle.js');      
+        };
 
-
-      } //init ends
+      }
+      //init ends
 
       //common functions
+      function addScript (xtag,src) {
+        return new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.setAttribute('src', src);
+          s.addEventListener('load', resolve);
+          s.addEventListener('error', reject); 
+          document.getElementById(xtag).appendChild(s);
+        });
+      }
+
       // click any element 
       function simulateClick(elem) {
         var evt = new MouseEvent('click');
@@ -167,6 +183,10 @@
         }
       }
 
+      module.exports = { arrsimobjects: arrsimobjects,
+                         velocities: velocities,
+                         positions: positions, 
+                         masses: masses};
 
 
       /* for reference later 

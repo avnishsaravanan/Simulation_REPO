@@ -1,33 +1,34 @@
 //detail queryselectors if necessary
 //imports - 
 
-let BABYLON = require("babylonjs");
-let interaction = require("./interaction.js");
-let velo1 = interaction.velocities;
-let masses = interaction.masses;
-let positions = interaction.positions;
-let velocities = [];
-
-let equations = require("./SR_Functions1.js");
-
-let velos = require("./velocity_codes");
-coaxial_velocity = velos.coaxial_velocity;
-displacement = velos.displacement;
-coaxial_displacement = velos.coaxial_displacement;
-axial_velocity = velos.axial_velocity;
-let result;
-
-velocities.push(velo1.forEach (function(veloset) { axial_velocity(veloset); } ));
-
 (function(window, document, undefined){
+
+    let interaction = require("./interaction.js");
+    let masses = interaction.masses;
+    let velo1 = interaction.velocities;
+    let positions = interaction.positions;
+    let velocities = [];
+    
+    let equations = require("./SR_Functions1.js");
+    
+    let velos = require("./velocity_codes.js");
+    coaxial_velocity = velos.coaxial_velocity;
+    displacement = velos.displacement;
+    coaxial_displacement = velos.coaxial_displacement;
+    axial_velocity = velos.axial_velocity;
+    let result;
+    
+    let process = velo1.map(elem => { return axial_velocity(elem); });
+    process.forEach(function(n) { velocities.push(n); });
+    
     // to wait until all elements are loaded
     window.onload = init;
     function init(){
 
-const runbutton = document.querySelector("#simbtn");
-runbutton.onclick = function() {
+    const runbutton = document.querySelector("#simbtn");
+    runbutton.onclick = function() {
 
-let checked = [1, 2];
+let checked = [0, 1];
 let dt_PA;
 let dt_QA;
 let dp_PA;
@@ -38,8 +39,8 @@ colinear_velo = {x: 1, y: 1, z: 1};
 
 relvelo = {x: (velocities[checked[1]].x - velocities[checked[0]].x), 
            y: (velocities[checked[1]].y - velocities[checked[0]].y),
-           z: (velocities[checked[1]].z - velocities[checked[0]].z),
-           total: Math.sqrt(relvelo.x**2 + relvelo.y**2 + relvelo.z**2)}
+           z: (velocities[checked[1]].z - velocities[checked[0]].z)};
+relvelo.total = (Math.sqrt(relvelo.x**2 + relvelo.y**2 + relvelo.z**2));
 
 function declareParam() {
 event1.time = document.querySelector("#eventpln > fieldset > #e1time").value;
@@ -64,30 +65,30 @@ function sol_var() {
                                      dp_PA = displacement(event2.pos, event1.pos); 
                                      dt_QA = null;
                                      dp_QA = null; 
-                                     mass1 = masses[checked[1]]
-                                     mass2 = masses[checked[0]]
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos)}
-    if (solvefx.value == "deltat")  { dt_QA = (event2.time - event1.time) 
-                                     dp_QA = displacement(event2.pos, event1.pos) 
+                                     mass1 = masses[checked[1]];
+                                     mass2 = masses[checked[0]];
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
+    if (solvefx.value == "deltat")  { dt_QA = (event2.time - event1.time); 
+                                     dp_QA = displacement(event2.pos, event1.pos); 
                                      dt_PA = null;
                                      dp_PA = null;
-                                     mass1 = masses[checked[0]]
-                                     mass2 = masses[checked[1]]
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos)}
-    if (solvefx.value == "deltax1") { dp_PA = displacement(event2.pos, event1.pos)
-                                     dt_PA = (event2.time - event1.time)
+                                     mass1 = masses[checked[0]];
+                                     mass2 = masses[checked[1]];
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
+    if (solvefx.value == "deltax1") { dp_PA = displacement(event2.pos, event1.pos);
+                                     dt_PA = (event2.time - event1.time);
                                      dt_QA = document.querySelector("#deltafx > #deltat1").value;
                                      dp_QA = null;
-                                     mass1 = masses[checked[1]]
-                                     mass2 = masses[checked[0]]
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos)}
-    if (solvefx.value == "deltax")  { dp_QA = displacement(event2.pos, event1.pos)  
-                                     dt_QA = (event2.time - event1.time)
+                                     mass1 = masses[checked[1]];
+                                     mass2 = masses[checked[0]];
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
+    if (solvefx.value == "deltax")  { dp_QA = displacement(event2.pos, event1.pos);  
+                                     dt_QA = (event2.time - event1.time);
                                      dp_PA = null;
                                      dt_PA = document.querySelector("#deltafx > #deltat").value;
-                                     mass1 = masses[checked[0]]
-                                     mass2 = masses[checked[1]]
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos)}
+                                     mass1 = masses[checked[0]];
+                                     mass2 = masses[checked[1]];
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
 }
 
 sol_var();
@@ -98,20 +99,20 @@ input = { dt_P: dt_PA,
     dp_Q: dp_QA,
     colinear_velo: colinear_veloA, 
     mass1: mass1,
-    mass2: mass2 }
+    mass2: mass2 };
 
-if (!input.colinear_veloA) { colinear_veloA.total = relvelo.total };
+if (!input.colinear_veloA) { colinear_veloA.total = relvelo.total; }
 
 console.log(input, "from input js");
 result = new equations(input);
-if (!input.dt_Q) { result.case1(); result.case3() }
-if (!input.dt_P) { result.case2(); result.case4() }
+if (!input.dt_Q) { result.case1(); result.case3();}
+if (!input.dt_P) { result.case2(); result.case4();}
 
-if (!input.dp_Q && !input.dp_P && solvefx.value == "deltax") { result.case5() }
-if (!input.dp_Q && !input.dp_P && !!input.dt_Q && solvefx.value == "deltax1") { result.case6() }
+if (!input.dp_Q && !input.dp_P && solvefx.value == "deltax") { result.case5();}
+if (!input.dp_Q && !input.dp_P && !!input.dt_Q && solvefx.value == "deltax1") { result.case6();}
 
-if (!input.dp_Q && !!input.dp_P) { result.case1(); result.case3() }
-if (!input.dp_P && !!input.dp_Q) { result.case2(); result.case4() }     
+if (!input.dp_Q && !!input.dp_P) { result.case1(); result.case3();}
+if (!input.dp_P && !!input.dp_Q) { result.case2(); result.case4();}     
 
 result.case7();
 result.case8();
@@ -129,6 +130,8 @@ dx.value = result.content.dp_P;
 dx1.value = result.content.dp_Q;
 e1.value = result.content.energy1;
 e2.value = result.content.energy2;
-}
-runbutton.onclick(() => module.exports = {result: result});
+
+console.log("ins outs recognised");
+};
+//runbutton.onclick(() => module.exports = {result: result});
 }})(window, document, undefined);

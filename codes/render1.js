@@ -1,17 +1,16 @@
 let BABYLON = require("babylonjs");
 
 let interaction = require("./interaction.js");
-let result = require("./inputs.js").result;
+//let result = require("./inputs.js").result;
 
 let checked = [];
 let objects = interaction.arrsimobjects;
-let velocities = interaction.velocities;
+//let velocities = interaction.velocities;
 let positions = interaction.positions;
-let masses = interaction.masses;
+//let masses = interaction.masses;
 
 const canvas = document.querySelector("#renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
-let scene = BABYLON.Scene(engine);
 
 function synthObject (scene, synthindex) {
     let object;
@@ -27,6 +26,10 @@ function synthObject (scene, synthindex) {
 }
 
 function createScene () {
+    let scene = BABYLON.Scene(engine);
+
+    const camera = new BABYLON.ArcRotateCamera('', Math.PI*2, Math.PI, 1, new BABYLON.Vector3(10, 10, 10), scene);
+    const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene);
     let originpts = [[new BABYLON.Vector3(-1, 0, 0),
                      new BABYLON.Vector3(1, 0, 0)],
                      [new BABYLON.Vector3(0, -1, 0),
