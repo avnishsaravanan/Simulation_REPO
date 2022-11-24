@@ -54,7 +54,7 @@ function equations (input) {
         term2 = (dp_P.y - (colinear_velo.y * dt_P));
         term3 = (dp_P.z - (colinear_velo.z * dt_P));
         term4 = [(term1 * LzF), (term2 * LzF), (term3 * LzF)];
-        this.content.dp_Q = displacement(term4).total;
+        this.content.dp_Q = displacement(term4, null).total;
         this.content.dp_P = dp_P.total; };
 
     this.content.case4 = function case4() { //displacement in frame p

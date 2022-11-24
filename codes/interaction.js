@@ -68,7 +68,8 @@
           document.querySelectorAll('#editParameters input, #editParameters select, #editParameters button, #editParameters textarea').forEach(elem => elem.disabled = false);
           document.getElementById("editParameters").reset();
           document.getElementById('objname').focus();
-          inputs(masses, velocities); console.log("from interactionjs : after input procesed");
+          inputs(masses, velocities); 
+          console.log("from interactionjs : after input procesed");
         };
 
         // initialize saveparameters interactions

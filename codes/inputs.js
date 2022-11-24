@@ -1,20 +1,17 @@
 //detail queryselectors if necessary
 //imports - 
-
+let equations = require("./SR_Functions1.js");
+let velos = require("./velocity_codes.js");
+    coaxial_velocity = velos.coaxial_velocity;
+    displacement = velos.displacement;
+    coaxial_displacement = velos.coaxial_displacement;
+    axial_velocity = velos.axial_velocity;
 
 function inputs (masses, velo) {
 //    let interaction = require("./interaction.js");
     //let masses = interaction.masses;
     //let positions = interaction.positions;
     let velocities = [];
-    
-    let equations = require("./SR_Functions1.js");
-    
-    let velos = require("./velocity_codes.js");
-    coaxial_velocity = velos.coaxial_velocity;
-    displacement = velos.displacement;
-    coaxial_displacement = velos.coaxial_displacement;
-    axial_velocity = velos.axial_velocity;
     let result;
     
     let process = velo.map(elem => { return axial_velocity(elem); });
