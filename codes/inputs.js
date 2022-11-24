@@ -1,12 +1,11 @@
 //detail queryselectors if necessary
 //imports - 
 
-(function(window, document, undefined){
 
-    let interaction = require("./interaction.js");
-    let masses = interaction.masses;
-    let velo1 = interaction.velocities;
-    let positions = interaction.positions;
+function inputs (masses, velo) {
+//    let interaction = require("./interaction.js");
+    //let masses = interaction.masses;
+    //let positions = interaction.positions;
     let velocities = [];
     
     let equations = require("./SR_Functions1.js");
@@ -18,15 +17,10 @@
     axial_velocity = velos.axial_velocity;
     let result;
     
-    let process = velo1.map(elem => { return axial_velocity(elem); });
+    let process = velo.map(elem => { return axial_velocity(elem); });
     process.forEach(function(n) { velocities.push(n); });
-    
+    console.log('from inputs js: velocities', velocities);
     // to wait until all elements are loaded
-    window.onload = init;
-    function init(){
-
-    const runbutton = document.querySelector("#simbtn");
-    runbutton.onclick = function() {
 
 let checked = [0, 1];
 let dt_PA;
@@ -42,6 +36,8 @@ relvelo = {x: (velocities[checked[1]].x - velocities[checked[0]].x),
            z: (velocities[checked[1]].z - velocities[checked[0]].z)};
 relvelo.total = (Math.sqrt(relvelo.x**2 + relvelo.y**2 + relvelo.z**2));
 
+//console.log( "from input js: relvelo ", relvelo);
+
 function declareParam() {
 event1.time = document.querySelector("#eventpln > fieldset > #e1time").value;
 event1.x = document.querySelector("#eventpln > fieldset > #e1x").value;
@@ -53,7 +49,8 @@ event2.time = document.querySelector("#eventpln > fieldset > #e2time").value;
 event2.x = document.querySelector("#eventpln > fieldset > #e2x").value;
 event2.y = document.querySelector("#eventpln > fieldset > #e2y").value;
 event2.z = document.querySelector("#eventpln > fieldset > #e2z").value;
-event2.pos = [event2.x, event2.y, event2.z];
+event2.pos = [event2.x, event2.y, event2.z]; 
+console.log('from input js: finish declare param');
 }
 
 function sol_var() {
@@ -84,11 +81,12 @@ function sol_var() {
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
     if (solvefx.value == "deltax")  { dp_QA = displacement(event2.pos, event1.pos);  
                                      dt_QA = (event2.time - event1.time);
-                                     dp_PA = null;
-                                     dt_PA = document.querySelector("#deltafx > #deltat").value;
+                                     dp_PA = {x: null, y: null, z: null, total: null};
+                                     dt_PA = Number(document.querySelector("#deltafx > #deltat").value);
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); } 
+                                     console.log('from input js: finished solvar');
 }
 
 sol_var();
@@ -103,8 +101,9 @@ input = { dt_P: dt_PA,
 
 if (!input.colinear_veloA) { colinear_veloA.total = relvelo.total; }
 
-console.log(input, "from input js");
+console.log("from input js: input", input);
 result = new equations(input);
+console.log(result);
 if (!input.dt_Q) { result.case1(); result.case3();}
 if (!input.dt_P) { result.case2(); result.case4();}
 
@@ -132,6 +131,7 @@ e1.value = result.content.energy1;
 e2.value = result.content.energy2;
 
 console.log("ins outs recognised");
-};
-//runbutton.onclick(() => module.exports = {result: result});
-}})(window, document, undefined);
+    }
+//runbutton.onclick(() => module.exports = {result: result});}})(window, document, undefined)
+
+module.exports = inputs;

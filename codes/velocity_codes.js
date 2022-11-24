@@ -31,9 +31,9 @@ function displacement(term2, term1) {
 function coaxial_displacement(relvelo, pos2, pos1) {
     coaxial_dis = {};
     dis = displacement(pos2, pos1);
-    coaxial_dis.x = (relvelo.x / dis.y) / (relvelo.y / dis.x) * relvelo.x;
-    coaxial_dis.y = (relvelo.y / dis.x) / (relvelo.x / dis.y) * relvelo.y;
-    coaxial_dis.z = (relvelo.z / dis.y) / (relvelo.y / dis.z) * relvelo.z;
+    coaxial_dis.x = (relvelo.x/dis.y) / (relvelo.y/dis.x) * relvelo.x;
+    coaxial_dis.y = (relvelo.y/dis.x) / (relvelo.x/dis.y) * relvelo.y;
+    coaxial_dis.z = (relvelo.z/dis.y) / (relvelo.y/dis.z) * relvelo.z;
     coaxial_dis.total = Math.sqrt((coaxial_dis.x)**2 + (coaxial_dis.y)**2 + (coaxial_dis.z)**2);
 }
 
@@ -46,6 +46,7 @@ function coaxial_velocity(relvelo, pos2, pos1) {
     coaxial_velo.y = (relvelo.y / dis.x) / (relvelo.x / dis.y) * relvelo.y;
     coaxial_velo.z = (relvelo.z / dis.y) / (relvelo.y / dis.z) * relvelo.z;
     coaxial_velo.total = Math.sqrt((coaxial_velo.x)**2 + (coaxial_velo.y)**2 + (coaxial_velo.z)**2);
+    console.log('from velocity codes', coaxial_velo);
     return coaxial_velo; }
 }
 module.exports = {coaxial_velocity: coaxial_velocity,

@@ -1,6 +1,7 @@
 let BABYLON = require("babylonjs");
-
+console.log("from render1: before require interaction js");
 let interaction = require("./interaction.js");
+console.log("from render1: after require interaction js");
 //let result = require("./inputs.js").result;
 
 let checked = [];

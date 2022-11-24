@@ -5,11 +5,12 @@
       {"objname":"Sphere1", "objsize":5, "objmass":30, "objcolor":"#535353", "objposx":30, "objposy":30, "objposz":30, "speed":0.3, "xyangle":30, "yzangle":45},
       {"objname":"Sphere2", "objsize":8, "objmass":50, "objcolor":"#535353", "objposx":50, "objposy":50, "objposz":50, "speed":0.5, "xyangle":50, "yzangle":80}
     ];*/
+    let inputs = require("./inputs.js");
     let arrsimobjects = [
       {0:"Sphere1", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.8, 8:30, 9:45},
       {0:"Sphere2", 1:8, 2:50, 3:"#535353", 4:50, 5:50, 6:50, 7:0.5, 8:50, 9:80}
     ];
-    let velocities = [[0.8, 30, 45], [0.5, 50, 80]];
+    let velocities = [[0.5, 45, 45], [0.8, 45, 45]];
     let positions = [[30, 30, 30], [50, 50, 50]];
     let masses = [30, 50];
     
@@ -67,6 +68,7 @@
           document.querySelectorAll('#editParameters input, #editParameters select, #editParameters button, #editParameters textarea').forEach(elem => elem.disabled = false);
           document.getElementById("editParameters").reset();
           document.getElementById('objname').focus();
+          inputs(masses, velocities); console.log("from interactionjs : after input procesed");
         };
 
         // initialize saveparameters interactions
@@ -146,7 +148,8 @@
         // initialize run simulation interactions 
         simrun = document.getElementById('simbtn');
         simrun.onclick = function() {
-          addScript('renderCanvas','./render1.bundle.js');      
+         // inputs(masses, velocities); console.log("from interactionjs : after input procesed");
+          //addScript('renderCanvas','./render1.bundle.js');      
         };
 
       }
