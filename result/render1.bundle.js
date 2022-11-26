@@ -12,193 +12,249 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 (function(window, document, undefined){
-    // to wait until all elements are loaded
+  // to wait until all elements are loaded
+  /*let arrsimobjects = [
+    {"objname":"Sphere1", "objsize":5, "objmass":30, "objcolor":"#535353", "objposx":30, "objposy":30, "objposz":30, "speed":0.3, "xyangle":30, "yzangle":45},
+    {"objname":"Sphere2", "objsize":8, "objmass":50, "objcolor":"#535353", "objposx":50, "objposy":50, "objposz":50, "speed":0.5, "xyangle":50, "yzangle":80} ];*/
 
-    /*let arrsimobjects = [
-      {"objname":"Sphere1", "objsize":5, "objmass":30, "objcolor":"#535353", "objposx":30, "objposy":30, "objposz":30, "speed":0.3, "xyangle":30, "yzangle":45},
-      {"objname":"Sphere2", "objsize":8, "objmass":50, "objcolor":"#535353", "objposx":50, "objposy":50, "objposz":50, "speed":0.5, "xyangle":50, "yzangle":80}
-    ];*/
-    let inputs = __webpack_require__(3);
-    let arrsimobjects = [
-      {0:"Sphere1", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.8, 8:30, 9:45},
-      {0:"Sphere2", 1:8, 2:50, 3:"#535353", 4:50, 5:50, 6:50, 7:0.5, 8:50, 9:80}
-    ];
-    let velocities = [[0.5, 45, 45], [0.8, 45, 45]];
-    let positions = [[30, 30, 30], [50, 50, 50]];
-    let masses = [30, 50];
+  let inputs = __webpack_require__(3);
+  let arrsimobjects = [
+    {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
+    {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80} ];
+    /*{0:"Sphere3", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
+    {0:"Sphere4", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
+    {0:"Sphere5", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
+    {0:"Sphere6", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
+    {0:"Sphere7", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
+    {0:"Sphere8", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
+    {0:"Sphere9", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45} ];*/
+  let velocities = [[0.5, 45, 45], [0.8, 45, 45]];
+  let positions = [[30, 30, 30], [50, 50, 50]];
+  let masses = [30, 50];
+  let checks = ['obj1','obj2']; //,'obj3','obj4','obj5','obj6','obj7','obj8','obj9'];  
     
-    window.onload = init;
-      function init(){
-
-        console.log("function rec interaction ");
-        
-        let simulmode = "auto"; //can be a  global variable ?
-        let checkclear = false;
-        const simmode = document.getElementById('autouser');
-        const simselect = document.querySelectorAll('#relati input');
-        const addelement =  document.getElementById('addbtn');
-        const objectslist = document.getElementsByName('simobject');
-        let arrsimobject = 
-          {0:"Sphere3", 1:5, 2:30, 3:"#535353", 4:30, 5:30, 6:30, 7:0.3, 8:30, 9:45};
+  window.onload = init;
+  function init(){
+    let simulmode = "auto"; //can be a  global variable ?
+    const simmode = document.getElementById('autouser');
+    const simselect = document.querySelectorAll('#relati input');
+    const addelement =  document.getElementById('addbtn');
+    const objectslist = document.getElementsByName('simobject');
+    //var arrsimobject = {0:"Spherex", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45};
+    let trigger = 'self';
                 
-        // initialize auto/user toggle interactions 
-        simmode.onclick = function () {
-          if (this.checked) {
-            simulmode = "user";
-          } else {
-            simulmode = "auto";
-          }
-                // next steps 
-                // stop sim if running 
-                // verify parameters for fitment for selected relativity option ?          
-        };
+    // initialize auto/user toggle interactions 
+    simmode.onclick = function () {
+      if (this.checked) {
+        simulmode = "user";
+      } else {
+      simulmode = "auto";
+      }
+    };
 
-        // initialize radiobutton interactions 
-        for(var i = 0, max = simselect.length; i < max; i++) {
-            simselect[i].onclick = function() {
-                // change toggle to user
-                if (!simmode.checked) {
-                    simulateClick(simmode);  
-                } 
-                // next steps 
-                // stop sim if running 
-                // verify parameters for fitment for selected relativity option ?
-            };
-        }
-
-        // initialize addelement interactions 
-        addelement.onclick = function () {
-          this.disabled=true;
-          //clear object list
-          checkclear=true;
-          objectslist.forEach(function(elem) {
-            if (elem.checked == true) {
-              simulateClick(elem);
-            }
-          });
-          document.getElementById('simbtn').disabled = true;
-          // enable parameters
-          document.querySelectorAll('#editParameters input, #editParameters select, #editParameters button, #editParameters textarea').forEach(elem => elem.disabled = false);
-          document.getElementById("editParameters").reset();
-          document.getElementById('objname').focus();
-          inputs(masses, velocities); 
-          console.log("from interactionjs : after input procesed");
-        };
-
-        // initialize saveparameters interactions
-        // create new object 
-        // update object 
-        let formElem = document.getElementById('editParameters');
-        formElem.addEventListener("submit", formSubmitHandler);
-        function formSubmitHandler(event) {
-          event.preventDefault();
-          if (checkclear === false) {
-            saveparameters("up");
-          } else {
-            saveparameters("add");
-          }
-        }
-
-        function saveparameters(addup){
-          x=0;
-          document.getElementsByName('objparams').forEach(function(elem){
-            arrsimobject[x] = elem.value;
-            x+=1;
-          });
-          if (addup === "add") {
-            arrsimobjects.push(arrsimobject);
-            velocities.push([arrsimobject[7], 
-                             arrsimobject[8], 
-                             arrsimobject[9]]);
-            positions.push([arrsimobject[4],
-                            arrsimobject[5],
-                            arrsimobject[6]]);
-            masses.push(arrsimobject[2]);
-                      
-            module.exports = {arrsimobjects: arrsimobjects,
-                              velocities: velocities,
-                              positions: positions,
-                              masses: masses };
-            
-            //document.querySelectorAll('#editParameters input[text], #editParameters input[number]').forEach(elem => elem.value === null);
-            //document.querySelectorAll('#editParameters input[submit]').forEach(elem => elem.disabled = true);
-            refreshobjlist(arrsimobjects.length);
-            if (arrsimobjects.length < 10) {
-              addelement.disabled = false;
-            }
-          } else {
-            console.log(objindex);
-          }            
-            objectslist.forEach(function(elem) {
-              if (elem.id == ("obj"+arrsimobjects.length)) {
-                simulateClick(elem);
-              }
-            });
-                  
-
-        }
-
-
-        // initialize checkbox interactions
-
-        // find how many checked and action accordingly 
-        //  none , one , two , attempt  third 
-        // if params not saved 
-
-        function refreshobjlist(num) {
-          //txt = document.getElementById("objlabel"+num).childNodes[0].textContent;
-          //newtxt = arrsimobjects[num-1].objname + txt;
-          document.getElementById("objlabel"+num).childNodes[0].textContent = arrsimobjects[num-1][0]; //newtxt;
-          document.getElementById("line"+num).hidden = false;
-          document.getElementById("obj"+num).checked = true;
-          simulateClick(document.getElementById("objlabel"+num));
-          //checkmark
+    // initialize radiobutton interactions 
+    for(var i = 0, max = simselect.length; i < max; i++) {
+      simselect[i].onclick = function() {
+        // change toggle to user
+        if (!simmode.checked) {
+          simulateClick(simmode);  
         } 
+      };
+    }
 
-        // initialize solvefor interactions
-        // on change of selection highlight respective field 
-        
-
-        // initialize run simulation interactions 
-        simrun = document.getElementById('simbtn');
-        simrun.onclick = function() {
-         // inputs(masses, velocities); console.log("from interactionjs : after input procesed");
-          //addScript('renderCanvas','./render1.bundle.js');      
-        };
-
-      }
-      //init ends
-
-      //common functions
-      function addScript (xtag,src) {
-        return new Promise((resolve, reject) => {
-          const s = document.createElement('script');
-          s.setAttribute('src', src);
-          s.addEventListener('load', resolve);
-          s.addEventListener('error', reject); 
-          document.getElementById(xtag).appendChild(s);
-        });
-      }
-
-      // click any element 
-      function simulateClick(elem) {
-        var evt = new MouseEvent('click');
-        //var cb = document.getElementById(elem); 
-        var canceled = !elem.dispatchEvent(evt);
-        if(canceled) {
-          // A handler called preventDefault
-          alert("click event canceled");
-        } else {
-          // None of the handlers called preventDefault
-          //alert("not canceled");
+    // initialize addelement interactions 
+    addelement.onclick = function () {
+      this.disabled=true;
+      trigger = 'addel';
+      //uncheck object list
+      objectslist.forEach(function(obj) {
+        if(obj.id == checks[0] || obj.id == checks[1]){
+          //if (elem.checked == true) {
+          simulateClick(obj);
         }
+      });
+      //document.getElementById('simbtn').disabled = true;
+      // enable parameters
+      processparam(false, 100);
+      trigger = 'self';
+      //inputs(masses, velocities); 
+    };
+
+    // initialize saveparameters interactions
+    let formElem = document.getElementById('editParameters');
+    formElem.addEventListener("submit", formSubmitHandler);
+    function formSubmitHandler(event) {
+      event.preventDefault();
+      if (checks.length == 1) {
+        saveparameters("up");
+      } else {
+        saveparameters("add");
       }
+    }
 
-      module.exports = { arrsimobjects: arrsimobjects,
-                         velocities: velocities,
-                         positions: positions, 
-                         masses: masses};
+    function saveparameters(addup){
+      x=0;
+      var arrsimobject = {};
+      //{0:"Spherex", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45};
+      document.getElementsByName('objparams').forEach(function(elem){
+        if (elem.id == 'objname' || elem.id == 'objcolor') {
+          arrsimobject[x] = elem.value;
+        } else {
+          arrsimobject[x] = Number(elem.value); 
+        }
+        x+=1;
+      });
+      if (addup == "add") {
+        arrsimobjects.push(arrsimobject);
+        //doubt
+        velocities.push([arrsimobject[7], 
+                        arrsimobject[8], 
+                        arrsimobject[9]]);
+        positions.push([arrsimobject[4],
+                       arrsimobject[5],
+                       arrsimobject[6]]);
+        masses.push(arrsimobject[2]);
+                      
+        module.exports = {arrsimobjects: arrsimobjects,
+                          velocities: velocities,
+                          positions: positions,
+                          masses: masses };
+            
+        refreshobjlist(arrsimobjects.length);
+        objectslist.forEach(function(elem) {
+          if (elem.id == ("obj"+arrsimobjects.length)) {
+            simulateClick(elem);
+          }
+        });
+      } else {
+        // update arrims
+        arrsimobjects[(upobj() - 1)] = arrsimobject;
+        document.getElementById("objlabel"+(upobj())).childNodes[0].textContent = arrsimobject[0];
+        alert('saved'); // beautify
+      }
+    }
 
+    // initialize checkbox interactions
+    objectslist.forEach(elem => elem.onclick = function () {
+      // find how many checked and action accordingly
+      //  none , one , two , attempt  third
+      if (this.checked == true) {
+        checks.push(this.id);
+        if (checks.length == 2 ) {
+          objectslist.forEach(function (elemnt) {
+            if (elemnt.id != checks[0] && elemnt.id != checks[1]) {
+              elemnt.checked = false;
+              elemnt.disabled = true;
+            }
+          });
+          processparam(true, 100);
+          document.getElementById('simbtn').disabled = false;
+        } else {
+          processparam(false, upobj());
+        } 
+      } else {
+        if (checks[0] == this.id) {
+          del = checks.shift();
+        } else {
+          del = checks.pop();
+        }
+        if (checks.length == 1) {
+          for (let index = 1; index <= 10; index++) {
+            para = document.getElementById('line'+index);
+            if (!para.hidden) {
+              document.getElementById('obj'+index).disabled = false;
+            } else {break;}
+          }
+          // populate params
+          if (trigger == 'self') {
+            processparam(false, upobj());
+          }    
+        } else {
+          // null params
+          processparam(true, 100);
+        }
+        document.getElementById('simbtn').disabled = true;
+      } 
+      addbtnchk();
+    });
+    // if params not saved - no alert for now 
+
+
+    function refreshobjlist(num) {
+      document.getElementById("objlabel"+num).childNodes[0].textContent = arrsimobjects[num-1][0]; //newtxt;
+      document.getElementById("obj"+num).checked = true;
+      document.getElementById("obj"+num).disabled = false;
+      document.getElementById("line"+num).hidden = false;          
+      simulateClick(document.getElementById("objlabel"+num)); //checkmark
+    } 
+
+    // initialize solvefor interactions
+    // on change of selection highlight respective field 
+
+    // initialize run simulation interactions 
+    simrun = document.getElementById('simbtn');
+    simrun.onclick = function() {
+      inputs(masses, velocities);
+      //addScript('renderCanvas','./render1.bundle.js');      
+    };
+
+    //functions
+    function processparam(state, num) {
+      document.getElementById("editParameters").reset();
+      col=0;
+      document.querySelectorAll('#editParameters input, #editParameters select, #editParameters button, #editParameters textarea').forEach(function(elem) {
+        elem.disabled = state;
+        if (num != 100 && col < 10) {
+          elem.value = arrsimobjects[num-1][col];
+          col++;
+        }          
+      });
+      if (!state) {
+        document.getElementById('objname').focus();
+      }
+    }
+
+    function addbtnchk(){
+      if (arrsimobjects.length < 10) {
+        addelement.disabled = false;
+      }
+    }
+
+  } //init ends
+
+  //common functions
+  function upobj() {
+    num = Number(checks[0].match(/\d+/));
+    return num;
+  }
+
+  function addScript (xtag,src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.setAttribute('src', src);
+      s.addEventListener('load', resolve);
+      s.addEventListener('error', reject); 
+      document.getElementById(xtag).appendChild(s);
+    });
+  }
+
+  // click any element 
+  function simulateClick(elem) {
+    var evt = new MouseEvent('click');
+    var canceled = !elem.dispatchEvent(evt);
+    if(canceled) {
+      // A handler called preventDefault
+      alert("click event canceled");
+    } else {
+      // None of the handlers called preventDefault
+      //alert("not canceled");
+    }
+  }
+
+  module.exports = {  arrsimobjects: arrsimobjects,
+                      velocities: velocities,
+                      positions: positions, 
+                      masses: masses };
 
       /* for reference later 
       function preventDef(event) {
@@ -252,9 +308,9 @@ let event1 = {};
 let event2 = {};
 colinear_velo = {x: 1, y: 1, z: 1};
 
-relvelo = {x: (velocities[checked[1]].x - velocities[checked[0]].x), 
-           y: (velocities[checked[1]].y - velocities[checked[0]].y),
-           z: (velocities[checked[1]].z - velocities[checked[0]].z)};
+relvelo = {x: Math.abs((velocities[checked[1]].x - velocities[checked[0]].x)), 
+           y: Math.abs((velocities[checked[1]].y - velocities[checked[0]].y)),
+           z: Math.abs((velocities[checked[1]].z - velocities[checked[0]].z))};
 relvelo.total = (Math.sqrt(relvelo.x**2 + relvelo.y**2 + relvelo.z**2));
 
 //console.log( "from input js: relvelo ", relvelo);
@@ -295,7 +351,8 @@ function sol_var() {
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax1") { dp_PA = displacement(event2.pos, event1.pos);
+    if (solvefx.value == "deltax1") { if (event2.pos == null || event1.pos == null) {dp_PA = null}
+                                      else {dp_PA = displacement(event2.pos, event1.pos)}; 
                                      dt_PA = (event2.time - event1.time);
                                      dt_QA = Number(document.querySelector("#deltafx > #deltat1").value);
                                      dp_QA = null;
@@ -303,15 +360,15 @@ function sol_var() {
                                      mass2 = masses[checked[0]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax")  { dp_QA = displacement(event2.pos, event1.pos);  
+    if (solvefx.value == "deltax")  { if (event2.pos == null || event1.pos == null) {dp_QA = null}
+                                      else {dp_QA = displacement(event2.pos, event1.pos)};  
                                      dt_QA = (event2.time - event1.time);
                                      dp_PA = null;
                                      dt_PA = Number(document.querySelector("#deltafx > #deltat").value);
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
-                                     colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); } 
-                                     console.log('from input js: finished solvar'); 
+                                     colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }; 
 }
 
 sol_var();
@@ -325,8 +382,7 @@ input = { dt_P: dt_PA,
     mass1: mass1,
     mass2: mass2 };
 
-
-if (!input.colinear_veloA) { colinear_veloA.total = relvelo.total; }
+if (input.colinear_velo == null) { colinear_veloA.total = relvelo.total; }
 
 console.log("from input js: input", input);
 result = new equations(input);
@@ -475,8 +531,8 @@ function radians_degrees (input, path) {
 
 function axial_velocity(velo) {
     let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
-    let veloY = velo[0] * Math.sin(radians_degrees(velo[1]));
-    let veloZ = velo[0] * Math.sin(radians_degrees(velo[2]));
+    let veloY = velo[0] * Math.sin(radians_degrees(velo[1])) * Math.sin(radians_degrees(velo[2]));
+    let veloZ = velo[0] * Math.sin(radians_degrees(velo[1])) * Math.cos(radians_degrees(velo[2]));
     console.log("done, from first call");
     return {x : veloX, y : veloY, z : veloZ};
 }
@@ -495,26 +551,69 @@ function coaxial_displacement(relvelo, pos2, pos1) {
     if (pos1[0] == null && pos2[0] == null) { return null }
     else {
     coaxial_dis = {};
-    dis = displacement(pos2, pos1);
-    coaxial_dis.x = (relvelo.x/dis.y) / (relvelo.y/dis.x) * relvelo.x;
-    coaxial_dis.y = (relvelo.y/dis.x) / (relvelo.x/dis.y) * relvelo.y;
-    coaxial_dis.z = (relvelo.z/dis.y) / (relvelo.y/dis.z) * relvelo.z;
+    dis = displacement(pos2, pos1)
+    coefs = coaxial_velocity(relvelo, pos2, pos1);
+    coaxial_dis.x = coefs[0] * dis.x;
+    coaxial_dis.y = coefs[1] * dis.y;
+    coaxial_dis.z = coefs[2] * dis.z;
     coaxial_dis.total = Math.sqrt((coaxial_dis.x)**2 + (coaxial_dis.y)**2 + (coaxial_dis.z)**2);
     return coaxial_dis }
 }
 
 function coaxial_velocity(relvelo, pos2, pos1) {
     coaxial_velo = {};
+    let coefx; let coefy; let coefz; let ratio1; let ratio2;
     dis = displacement(pos2, pos1);
-    if (!pos2[0] && !pos1[0]) { return null }
-    else {
-    coaxial_velo.x = (relvelo.x / dis.y) / (relvelo.y / dis.x) * relvelo.x;
-    coaxial_velo.y = (relvelo.y / dis.x) / (relvelo.x / dis.y) * relvelo.y;
-    coaxial_velo.z = (relvelo.z / dis.y) / (relvelo.y / dis.z) * relvelo.z;
+    if (pos2[0] == null && pos1[0] == null) { return null }
+
+    else { //conditional alg to prevent NaN
+
+           if (dis.x == 0) { coaxial_velo.x = 0; coefx = 0 } 
+           else { //block1
+                 if ((relvelo.x/relvelo.y) <= 1) { //block 1.1
+                    if ((dis.x/dis.y) <= (relvelo.x/relvelo.y)) { coefx = (dis.x/dis.y)/(relvelo.x/relvelo.y) }
+                    else {coefx = (dis.x/dis.y)/Math.tan(Math.atan(relvelo.x/relvelo.y) - Math.atan(dis.x/dis.y)) };
+                    }
+                 else { //block 1.2
+                    if ((dis.x/dis.y) <= (relvelo.x/relvelo.y)) { coefx = (dis.x/dis.y) / Math.tan(90 - Math.atan(relvelo.x/relvelo.y) - Math.atan(dis.x/dis.y))}
+                    else { coefx = (dis.x/dis.y)/(relvelo.x/relvelo.y) };
+                 }}
+    
+           if (dis.y == 0) { coaxial_velo.y = 0; coefy = 0 } 
+           else { //block 2
+                 ratio1 = (relvelo.y/relvelo.x) * (relvelo.y/relvelo.z);
+                 ratio2 = (dis.y/dis.x) * (dis.y/dis.z); 
+
+                 if (ratio1 >= 1) { //block 2.1
+                    if (ratio2 >= ratio1) { coefy = ratio2/ratio1 }
+                    else { coefy = ratio2 / Math.tan(Math.atan(ratio2) - Math.atan(ratio1)) }; 
+                   }
+                 else { //block 2.2
+                    if (ratio2 >= ratio1) { coefy = ratio2/Math.tan(90 - Math.atan(ratio2) - Math.atan(ratio1)) }
+                    else { coefy = ratio2/ratio1 };
+                 }}
+    
+            if (dis.z == 0) { coaxial_velo.z = 0; coefz = 0 }
+            else {//block 3
+                 ratio1 = (relvelo.z/relvelo.y) * (relvelo.z/relvelo.x);
+                 ratio2 = (dis.z/dis.y) * (dis.z/dis.x);
+                 if (ratio1 <= 1) { //block 3.1
+                    if (ratio2 <= ratio1) { coefz = ratio2/ratio1 }
+                    else { coefz = ratio1 / Math.tan(Math.atan(ratio2) - Math.atan(ratio1)) }; 
+                  }
+                 else { //block 3.2
+                   if (ratio2 <= ratio1) { coefz = ratio2 / Math.tan(90 - Math.atan(ratio2) - Math.atan(ratio1)) }
+                   else { coefz = ratio2 / ratio1 };
+              }}
+            }
+    coaxial_velo.x = relvelo.x * coefx;
+    coaxial_velo.y = relvelo.y * coefy;
+    coaxial_velo.z = relvelo.z * coefz;
     coaxial_velo.total = Math.sqrt((coaxial_velo.x)**2 + (coaxial_velo.y)**2 + (coaxial_velo.z)**2);
+    coaxial_velo.coefs = [coefx, coefy, coefz];
     console.log('from velocity codes', coaxial_velo);
     return coaxial_velo; }
-}
+
 module.exports = {coaxial_velocity: coaxial_velocity,
                   displacement: displacement,
                   coaxial_displacement: coaxial_displacement,

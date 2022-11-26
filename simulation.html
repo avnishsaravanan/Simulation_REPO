@@ -61,21 +61,21 @@
         <p id="line2"><label class="checkcontainer" id="objlabel2">Sphere2
           <input type="checkbox" id="obj2" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
         <p id="line3" hidden="hidden"><label class="checkcontainer" id="objlabel3">Sphere3
-          <input type="checkbox" id="obj3" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj3" name="simobject" disabled><span class="checkmark"></span></label></p>
         <p id="line4" hidden="hidden"><label class="checkcontainer" id="objlabel4">Sphere4
-          <input type="checkbox" id="obj4" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj4" name="simobject" disabled><span class="checkmark"></span></label></p>
         <p id="line5" hidden="hidden"><label class="checkcontainer" id="objlabel5">Sphere5
-          <input type="checkbox" id="obj5" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj5" name="simobject" disabled><span class="checkmark"></span></label></p>
         <p id="line6" hidden="hidden"><label class="checkcontainer" id="objlabel6">Sphere6
-          <input type="checkbox" id="obj6" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj6" name="simobject" disabled><span class="checkmark"></span></label></p>
         <p id="line7" hidden="hidden"><label class="checkcontainer" id="objlabel7">Sphere7
-          <input type="checkbox" id="obj7" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj7" name="simobject" disabled><span class="checkmark"></span></label></p>
          <p id="line8" hidden="hidden"><label class="checkcontainer" id="objlabel8">Sphere8
-          <input type="checkbox" id="obj8" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj8" name="simobject" disabled><span class="checkmark"></span></label></p>
         <p id="line9" hidden="hidden"><label class="checkcontainer" id="objlabel9">Sphere9
-          <input type="checkbox" id="obj9" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj9" name="simobject" disabled><span class="checkmark"></span></label></p>
         <p id="line10" hidden="hidden"><label class="checkcontainer" id="objlabel10">Sphere10
-          <input type="checkbox" id="obj10" name="simobject" checked="checked"><span class="checkmark"></span></label></p>
+          <input type="checkbox" id="obj10" name="simobject" disabled><span class="checkmark"></span></label></p>
         <input type="submit" id="simbtn" value="Run Simulation"></input><br>
         </form>
       </div>
@@ -86,24 +86,24 @@
               <label for="objname">Object Name</label>
               <input type="text" name="objparams" id="objname" maxlength="10" placeholder="{objname}" required="required" style="width:100px; height:15px;" disabled></input><br>
               <label for="objsize">Diameter</label>
-              <input type="number" name="objparams" id="objsize" placeholder="1-10" required="required" min="1" max="10" style="width:100px; height:15px; text-align: right;" disabled></input><br>
+              <input type="number" name="objparams" id="objsize" placeholder="1-10" required="required" min=1 max=10 step=1 style="width:100px; height:15px; text-align: right;" disabled></input><br>
               <label for="objmass">Mass</label>
-              <input type="number" name="objparams" id="objmass" placeholder=".01-100" required="required" min="0.01" max="100" style="width:100px; height:15px; text-align: right;" disabled></input><br>
+              <input type="number" name="objparams" id="objmass" placeholder=".01-100" required="required" min=0.01 max=100 step=0.01 style="width:100px; height:15px; text-align: right;" disabled></input><br>
               <label for="objcolor">Colour</label>
               <input type="color" name="objparams" id="objcolor" value="#0091ff" required="required" disabled></input><br>
               <br>
               <label for="posxyx">Position XYZ</label>
-              <input type="number" name="objparams" id="objposx" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
-              <input type="number" name="objparams" id="objposy" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
-              <input type="number" name="objparams" id="objposz" placeholder="0-200" required="required" min="0" max="200" style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="objparams" id="objposx" placeholder="0-200" required="required" min=0 max=200 step=5 style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="objparams" id="objposy" placeholder="0-200" required="required" min=0 max=200 step=5 style="width:47px; height:15px; text-align: right;" disabled></input>
+              <input type="number" name="objparams" id="objposz" placeholder="0-200" required="required" min=0 max=200 step=5 style="width:47px; height:15px; text-align: right;" disabled></input>
               <br><br>
               <a style="color: #535353;"><b>Velocity</b></a><br>
               <label for="speed">Axial speed</label>
-              <input type="number" name="objparams" id="speed" placeholder=".001-.999" required="required" min=0.001 max=0.999 style="width:100px; height: 15px; text-align: right;" disabled></input><br>
+              <input type="number" name="objparams" id="speed" placeholder=".001-.999" required="required" min=0.001 max=0.999 step = 0.001 style="width:100px; height: 15px; text-align: right;" disabled></input><br>
               <label for="angle_xy">X-Y angle</label>
-              <input type="number" name="objparams" id="xyangle" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br>
+              <input type="number" name="objparams" id="xyangle" placeholder="0-90" required="required" min=0 max=89 step=1 style="width:100px; height: 15px; text-align: right;" disabled></input><br>
               <label for="angle_yz">Y-Z angle</label>
-              <input type="number" name="objparams" id="yzangle" placeholder="0-90" required="required" min="0" max="90"style="width:100px; height: 15px; text-align: right;" disabled></input><br><br>
+              <input type="number" name="objparams" id="yzangle" placeholder="0-90" required="required" min=0 max=89 step=1 style="width:100px; height: 15px; text-align: right;" disabled></input><br><br>
               <p style="text-align:center; margin:auto;"><input type="submit" id="savbtn" value="Save" disabled></input></p>
           </form>
       </div>
@@ -114,21 +114,21 @@
           <fieldset>
             <legend style="color: #535353;">Event #1</legend>
             <label for="e1time">time(ss)</label>
-            <input type="number" id="e1time" name="e1time" value="10" placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
+            <input type="number" id="e1time" name="e1time" value="10" placeholder="10-50" required="required" min=0 max=50 style="width:47px; height:15px; text-align: right;"><br><br>
             <label for="e1xyz">XYZ</label>
-              <input type="number" name="e1xyz" id="e1x" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
-              <input type="number" name="e1xyz" id="e1y" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
-              <input type="number" name="e1xyz" id="e1z" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e1xyz" id="e1x" value="5" placeholder="0-100" required="required" min=0 max=100 style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e1xyz" id="e1y" value="5" placeholder="0-100" required="required" min=0 max=100 style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e1xyz" id="e1z" value="5" placeholder="0-100" required="required" min=0 max=100 style="width:47px; height:15px; text-align: right;"></input>
               <br>
           </fieldset>
           <fieldset>
             <legend style="color: #535353;">Event #2</legend>
             <label for="e2time">time(ss)</label>
-            <input type="number" id="e2time" name="e2time" value="10" placeholder="10-50" required="required" min="0" max="50" style="width:47px; height:15px; text-align: right;"><br><br>
+            <input type="number" id="e2time" name="e2time" value="10" placeholder="10-50" required="required" min=0 max=50 style="width:47px; height:15px; text-align: right;"><br><br>
             <label for="e2xyz">X  Y  Z</label>
-              <input type="number" name="e2xyz" id="e2x" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
-              <input type="number" name="e2xyz" id="e2y" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
-              <input type="number" name="e2xyz" id="e2z" value="5" placeholder="0-100" required="required" min="0" max="100" style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e2xyz" id="e2x" value="5" placeholder="0-100" required="required" min=0 max=100 style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e2xyz" id="e2y" value="5" placeholder="0-100" required="required" min=0 max=100 style="width:47px; height:15px; text-align: right;"></input>
+              <input type="number" name="e2xyz" id="e2z" value="5" placeholder="0-100" required="required" min=0 max=100 style="width:47px; height:15px; text-align: right;"></input>
               <br>
           </fieldset>
         </form>
@@ -150,7 +150,7 @@
           <label for="deltax1">Δ d'</label>
           <input type="number" id="deltax1" name="deltax1" value=0 style="width:33px; height:15px; text-align: right;"><br>
           <label for="deltat">Δ t</label>
-          <input type="number" id="deltat" name="deltat" style="width:33px; height:15px; text-align: right;">
+          <input type="number" id="deltat" name="deltat" value=0 style="width:33px; height:15px; text-align: right;">
           <label for="deltat">Δ t'</label>
           <input type="number" id="deltat1" name="deltat1" value=0 style="width:33px; height:15px; text-align: right;"><br>
           <label for="energy">energy(E1)</label>
@@ -165,8 +165,8 @@
           <b>Simulation is currently running for objects 'Sphere1' and 'Sphere2'</b>
         </p><br><br>
         <canvas id="renderCanvas">
-        <!--script src="./result/render1.bundle.js"></script-->
-      </canvas>
+          <!--script src="./result/render1.bundle.js"></script-->
+        </canvas>
       </div>
 
     </div>
