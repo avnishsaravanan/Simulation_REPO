@@ -75,7 +75,8 @@
           document.querySelectorAll('#editParameters input, #editParameters select, #editParameters button, #editParameters textarea').forEach(elem => elem.disabled = false);
           document.getElementById("editParameters").reset();
           document.getElementById('objname').focus();
-          inputs(masses, velocities); console.log("from interactionjs : after input procesed");
+          inputs(masses, velocities); 
+          console.log("from interactionjs : after input procesed");
         };
 
         // initialize saveparameters interactions
@@ -217,21 +218,18 @@
 
 //detail queryselectors if necessary
 //imports - 
-
+let equations = __webpack_require__(4);
+let velos = __webpack_require__(5);
+    coaxial_velocity = velos.coaxial_velocity;
+    displacement = velos.displacement;
+    coaxial_displacement = velos.coaxial_displacement;
+    axial_velocity = velos.axial_velocity;
 
 function inputs (masses, velo) {
 //    let interaction = require("./interaction.js");
     //let masses = interaction.masses;
     //let positions = interaction.positions;
     let velocities = [];
-    
-    let equations = __webpack_require__(4);
-    
-    let velos = __webpack_require__(5);
-    coaxial_velocity = velos.coaxial_velocity;
-    displacement = velos.displacement;
-    coaxial_displacement = velos.coaxial_displacement;
-    axial_velocity = velos.axial_velocity;
     let result;
     
     let process = velo.map(elem => { return axial_velocity(elem); });
@@ -281,71 +279,77 @@ function sol_var() {
                                      dp_QA = null; 
                                      mass1 = masses[checked[1]];
                                      mass2 = masses[checked[0]];
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
+                                     colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
     if (solvefx.value == "deltat")  { dt_QA = (event2.time - event1.time); 
                                      dp_QA = displacement(event2.pos, event1.pos); 
                                      dt_PA = null;
                                      dp_PA = null;
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
+                                     colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
     if (solvefx.value == "deltax1") { dp_PA = displacement(event2.pos, event1.pos);
                                      dt_PA = (event2.time - event1.time);
-                                     dt_QA = document.querySelector("#deltafx > #deltat1").value;
+                                     dt_QA = Number(document.querySelector("#deltafx > #deltat1").value);
                                      dp_QA = null;
                                      mass1 = masses[checked[1]];
                                      mass2 = masses[checked[0]];
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); }
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
+                                     colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
     if (solvefx.value == "deltax")  { dp_QA = displacement(event2.pos, event1.pos);  
                                      dt_QA = (event2.time - event1.time);
-                                     dp_PA = {x: null, y: null, z: null, total: null};
+                                     dp_PA = null;
                                      dt_PA = Number(document.querySelector("#deltafx > #deltat").value);
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
-                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); } 
-                                     console.log('from input js: finished solvar');
+                                     colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
+                                     colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); } 
+                                     console.log('from input js: finished solvar'); 
 }
 
 sol_var();
 
 input = { dt_P: dt_PA, 
     dt_Q: dt_QA, 
-    dp_P: dp_PA, 
+    dp_P: dp_PA,
     dp_Q: dp_QA,
     colinear_velo: colinear_veloA, 
+    colinear_dis: colinear_disA,
     mass1: mass1,
     mass2: mass2 };
+
 
 if (!input.colinear_veloA) { colinear_veloA.total = relvelo.total; }
 
 console.log("from input js: input", input);
 result = new equations(input);
-console.log(result);
-if (!input.dt_Q) { result.case1(); result.case3();}
-if (!input.dt_P) { result.case2(); result.case4();}
 
-if (!input.dp_Q && !input.dp_P && solvefx.value == "deltax") { result.case5();}
-if (!input.dp_Q && !input.dp_P && !!input.dt_Q && solvefx.value == "deltax1") { result.case6();}
+if (input.dt_Q == null) { result.case1(); result.case3();}
+if (input.dp_Q == null) { result.case2(); result.case4();}
 
-if (!input.dp_Q && !!input.dp_P) { result.case1(); result.case3();}
-if (!input.dp_P && !!input.dp_Q) { result.case2(); result.case4();}     
+if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax") { result.case5(); }
+if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax1") { result.case6();}
 
+if (input.dp_Q == null && (input.dp_P == 0 || input.dp_P >= 1)) { result.case1(); result.case3(); }
+if (input.dp_P == null && (input.dp_Q == 0 || input.dp_Q >= 1)) { result.case2(); result.case4(); }     
+ 
 result.case7();
 result.case8();
 
-let dt = document.querySelector("#deltafx > deltat");
+let dt = document.querySelector("#deltafx > #deltat");
 let dt1 = document.querySelector("#deltafx > #deltat1");
 let dx = document.querySelector("#deltafx > #deltax");
 let dx1 = document.querySelector("#deltafx > #deltax1");
 let e1 = document.querySelector("#deltafx > #energy");
 let e2 = document.querySelector("#deltafx > #energy1");
 
-dt.value = result.content.dt_P;
-dt1.value = result.content.dt_Q;
-dx.value = result.content.dp_P;
-dx1.value = result.content.dp_Q;
-e1.value = result.content.energy1;
-e2.value = result.content.energy2;
+dt.setAttribute('value', result.content.dt_P);
+dt1.setAttribute('value', result.content.dt_Q);
+dx.setAttribute('value', result.content.dp_P);
+dx1.setAttribute('value', result.content.dp_Q);
+e1.setAttribute('value', result.content.energy1);
+e2.setAttribute('value', result.content.energy2);
 
 console.log("ins outs recognised");
     }
@@ -376,39 +380,41 @@ coaxial_velocity = velos.coaxial_velocity;
 displacement = velos.displacement;
 
 function equations (input) {
-    
+
+    this.content = {};    
     this.content = input; 
-    console.log(this.content);
+    console.log("from sr functions,", this.content);
 
     dt_P = this.content.dt_P;
     dt_Q = this.content.dt_Q;
+    console.log(this.content.dt_Q);
     dp_P = this.content.dp_P;
     dp_Q = this.content.dp_Q;
     mass1 = this.content.mass1;
     mass2 = this.content.mass2;
+    colinear_dis = this.content.colinear_dis;
     colinear_velo = this.content.colinear_velo;
     
-        
     velo_sum = ((colinear_velo.x**2) + (colinear_velo.y**2) + (colinear_velo.z**2));
     const LzF = (1/Math.sqrt(1 - (velo_sum/c**2))); //check whether Lorentz factor is directional
          
-    this.content.case1 = function case1() { //delta T in frame Q
+    this.case1 = function case1() { //delta T in frame Q
         //basic form of Lorentz transformation
         //account for asynchronised separation later
-        term1 = (colinear_velo.x * coaxial_displacement(dp_P.x));
-        term2 = (colinear_velo.y * coaxial_displacement(dp_P.y));
-        term3 = (colinear_velo.z * coaxial_displacement(dp_P.z));
+        term1 = (colinear_velo.x * colinear_dis.x);
+        term2 = (colinear_velo.y * colinear_dis.y);
+        term3 = (colinear_velo.z * colinear_dis.z);
         term4 = (dt_P + (-term1 - term2 - term3)/c**2);
         this.content.dt_Q = term4 * LzF; };
 
-    this.content.case2 = function case2() { //delta T in frame P
-        term1 = (colinear_velo.x * coaxial_displacement(dp_Q.x));
-        term2 = (colinear_veloY.y * coaxial_displacement(dp_Q.y));
-        term3 = ((colinear_velo.z * coaxial_displacement(dp_Q.z)));
+    this.case2 = function case2() { //delta T in frame P
+        term1 = (colinear_velo.x * colinear_dis.x);
+        term2 = (colinear_velo.y * colinear_dis.y);
+        term3 = (colinear_velo.z * colinear_dis.z);
         term4 = (dt_Q + (term1 + term2 + term3));
-        this.content.dt_Q = term4 * LzF; };
+        this.content.dt_P = term4 * LzF; };
     
-    this.content.case3 = function case3() {  //displacement in frame Q
+    this.case3 = function case3() {  //displacement in frame Q
         term1 = (dp_P.x - (colinear_velo.x * dt_P));
         term2 = (dp_P.y - (colinear_velo.y * dt_P));
         term3 = (dp_P.z - (colinear_velo.z * dt_P));
@@ -416,7 +422,7 @@ function equations (input) {
         this.content.dp_Q = displacement(term4).total;
         this.content.dp_P = dp_P.total; };
 
-    this.content.case4 = function case4() { //displacement in frame p
+    this.case4 = function case4() { //displacement in frame p
         term1 = (dp_Q.x - (colinear_velo.x * dt_Q));
         term2 = (dp_Q.y - (colinear_velo.y * dt_Q));
         term3 = (dp_Q.z - (colinear_velo.z * dt_Q));
@@ -424,23 +430,23 @@ function equations (input) {
         this.content.dp_P = displacement(term4).total;
         this.content.dp_Q = dp_Q.total; };
     
-    this.content.case6 = function case6() { //delta x' without delta x - assuming 100% coaxial velo
+    this.case6 = function case6() { //delta x' without delta x - assuming 100% coaxial velo
         term1 = ( LzF * - dt_P);
         term2 = (c**2/LzF * -(colinear_velo.total));
         this.content.dp_P = term2 * (dt_Q + term1); };
     
-    this.content.case5 = function case5() { //delta x without delta x' - assuming 100% coaxial velo
+    this.case5 = function case5() { //delta x without delta x' - assuming 100% coaxial velo
         term1 = ( LzF * - dt_Q);
         term2 = (c**2/LzF * (colinear_velo.total));
         this.content.dp_P = term2 * (dt_Q + term1); };
     
-    this.content.case7 = function case7() {
+    this.case7 = function case7() {
         this.content.energy1 = (mass1 * LzF * (c**2)); };
     
-    this.content.case8 = function case8() {
+    this.case8 = function case8() {
         this.content.energy2 = (mass2 * LzF * (c**2)); };
 
-    return this.content;
+    return this;
 }
 
 module.exports = equations;
@@ -480,12 +486,15 @@ function displacement(term2, term1) {
 }
 
 function coaxial_displacement(relvelo, pos2, pos1) {
+    if (pos1[0] == null && pos2[0] == null) { return null }
+    else {
     coaxial_dis = {};
     dis = displacement(pos2, pos1);
     coaxial_dis.x = (relvelo.x/dis.y) / (relvelo.y/dis.x) * relvelo.x;
     coaxial_dis.y = (relvelo.y/dis.x) / (relvelo.x/dis.y) * relvelo.y;
     coaxial_dis.z = (relvelo.z/dis.y) / (relvelo.y/dis.z) * relvelo.z;
     coaxial_dis.total = Math.sqrt((coaxial_dis.x)**2 + (coaxial_dis.y)**2 + (coaxial_dis.z)**2);
+    return coaxial_dis }
 }
 
 function coaxial_velocity(relvelo, pos2, pos1) {

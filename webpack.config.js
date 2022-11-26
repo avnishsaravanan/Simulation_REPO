@@ -5,7 +5,6 @@ module.exports = {
         index: './codes/home.js',
         interaction: './codes/interaction.js',
         simulation: './codes/simulation.js',
-        basis: './codes/basis.js',
         inputs: './codes/inputs.js',
         render1:'./codes/render1.js'
         

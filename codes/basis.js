@@ -3,9 +3,9 @@
 //function beforeRender() to change position in simulation
 //function for converting between axes
 
-let BABYLON = require('babylonjs');
+//let BABYLON = require('babylonjs');
 
-let inputParameters = [];
+/*let inputParameters = [];
 let objectCoordinate;
 let objects = [];
 let objectindex = 0;
@@ -77,7 +77,7 @@ function objectlist_gen (index) {
  /*alternate path:
  let list = document.querySelector(".objects-list");
  list.classList.add(classname);*/
- }
+ //} 
      
 
 /*function editObject (event, editindex) {
