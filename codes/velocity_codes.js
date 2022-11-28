@@ -29,11 +29,11 @@ function displacement(term2, term1) {
 }
 
 function coaxial_displacement(relvelo, pos2, pos1) {
-    if (pos1[0] == null && pos2[0] == null) { return null }
+    if (pos1[0] == null && pos2[0] == null) { console.log("null condition"); return null }
     else {
     coaxial_dis = {};
     dis = displacement(pos2, pos1)
-    coefs = coaxial_velocity(relvelo, pos2, pos1);
+    coefs = coaxial_velocity(relvelo, pos2, pos1).coefs;
     coaxial_dis.x = coefs[0] * dis.x;
     coaxial_dis.y = coefs[1] * dis.y;
     coaxial_dis.z = coefs[2] * dis.z;
@@ -45,7 +45,7 @@ function coaxial_velocity(relvelo, pos2, pos1) {
     coaxial_velo = {};
     let coefx; let coefy; let coefz; let ratio1; let ratio2;
     dis = displacement(pos2, pos1);
-    if (pos2[0] == null && pos1[0] == null) { return null }
+    if (pos2[0] == null && pos1[0] == null) { console.log("null condition"); return null }
 
     else { //conditional alg to prevent NaN
 

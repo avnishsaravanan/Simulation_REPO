@@ -26,7 +26,7 @@ let dp_PA;
 let dp_QA;
 let event1 = {};
 let event2 = {};
-colinear_velo = {x: 1, y: 1, z: 1};
+let buffer;
 
 relvelo = {x: Math.abs((velocities[checked[1]].x - velocities[checked[0]].x)), 
            y: Math.abs((velocities[checked[1]].y - velocities[checked[0]].y)),
@@ -74,7 +74,8 @@ function sol_var() {
     if (solvefx.value == "deltax1") { if (event2.pos == null || event1.pos == null) {dp_PA = null}
                                       else {dp_PA = displacement(event2.pos, event1.pos)}; 
                                      dt_PA = (event2.time - event1.time);
-                                     dt_QA = Number(document.querySelector("#deltafx > #deltat1").value);
+                                     buffer = document.querySelector("#deltafx > #deltat")
+                                     if (buffer == 0) { dt_QA = null; } else { dt_QA = Number(buffer) };
                                      dp_QA = null;
                                      mass1 = masses[checked[1]];
                                      mass2 = masses[checked[0]];
@@ -84,7 +85,9 @@ function sol_var() {
                                       else {dp_QA = displacement(event2.pos, event1.pos)};  
                                      dt_QA = (event2.time - event1.time);
                                      dp_PA = null;
-                                     dt_PA = Number(document.querySelector("#deltafx > #deltat").value);
+                                     buffer = document.querySelector("#deltafx > #deltat").value;
+                                     if (buffer == 0) { dt_PA = null; } else { dt_PA = Number(buffer) };
+                                     console.log(dt_PA);
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
@@ -107,14 +110,14 @@ if (input.colinear_velo == null) { colinear_veloA.total = relvelo.total; }
 console.log("from input js: input", input);
 result = new equations(input);
 
-if (input.dt_Q == null) { result.case1(); result.case3();}
-if (input.dp_Q == null) { result.case2(); result.case4();}
+if (input.dp_Q == null && solvefx.value == "deltat1") { result.case1(); result.case3();}
+if (input.dp_P == null && solvefx.value == "deltat") { result.case2(); result.case4();}
 
 if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax") { result.case5(); }
 if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax1") { result.case6();}
 
-if (input.dp_Q == null && (input.dp_P == 0 || input.dp_P >= 1)) { result.case1(); result.case3(); }
-if (input.dp_P == null && (input.dp_Q == 0 || input.dp_Q >= 1)) { result.case2(); result.case4(); }     
+if (input.dp_Q == null && (input.dp_P.total == 0 || input.dp_P.total >= 1)) { result.case1(); result.case3(); }
+if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { result.case2(); result.case4(); }     
  
 result.case7();
 result.case8();

@@ -34,7 +34,7 @@ let dp_PA;
 let dp_QA;
 let event1 = {};
 let event2 = {};
-colinear_velo = {x: 1, y: 1, z: 1};
+let buffer;
 
 relvelo = {x: Math.abs((velocities[checked[1]].x - velocities[checked[0]].x)), 
            y: Math.abs((velocities[checked[1]].y - velocities[checked[0]].y)),
@@ -92,7 +92,9 @@ function sol_var() {
                                       else {dp_QA = displacement(event2.pos, event1.pos)};  
                                      dt_QA = (event2.time - event1.time);
                                      dp_PA = null;
-                                     dt_PA = Number(document.querySelector("#deltafx > #deltat").value);
+                                     buffer = document.querySelector("#deltafx > #deltat").value;
+                                     if (buffer == 0) { dt_PA = null; } else { dt_PA = Number(buffer) };
+                                     console.log(dt_PA);
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
@@ -115,14 +117,14 @@ if (input.colinear_velo == null) { colinear_veloA.total = relvelo.total; }
 console.log("from input js: input", input);
 result = new equations(input);
 
-if (input.dt_Q == null) { result.case1(); result.case3();}
-if (input.dp_Q == null) { result.case2(); result.case4();}
+if (input.dp_Q == null && solvefx.value == "deltat1") { result.case1(); result.case3();}
+if (input.dp_P == null && solvefx.value == "deltat") { result.case2(); result.case4();}
 
 if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax") { result.case5(); }
 if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax1") { result.case6();}
 
-if (input.dp_Q == null && (input.dp_P == 0 || input.dp_P >= 1)) { result.case1(); result.case3(); }
-if (input.dp_P == null && (input.dp_Q == 0 || input.dp_Q >= 1)) { result.case2(); result.case4(); }     
+if (input.dp_Q == null && (input.dp_P.total == 0 || input.dp_P.total >= 1)) { result.case1(); result.case3(); }
+if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { result.case2(); result.case4(); }     
  
 result.case7();
 result.case8();
@@ -177,7 +179,6 @@ function equations (input) {
 
     dt_P = this.content.dt_P;
     dt_Q = this.content.dt_Q;
-    console.log(this.content.dt_Q);
     dp_P = this.content.dp_P;
     dp_Q = this.content.dp_Q;
     mass1 = this.content.mass1;
@@ -202,7 +203,8 @@ function equations (input) {
         term2 = (colinear_velo.y * colinear_dis.y);
         term3 = (colinear_velo.z * colinear_dis.z);
         term4 = (dt_Q + (term1 + term2 + term3));
-        this.content.dt_P = term4 * LzF; };
+        this.content.dt_P = term4 * LzF; 
+        console.log("from SR functions 2", this.content.dt_P) };
     
     this.case3 = function case3() {  //displacement in frame Q
         term1 = (dp_P.x - (colinear_velo.x * dt_P));
@@ -276,11 +278,11 @@ function displacement(term2, term1) {
 }
 
 function coaxial_displacement(relvelo, pos2, pos1) {
-    if (pos1[0] == null && pos2[0] == null) { return null }
+    if (pos1[0] == null && pos2[0] == null) { console.log("null condition"); return null }
     else {
     coaxial_dis = {};
     dis = displacement(pos2, pos1)
-    coefs = coaxial_velocity(relvelo, pos2, pos1);
+    coefs = coaxial_velocity(relvelo, pos2, pos1).coefs;
     coaxial_dis.x = coefs[0] * dis.x;
     coaxial_dis.y = coefs[1] * dis.y;
     coaxial_dis.z = coefs[2] * dis.z;
@@ -292,7 +294,7 @@ function coaxial_velocity(relvelo, pos2, pos1) {
     coaxial_velo = {};
     let coefx; let coefy; let coefz; let ratio1; let ratio2;
     dis = displacement(pos2, pos1);
-    if (pos2[0] == null && pos1[0] == null) { return null }
+    if (pos2[0] == null && pos1[0] == null) { console.log("null condition"); return null }
 
     else { //conditional alg to prevent NaN
 

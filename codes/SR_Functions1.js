@@ -24,7 +24,6 @@ function equations (input) {
 
     dt_P = this.content.dt_P;
     dt_Q = this.content.dt_Q;
-    console.log(this.content.dt_Q);
     dp_P = this.content.dp_P;
     dp_Q = this.content.dp_Q;
     mass1 = this.content.mass1;
@@ -49,7 +48,8 @@ function equations (input) {
         term2 = (colinear_velo.y * colinear_dis.y);
         term3 = (colinear_velo.z * colinear_dis.z);
         term4 = (dt_Q + (term1 + term2 + term3));
-        this.content.dt_P = term4 * LzF; };
+        this.content.dt_P = term4 * LzF; 
+        console.log("from SR functions 2", this.content.dt_P) };
     
     this.case3 = function case3() {  //displacement in frame Q
         term1 = (dp_P.x - (colinear_velo.x * dt_P));

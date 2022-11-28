@@ -102,10 +102,10 @@
                        arrsimobject[6]]);
         masses.push(arrsimobject[2]);
                       
-        module.exports = {arrsimobjects: arrsimobjects,
+        /*module.exports = {arrsimobjects: arrsimobjects,
                           velocities: velocities,
                           positions: positions,
-                          masses: masses };
+                          masses: masses };*/
             
         refreshobjlist(arrsimobjects.length);
         objectslist.forEach(function(elem) {
@@ -181,6 +181,7 @@
     // initialize run simulation interactions 
     simrun = document.getElementById('simbtn');
     simrun.onclick = function() {
+      event.preventDefault();
       inputs(masses, velocities);
       //addScript('renderCanvas','./render1.bundle.js');      
     };
