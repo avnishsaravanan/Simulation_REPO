@@ -82,7 +82,8 @@ function sol_var() {
     if (solvefx.value == "deltax1") { if (event2.pos == null || event1.pos == null) {dp_PA = null}
                                       else {dp_PA = displacement(event2.pos, event1.pos)}; 
                                      dt_PA = (event2.time - event1.time);
-                                     dt_QA = Number(document.querySelector("#deltafx > #deltat1").value);
+                                     buffer = document.querySelector("#deltafx > #deltat")
+                                     if (buffer == 0) { dt_QA = null; } else { dt_QA = Number(buffer) };
                                      dp_QA = null;
                                      mass1 = masses[checked[1]];
                                      mass2 = masses[checked[0]];

@@ -5,6 +5,7 @@
     {"objname":"Sphere2", "objsize":8, "objmass":50, "objcolor":"#535353", "objposx":50, "objposy":50, "objposz":50, "speed":0.5, "xyangle":50, "yzangle":80} ];*/
 
   let inputs = require("./inputs.js");
+  let graphics = require("./render1.js");
   let arrsimobjects = [
     {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80} ];
@@ -183,6 +184,8 @@
     simrun.onclick = function() {
       event.preventDefault();
       inputs(masses, velocities);
+      graphics(masses, velocities, positions, arrsimobjects);
+
       //addScript('renderCanvas','./render1.bundle.js');      
     };
 
