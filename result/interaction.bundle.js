@@ -19,6 +19,7 @@
 
   let inputs = __webpack_require__(3);
   let graphics = __webpack_require__(6);
+  const custom = __webpack_require__(7);
   let arrsimobjects = [
     {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80} ];
@@ -32,7 +33,9 @@
   let velocities = [[0.5, 45, 45], [0.8, 45, 45]];
   let positions = [[30, 30, 30], [50, 50, 50]];
   let masses = [30, 50];
-  let checks = ['obj1','obj2']; //,'obj3','obj4','obj5','obj6','obj7','obj8','obj9'];  
+  let checks = ['obj1','obj2']; //,'obj3','obj4','obj5','obj6','obj7','obj8','obj9'];
+  //let simtime = 5;
+
     
   window.onload = init;
   function init(){
@@ -41,6 +44,8 @@
     const simselect = document.querySelectorAll('#relati input');
     const addelement =  document.getElementById('addbtn');
     const objectslist = document.getElementsByName('simobject');
+    let okbtn =  document.getElementById('dummy');
+    const velomode = document.getElementById('absrel');
     //var arrsimobject = {0:"Spherex", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45};
     let trigger = 'self';
                 
@@ -65,6 +70,7 @@
 
     // initialize addelement interactions 
     addelement.onclick = function () {
+      event.preventDefault();
       this.disabled=true;
       trigger = 'addel';
       //uncheck object list
@@ -105,6 +111,7 @@
         }
         x+=1;
       });
+      let customAlert = new custom.CustomAlert();
       if (addup == "add") {
         arrsimobjects.push(arrsimobject);
         //doubt
@@ -127,12 +134,19 @@
             simulateClick(elem);
           }
         });
+        customAlert.alert('Object Added','Info');
       } else {
         // update arrims
         arrsimobjects[(upobj() - 1)] = arrsimobject;
         document.getElementById("objlabel"+(upobj())).childNodes[0].textContent = arrsimobject[0];
-        alert('saved'); // beautify
+        customAlert.alert('Updates Saved','Info'); // beautify
       }
+      okbtn =  document.getElementById('okbtn');
+      //custom ok
+      okbtn.onclick = function (){
+        event.preventDefault();
+        customAlert.ok();
+      };
     }
 
     // initialize checkbox interactions
@@ -196,12 +210,21 @@
     simrun = document.getElementById('simbtn');
     simrun.onclick = function() {
       event.preventDefault();
-      inputs(masses, velocities);
-      graphics(masses, velocities, positions, arrsimobjects);
-
+      //inputs(masses, velocities);
+      //graphics(masses, velocities, positions, arrsimobjects);
+      custom.progressbar(Date.now());
       //addScript('renderCanvas','./render1.bundle.js');      
     };
 
+    // velo toggle interactions 
+    velomode.onclick = function () {
+      if (this.checked) {
+        document.getElementById('veloabsrel').innerText = "Veloity: Relative";
+      } else {
+        document.getElementById('veloabsrel').innerText = "Veloity: Absolute";
+      }
+    };
+    
     //functions
     function processparam(state, num) {
       document.getElementById("editParameters").reset();
@@ -254,6 +277,7 @@
       //alert("not canceled");
     }
   }
+
 
   module.exports = {  arrsimobjects: arrsimobjects,
                       velocities: velocities,
@@ -632,6 +656,7 @@ module.exports = {coaxial_velocity: coaxial_velocity,
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 let BABYLON = __webpack_require__(1);
+const custom = __webpack_require__(7);
 let velos = __webpack_require__(5);
 //let result = require("./inputs.js").result;
 
@@ -651,30 +676,31 @@ function synthObject (scene, objspecs, synthindex) {
     return object; 
 }
 
-function synthVector (scene, obj1, obj2) {
+function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
     let dis = velos.displacement(obj2, obj1); 
-    let factor = dis.total;
+    let factor = dis.total / 5;
     
     let vectpts1 = [new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]), new BABYLON.Vector3(obj2[0], obj2[1], obj2[2])]
     let vectline = BABYLON.MeshBuilder.CreateLines("vector", {points: vectpts1}, scene);
     vectline.scaling.x = 0.2; vectline.scaling.y = 0.2; vectline.scaling.z = 0.2;
 
-    //alternative:
+    //alternative (will probably need this as rotation isnt working)
     /*let angle = -1 * Math.atan(dis.y/Math.sqrt(dis.x**2 + dis.z**2));
     let arrowpts1 = (0.5 * (dis.total/5) * Math.cos(angle)) - (0.03 * (dis.total/5) * Math.sin(angle));
     let arrowpts2 = (0.5 * (dis.total/5) * Math.sin(angle)) + (0.03 * (dis.total/5) * Math.cos(angle));
     arrowpts = [[arrowpts1, term1, arrowpts2]]; */
 
-    let term1 = (new BABYLON.Vector3(dis.x / 2, dis.y / 2, dis.z / 2).add(vectpts1[0]));
+    let term1 = new BABYLON.Vector3(dis.x / 2, dis.y / 2, dis.z / 2);
+    //add(vectpts1[0]));
     vectline.position = term1;
 
-    //let arrowpts = [[new BABYLON.Vector3((0.1 * factor), (0.03 * factor), 0), term1,
-                     //new BABYLON.Vector3((-0.1 * factor), (-3 * factor), 0) ]];
-    //let arrow = BABYLON.MeshBuilder.CreateLineSystem("arrowhead", {lines: arrowpts, updatable: true}, scene);
+    let arrowpts = [[new BABYLON.Vector3((0.1 * factor), (0.03 * factor), 0), term1,
+                    new BABYLON.Vector3((-0.1 * factor), (-3 * factor), 0) ]];
+    let arrow = BABYLON.MeshBuilder.CreateLineSystem("arrowhead", {lines: arrowpts, updatable: true}, scene);
+    arrow.position = term1;
+    arrow.rotation = vectline.rotation;
+}
 
-    //arrow.position = term1;
-    //arrow.rotation = vectline.rotation;
-} 
 
 function render (masses, velo, positions, array) {
     const canvas = document.getElementById("renderCanvas");
@@ -725,7 +751,12 @@ function render (masses, velo, positions, array) {
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        toRender.render(); })
+        toRender.render(); 
+        /*chk = customs.progressbar(starttime);
+        if (chk) {
+            //
+        }*/
+    });
 
     window.addEventListener("resize", function () {
         engine.resize();
@@ -734,6 +765,74 @@ function render (masses, velo, positions, array) {
     module.exports = render;
 
 
+
+/***/ }),
+/* 7 */
+/***/ ((module) => {
+
+
+  //progress bar
+function progressbar(starttime) {
+    var i = 0;
+    function move() {
+        if (i == 0) {
+            i = 1;
+            var elem = document.getElementById("simBar");
+            var width = 10;
+            var id = setInterval(frame, 10);
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    i = 0;
+                } else {
+                    width++;
+                    elem.style.width = width + "%";
+                    elem.innerHTML = width + "%";
+                }
+            }
+        }
+    }
+}
+
+
+// alert
+function CustomAlert(){
+    this.alert = function(message,title){
+      //document.body.innerHTML = document.body.innerHTML + '<div id="dialogoverlay"></div><div id="dialogbox" class="slit-in-vertical"><div><div id="dialogboxhead"></div><div id="dialogboxbody"></div><div id="dialogboxfoot"></div></div></div>';
+  
+      let dialogoverlay = document.getElementById('dialogoverlay');
+      let dialogbox = document.getElementById('dialogbox');
+      
+      let winH = window.innerHeight;
+      dialogoverlay.style.height = winH+"px";
+      
+      dialogbox.style.top = "100px";
+  
+      dialogoverlay.style.display = "block";
+      dialogbox.style.display = "block";
+      
+      document.getElementById('dialogboxhead').style.display = 'block';
+  
+      if(typeof title === 'undefined') {
+        document.getElementById('dialogboxhead').style.display = 'none';
+      } else {
+        document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+      }
+      document.getElementById('dialogboxbody').innerHTML = message;
+      document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';
+    };
+    
+    this.ok = function(){
+      document.getElementById('dialogbox').style.display = "none";
+      document.getElementById('dialogoverlay').style.display = "none";
+    };
+  }
+
+  
+  
+  //let customAlert = new CustomAlert();
+
+module.exports = {progressbar: progressbar, CustomAlert: CustomAlert};
 
 /***/ })
 /******/ 	]);

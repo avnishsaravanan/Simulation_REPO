@@ -6,6 +6,7 @@
 
   let inputs = require("./inputs.js");
   let graphics = require("./render1.js");
+  const custom = require("./customs.js");
   let arrsimobjects = [
     {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80} ];
@@ -19,7 +20,9 @@
   let velocities = [[0.5, 45, 45], [0.8, 45, 45]];
   let positions = [[30, 30, 30], [50, 50, 50]];
   let masses = [30, 50];
-  let checks = ['obj1','obj2']; //,'obj3','obj4','obj5','obj6','obj7','obj8','obj9'];  
+  let checks = ['obj1','obj2']; //,'obj3','obj4','obj5','obj6','obj7','obj8','obj9'];
+  //let simtime = 5;
+
     
   window.onload = init;
   function init(){
@@ -28,6 +31,8 @@
     const simselect = document.querySelectorAll('#relati input');
     const addelement =  document.getElementById('addbtn');
     const objectslist = document.getElementsByName('simobject');
+    let okbtn =  document.getElementById('dummy');
+    const velomode = document.getElementById('absrel');
     //var arrsimobject = {0:"Spherex", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45};
     let trigger = 'self';
                 
@@ -52,6 +57,7 @@
 
     // initialize addelement interactions 
     addelement.onclick = function () {
+      event.preventDefault();
       this.disabled=true;
       trigger = 'addel';
       //uncheck object list
@@ -92,6 +98,7 @@
         }
         x+=1;
       });
+      let customAlert = new custom.CustomAlert();
       if (addup == "add") {
         arrsimobjects.push(arrsimobject);
         //doubt
@@ -114,12 +121,19 @@
             simulateClick(elem);
           }
         });
+        customAlert.alert('Object Added','Info');
       } else {
         // update arrims
         arrsimobjects[(upobj() - 1)] = arrsimobject;
         document.getElementById("objlabel"+(upobj())).childNodes[0].textContent = arrsimobject[0];
-        alert('saved'); // beautify
+        customAlert.alert('Updates Saved','Info'); // beautify
       }
+      okbtn =  document.getElementById('okbtn');
+      //custom ok
+      okbtn.onclick = function (){
+        event.preventDefault();
+        customAlert.ok();
+      };
     }
 
     // initialize checkbox interactions
@@ -183,12 +197,21 @@
     simrun = document.getElementById('simbtn');
     simrun.onclick = function() {
       event.preventDefault();
-      inputs(masses, velocities);
-      graphics(masses, velocities, positions, arrsimobjects);
-
+      //inputs(masses, velocities);
+      //graphics(masses, velocities, positions, arrsimobjects);
+      custom.progressbar(Date.now());
       //addScript('renderCanvas','./render1.bundle.js');      
     };
 
+    // velo toggle interactions 
+    velomode.onclick = function () {
+      if (this.checked) {
+        document.getElementById('veloabsrel').innerText = "Veloity: Relative";
+      } else {
+        document.getElementById('veloabsrel').innerText = "Veloity: Absolute";
+      }
+    };
+    
     //functions
     function processparam(state, num) {
       document.getElementById("editParameters").reset();
@@ -241,6 +264,7 @@
       //alert("not canceled");
     }
   }
+
 
   module.exports = {  arrsimobjects: arrsimobjects,
                       velocities: velocities,

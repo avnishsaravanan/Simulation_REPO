@@ -1,5 +1,6 @@
 let BABYLON = require("babylonjs");
-let velos = require("./velocity_codes");
+const custom = require("./customs.js");
+let velos = require("./velocity_codes.js");
 //let result = require("./inputs.js").result;
 
 let checked = [0, 1];
@@ -42,6 +43,7 @@ function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to deb
     arrow.position = term1;
     arrow.rotation = vectline.rotation;
 }
+
 
 function render (masses, velo, positions, array) {
     const canvas = document.getElementById("renderCanvas");
@@ -92,7 +94,12 @@ function render (masses, velo, positions, array) {
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        toRender.render(); })
+        toRender.render(); 
+        /*chk = customs.progressbar(starttime);
+        if (chk) {
+            //
+        }*/
+    });
 
     window.addEventListener("resize", function () {
         engine.resize();
