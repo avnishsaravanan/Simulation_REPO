@@ -130,10 +130,15 @@
       } else {
         // update arrims
         arrsimobjects[(upobj() - 1)] = arrsimobject;
+
+        velocities[(upobj() -1)] = ([arrsimobject[7], arrsimobject[8], arrsimobject[9]]);
+        positions[(upobj() -1)] = ([arrsimobject[4], arrsimobject[5], arrsimobject[6]]);
+        masses[(upobj() -1)] = arrsimobject[2];
+
         document.getElementById("objlabel"+(upobj())).childNodes[0].textContent = arrsimobject[0];
         alert('saved'); // beautify
       }
-    }
+    } 
 
     // initialize checkbox interactions
     objectslist.forEach(elem => elem.onclick = function () {
@@ -195,11 +200,12 @@
     // initialize run simulation interactions 
     simrun = document.getElementById('simbtn');
     simrun.onclick = function() {
+      let time = document.getElementById("e2time").value + 5;
       event.preventDefault();
       inputs(masses, velocities);
-      graphics(masses, velocities, positions, arrsimobjects);
+      graphics(masses, velocities, positions, arrsimobjects, time);
 
-      //addScript('renderCanvas','./render1.bundle.js');      
+      //addScript('renderCanvas','./render1.bundle.js');
     };
 
     //functions
@@ -310,7 +316,6 @@ let dp_PA;
 let dp_QA;
 let event1 = {};
 let event2 = {};
-let buffer;
 
 relvelo = {x: Math.abs((velocities[checked[1]].x - velocities[checked[0]].x)), 
            y: Math.abs((velocities[checked[1]].y - velocities[checked[0]].y)),
@@ -330,6 +335,7 @@ event2.time = document.querySelector("#eventpln > fieldset > #e2time").value;
 event2.x = document.querySelector("#eventpln > fieldset > #e2x").value;
 event2.y = document.querySelector("#eventpln > fieldset > #e2y").value;
 event2.z = document.querySelector("#eventpln > fieldset > #e2z").value;
+
 event2.pos = [event2.x, event2.y, event2.z]; 
 console.log('from input js: finish declare param');
 }
@@ -531,10 +537,8 @@ module.exports = equations;
 
 function radians_degrees (input, path) {
     const pi = Math.PI;
-    if (path == 0) {
-        return input * (180/pi);}
-    else {
-        return pi * input/180; }}
+    if (path == 0) {return input * (180/pi);}
+    else {return pi * input/180; }}
 
 function axial_velocity(velo) {
     let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
@@ -624,7 +628,8 @@ function coaxial_velocity(relvelo, pos2, pos1) {
 module.exports = {coaxial_velocity: coaxial_velocity,
                   displacement: displacement,
                   coaxial_displacement: coaxial_displacement,
-                  axial_velocity: axial_velocity };
+                  axial_velocity: axial_velocity, 
+                  radians_degrees: radians_degrees };
 
 
 /***/ }),
@@ -632,8 +637,12 @@ module.exports = {coaxial_velocity: coaxial_velocity,
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 let BABYLON = __webpack_require__(1);
+
 let velos = __webpack_require__(5);
 //let result = require("./inputs.js").result;
+let raddeg = velos.radians_degrees;
+let axial_velocity = velos.axial_velocity;
+let displacement = velos.displacement;
 
 let checked = [0, 1];
 
@@ -651,32 +660,86 @@ function synthObject (scene, objspecs, synthindex) {
     return object; 
 }
 
-function synthVector (scene, obj1, obj2) {
-    let dis = velos.displacement(obj2, obj1); 
-    let factor = dis.total;
+function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
+    let dis = displacement(obj2, obj1); 
+    let factor = dis.total / 3;
     
-    let vectpts1 = [new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]), new BABYLON.Vector3(obj2[0], obj2[1], obj2[2])]
-    let vectline = BABYLON.MeshBuilder.CreateLines("vector", {points: vectpts1}, scene);
-    vectline.scaling.x = 0.2; vectline.scaling.y = 0.2; vectline.scaling.z = 0.2;
+    let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
+    
+    let refvect = new BABYLON.TransformNode("root");
+    refvect.position = new BABYLON.Vector3.Zero();
+        
+    //calculation of midpoint
+    let term1 = new BABYLON.Vector3(dis.x/2, dis.y/2, dis.z/2);
+    let term2 = new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]);
+    let centre = term1.add(term2);
+    
+    let arrowpts = [new BABYLON.Vector3(0, (0.2 * factor), 0), new BABYLON.Vector3(0.3 * factor, 0, 0),
+                    new BABYLON.Vector3(0, (-0.2 * factor), 0),  new BABYLON.Vector3(0, (0.2 * factor), 0)];
+            
+    let trans = vectpts[0][1].subtract(vectpts[0][0]).scale(0.5).x;
+    arrowpts.forEach(function(n) { n.x += trans; });
+    vectpts.push(arrowpts);
+   
+    let vect2 = BABYLON.MeshBuilder.CreateLineSystem("arrow", {lines: vectpts, updatable: true}, scene);
+    vect2.parent = refvect;
 
-    //alternative:
-    /*let angle = -1 * Math.atan(dis.y/Math.sqrt(dis.x**2 + dis.z**2));
-    let arrowpts1 = (0.5 * (dis.total/5) * Math.cos(angle)) - (0.03 * (dis.total/5) * Math.sin(angle));
-    let arrowpts2 = (0.5 * (dis.total/5) * Math.sin(angle)) + (0.03 * (dis.total/5) * Math.cos(angle));
-    arrowpts = [[arrowpts1, term1, arrowpts2]]; */
+    vect2.rotate(BABYLON.Axis.Y, -Math.atan(dis.z/dis.x), BABYLON.Space.WORLD);
+    vect2.rotate(BABYLON.Axis.Z, Math.atan(dis.y/dis.x), BABYLON.Space.WORLD);
+    //vect2.rotate(BABYLON.Axis.X, -Math.atan(dis.y/dis.z), BABYLON.Space.WORLD);
+    vect2.translate(new BABYLON.Vector3(dis.x, dis.y, dis.z).normalize(), 
+                       (Math.sqrt(centre.x**2 + centre.y**2 + centre.z**2))/10,
+                       BABYLON.Space.WORLD);
 
-    let term1 = (new BABYLON.Vector3(dis.x / 2, dis.y / 2, dis.z / 2).add(vectpts1[0]));
-    vectline.position = term1;
+    return {node: refvect, vector: vect2};
+}
 
-    //let arrowpts = [[new BABYLON.Vector3((0.1 * factor), (0.03 * factor), 0), term1,
-                     //new BABYLON.Vector3((-0.1 * factor), (-3 * factor), 0) ]];
-    //let arrow = BABYLON.MeshBuilder.CreateLineSystem("arrowhead", {lines: arrowpts, updatable: true}, scene);
+function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
 
-    //arrow.position = term1;
-    //arrow.rotation = vectline.rotation;
-} 
+    node.position = obj1.position;
+    if ((obj1.position.x - pos1[0]) >= 100 ||
+        (obj1.position.y - pos1[1]) >= 100 ||
+        (obj1.position.z - pos1[2]) >= 100 ) {}
+    
+    else {
+    obj1.position.x += 0.1 * velo1.x;
+    obj1.position.y += 0.1 * velo1.y;
+    obj1.position.z += 0.1* velo1.z; }
 
-function render (masses, velo, positions, array) {
+    if ((obj2.position.x - pos2[0]) >= 100 ||
+        (obj2.position.y - pos2[1]) >= 100 ||
+        (obj2.position.z - pos2[2]) >= 100 ) {}
+
+    else {
+    obj2.position.x += 0.1 * velo2.x;
+    obj2.position.y += 0.1 * velo2.y;
+    obj2.position.z += 0.1 * velo2.z; }
+
+    //let disref = displacement (pos2, pos1);
+    let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
+                           [obj1.position.x, obj1.position.y, obj1.position.z]);
+    let angle1 = raddeg(Math.atan(dis.z/dis.x));
+    let angle2 = raddeg(Math.atan(dis.y/dis.z));
+    let angle3 = raddeg(Math.atan(dis.y/dis.x))
+    
+    let node1 = new BABYLON.Vector3(0, 1, 0); let node2 = new BABYLON.Vector3(1, 0, 0); let node3 = new BABYLON.Vector3(0, 0, 1)
+    
+    vector.rotate(BABYLON.Axis.X, Math.PI/60, BABYLON.Space.LOCAL);
+
+    if (vector.rotation.y >= angle1) { vector.rotate(node.position.add(node1), raddeg(Math.atan(dis.z/dis.x)), BABYLON.Space.WORLD); };
+    if (vector.rotation.y <= angle1) { vector.rotate(node.position.add(node1), raddeg(-Math.atan(dis.z/dis.x)), BABYLON.Space.WORLD); };
+
+    if (vector.rotation.x >= angle2) { vector.rotate(node.position.add(node2), raddeg(Math.atan(dis.y/dis.z)), BABYLON.Space.WORLD); };
+    if (vector.rotation.x <= angle2) { vector.rotate(node.position.add(node2), raddeg(-Math.atan(dis.y/dis.z)), BABYLON.Space.WORLD); };
+
+    if (vector.rotation.z >= angle3) { vector.rotate(node.position.add(node3), raddeg(Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
+    if (vector.rotation.z <= angle3) { vector.rotate(node.position.add(node3), raddeg(-Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
+
+    console.log("exec", (raddeg(Math.atan(dis.z/dis.x)) - vector.rotation.y));
+}
+
+function render (masses, velo, positions, array, timelim) {
+    let timetrack = 0;
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
 
@@ -712,21 +775,28 @@ function render (masses, velo, positions, array) {
     //sim objects
     let current0 = new BABYLON.Mesh("obj1");
     current0 = synthObject(scene, array, checked[0]);
-    //current0.position = positions[checked[0]];
+    let pos1 = positions[checked[0]];
+    
     let current1 = new BABYLON.Mesh("obj2");
     current1 = synthObject(scene, array, checked[1]);
-    //current1.position = positions[checked[1]]; 
+    let pos2 = positions[checked[1]];
+    let velo1 = axial_velocity(velo[checked[0]]); let velo2 = axial_velocity(velo[checked[1]]);
+
+    let vect1 = synthVector(scene, pos1, pos2);
+    let node = vect1.node; let vect2 = vect1.vector;
 
     scene.registerBeforeRender(function () {
-        synthVector(scene, positions[0], positions[1]);
+        augment(current0, current1, pos1, pos2, velo1, velo2, vect2, node);
     })
 
     return scene; }
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        toRender.render(); })
-
+        timetrack += 1/60;
+        if (timetrack >= timelim) { engine.stopRenderLoop() }
+        else { toRender.render(); }} )
+    
     window.addEventListener("resize", function () {
         engine.resize();
       });

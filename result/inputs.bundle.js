@@ -34,7 +34,6 @@ let dp_PA;
 let dp_QA;
 let event1 = {};
 let event2 = {};
-let buffer;
 
 relvelo = {x: Math.abs((velocities[checked[1]].x - velocities[checked[0]].x)), 
            y: Math.abs((velocities[checked[1]].y - velocities[checked[0]].y)),
@@ -54,6 +53,7 @@ event2.time = document.querySelector("#eventpln > fieldset > #e2time").value;
 event2.x = document.querySelector("#eventpln > fieldset > #e2x").value;
 event2.y = document.querySelector("#eventpln > fieldset > #e2y").value;
 event2.z = document.querySelector("#eventpln > fieldset > #e2z").value;
+
 event2.pos = [event2.x, event2.y, event2.z]; 
 console.log('from input js: finish declare param');
 }
@@ -255,10 +255,8 @@ module.exports = equations;
 
 function radians_degrees (input, path) {
     const pi = Math.PI;
-    if (path == 0) {
-        return input * (180/pi);}
-    else {
-        return pi * input/180; }}
+    if (path == 0) {return input * (180/pi);}
+    else {return pi * input/180; }}
 
 function axial_velocity(velo) {
     let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
@@ -348,7 +346,8 @@ function coaxial_velocity(relvelo, pos2, pos1) {
 module.exports = {coaxial_velocity: coaxial_velocity,
                   displacement: displacement,
                   coaxial_displacement: coaxial_displacement,
-                  axial_velocity: axial_velocity };
+                  axial_velocity: axial_velocity, 
+                  radians_degrees: radians_degrees };
 
 
 /***/ })

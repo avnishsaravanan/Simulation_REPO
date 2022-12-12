@@ -117,10 +117,15 @@
       } else {
         // update arrims
         arrsimobjects[(upobj() - 1)] = arrsimobject;
+
+        velocities[(upobj() -1)] = ([arrsimobject[7], arrsimobject[8], arrsimobject[9]]);
+        positions[(upobj() -1)] = ([arrsimobject[4], arrsimobject[5], arrsimobject[6]]);
+        masses[(upobj() -1)] = arrsimobject[2];
+
         document.getElementById("objlabel"+(upobj())).childNodes[0].textContent = arrsimobject[0];
         alert('saved'); // beautify
       }
-    }
+    } 
 
     // initialize checkbox interactions
     objectslist.forEach(elem => elem.onclick = function () {
@@ -182,11 +187,12 @@
     // initialize run simulation interactions 
     simrun = document.getElementById('simbtn');
     simrun.onclick = function() {
+      let time = document.getElementById("e2time").value + 5;
       event.preventDefault();
       inputs(masses, velocities);
-      graphics(masses, velocities, positions, arrsimobjects);
+      graphics(masses, velocities, positions, arrsimobjects, time);
 
-      //addScript('renderCanvas','./render1.bundle.js');      
+      //addScript('renderCanvas','./render1.bundle.js');
     };
 
     //functions

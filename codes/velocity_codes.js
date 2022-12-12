@@ -5,10 +5,8 @@
 
 function radians_degrees (input, path) {
     const pi = Math.PI;
-    if (path == 0) {
-        return input * (180/pi);}
-    else {
-        return pi * input/180; }}
+    if (path == 0) {return input * (180/pi);}
+    else {return pi * input/180; }}
 
 function axial_velocity(velo) {
     let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
@@ -98,4 +96,5 @@ function coaxial_velocity(relvelo, pos2, pos1) {
 module.exports = {coaxial_velocity: coaxial_velocity,
                   displacement: displacement,
                   coaxial_displacement: coaxial_displacement,
-                  axial_velocity: axial_velocity };
+                  axial_velocity: axial_velocity, 
+                  radians_degrees: radians_degrees };
