@@ -3,8 +3,9 @@
  
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="css/simstyles.css" />
-    <link rel="stylesheet" href="css/toggle.css" />
+    <link rel="stylesheet" href="css/simstyles.css"/>
+    <link rel="stylesheet" href="css/toggle.css"/>
+    <link rel="stylesheet" href="css/customs.css"/>
     <script src = "./result/interaction.bundle.js"></script>
     <script src = "./result/inputs.bundle.js"></script>
     <script src = "./result/render1.bundle.js"></script>
@@ -22,7 +23,8 @@
       </div>
       
       <div class="toggle">
-        <div class="toggle-button-cover"><br>
+        <p>Mode</p>
+        <div class="toggle-button-cover">
             <div class="button r" id="simmodetoggle">
               <input type="checkbox" class="autouser" id="autouser"/>
               <div class="knobs"></div>
@@ -50,7 +52,7 @@
       </div>
       
       <div class="addel">
-        <input type="submit" value="Add Element" id="addbtn"></input>
+        <button id="dummy" hidden="true"></button>
       </div>      
 
       <div class="listel">
@@ -76,7 +78,7 @@
           <input type="checkbox" id="obj9" name="simobject" disabled><span class="checkmark"></span></label></p>
         <p id="line10" hidden="hidden"><label class="checkcontainer" id="objlabel10">Sphere10
           <input type="checkbox" id="obj10" name="simobject" disabled><span class="checkmark"></span></label></p>
-        <input type="submit" id="simbtn" value="Run Simulation"></input><br>
+          <input type="submit" value="Add Object" id="addbtn"></input></p><br>
         </form>
       </div>
       
@@ -158,19 +160,51 @@
           <label for="energy1">energy(E2)</label>
           <input type="number" id="energy1" name="energy1" value=0 style="width:33px; height:15px; text-align: right;"><br>
         </form>
+        <p style="text-align:center; margin:auto"></p><input type="submit" id="simbtn" value="Run Simulation"></input><br>
+      </div>
+      
+      <div class="simset">
+        <p id="veloabsrel">Velocity: Absolute</p>
+        <div class="toggle-button-cover">
+            <div class="button r" id="velotoggle">
+              <input type="checkbox" class="absrel" id="absrel"/>
+              <div class="knobs"></div>
+              <div class="layer"></div>
+            </div>
+        </div><br>
+      </div>        
+
+      <div class="siminfo">
+        <p id="sinfo" style="text-align:center; margin:auto;"><b>Input all values and Run Simulation</b></p>
+      </div>      
+
+      <div class="simput">
+        <p>Simulation Progress</p>
+        <div id="simProgress"><div id="simBar"><span id="simtimeinfo">0:00/0:00</span></div>
+        </div>
+        <br>
+        <input type="button" id="rstcam" value="Reset Cam"></input>
+        <input type="button" id="simstop" value="Stop Simulation"></input>
       </div>
 
       <div class="simul">
-        <p id="siminfo" style="text-align:left; margin:auto;">
+        <p id="siminfo" style="text-align:center; margin:auto;">
           <b>Simulation is currently running for objects 'Sphere1' and 'Sphere2'</b>
         </p><br><br>
         <canvas id="renderCanvas">
           <!--script src="./result/render1.bundle.js"></script-->
         </canvas>
       </div>
-
     </div>
     
+    <div id="dialogoverlay" style="display: none;"></div>
+    <div id="dialogbox" class="slit-in-vertical" style="display: none;">
+      <div>
+        <div id="dialogboxhead"></div>
+        <div id="dialogboxbody"></div>
+        <div id="dialogboxfoot"></div>
+      </div>
+    </div>
   </body>
   <footer>
 

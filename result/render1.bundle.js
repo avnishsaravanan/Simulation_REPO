@@ -121,7 +121,11 @@ module.exports = {coaxial_velocity: coaxial_velocity,
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 let BABYLON = __webpack_require__(1);
+<<<<<<< HEAD
 
+=======
+const custom = __webpack_require__(7);
+>>>>>>> new-infogrid
 let velos = __webpack_require__(5);
 //let result = require("./inputs.js").result;
 let raddeg = velos.radians_degrees;
@@ -145,8 +149,13 @@ function synthObject (scene, objspecs, synthindex) {
 }
 
 function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
+<<<<<<< HEAD
     let dis = displacement(obj2, obj1); 
     let factor = dis.total / 3;
+=======
+    let dis = velos.displacement(obj2, obj1); 
+    let factor = dis.total / 5;
+>>>>>>> new-infogrid
     
     let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
     
@@ -168,6 +177,7 @@ function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to deb
     let vect2 = BABYLON.MeshBuilder.CreateLineSystem("arrow", {lines: vectpts, updatable: true}, scene);
     vect2.parent = refvect;
 
+<<<<<<< HEAD
     vect2.rotate(BABYLON.Axis.Y, -Math.atan(dis.z/dis.x), BABYLON.Space.WORLD);
     vect2.rotate(BABYLON.Axis.Z, Math.atan(dis.y/dis.x), BABYLON.Space.WORLD);
     //vect2.rotate(BABYLON.Axis.X, -Math.atan(dis.y/dis.z), BABYLON.Space.WORLD);
@@ -224,6 +234,27 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
 
 function render (masses, velo, positions, array, timelim) {
     let timetrack = 0;
+=======
+    //alternative (will probably need this as rotation isnt working)
+    /*let angle = -1 * Math.atan(dis.y/Math.sqrt(dis.x**2 + dis.z**2));
+    let arrowpts1 = (0.5 * (dis.total/5) * Math.cos(angle)) - (0.03 * (dis.total/5) * Math.sin(angle));
+    let arrowpts2 = (0.5 * (dis.total/5) * Math.sin(angle)) + (0.03 * (dis.total/5) * Math.cos(angle));
+    arrowpts = [[arrowpts1, term1, arrowpts2]]; */
+
+    let term1 = new BABYLON.Vector3(dis.x / 2, dis.y / 2, dis.z / 2);
+    //add(vectpts1[0]));
+    vectline.position = term1;
+
+    let arrowpts = [[new BABYLON.Vector3((0.1 * factor), (0.03 * factor), 0), term1,
+                    new BABYLON.Vector3((-0.1 * factor), (-3 * factor), 0) ]];
+    let arrow = BABYLON.MeshBuilder.CreateLineSystem("arrowhead", {lines: arrowpts, updatable: true}, scene);
+    arrow.position = term1;
+    arrow.rotation = vectline.rotation;
+}
+
+
+function render (masses, velo, positions, array) {
+>>>>>>> new-infogrid
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
 
@@ -277,10 +308,20 @@ function render (masses, velo, positions, array, timelim) {
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
+<<<<<<< HEAD
         timetrack += 1/60;
         if (timetrack >= timelim) { engine.stopRenderLoop() }
         else { toRender.render(); }} )
     
+=======
+        toRender.render(); 
+        /*chk = customs.progressbar(starttime);
+        if (chk) {
+            //
+        }*/
+    });
+
+>>>>>>> new-infogrid
     window.addEventListener("resize", function () {
         engine.resize();
       });
@@ -288,6 +329,74 @@ function render (masses, velo, positions, array, timelim) {
     module.exports = render;
 
 
+
+/***/ }),
+/* 7 */
+/***/ ((module) => {
+
+
+  //progress bar
+function progressbar(starttime) {
+    var i = 0;
+    function move() {
+        if (i == 0) {
+            i = 1;
+            var elem = document.getElementById("simBar");
+            var width = 10;
+            var id = setInterval(frame, 10);
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    i = 0;
+                } else {
+                    width++;
+                    elem.style.width = width + "%";
+                    elem.innerHTML = width + "%";
+                }
+            }
+        }
+    }
+}
+
+
+// alert
+function CustomAlert(){
+    this.alert = function(message,title){
+      //document.body.innerHTML = document.body.innerHTML + '<div id="dialogoverlay"></div><div id="dialogbox" class="slit-in-vertical"><div><div id="dialogboxhead"></div><div id="dialogboxbody"></div><div id="dialogboxfoot"></div></div></div>';
+  
+      let dialogoverlay = document.getElementById('dialogoverlay');
+      let dialogbox = document.getElementById('dialogbox');
+      
+      let winH = window.innerHeight;
+      dialogoverlay.style.height = winH+"px";
+      
+      dialogbox.style.top = "100px";
+  
+      dialogoverlay.style.display = "block";
+      dialogbox.style.display = "block";
+      
+      document.getElementById('dialogboxhead').style.display = 'block';
+  
+      if(typeof title === 'undefined') {
+        document.getElementById('dialogboxhead').style.display = 'none';
+      } else {
+        document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+      }
+      document.getElementById('dialogboxbody').innerHTML = message;
+      document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';
+    };
+    
+    this.ok = function(){
+      document.getElementById('dialogbox').style.display = "none";
+      document.getElementById('dialogoverlay').style.display = "none";
+    };
+  }
+
+  
+  
+  //let customAlert = new CustomAlert();
+
+module.exports = {progressbar: progressbar, CustomAlert: CustomAlert};
 
 /***/ })
 /******/ 	]);
