@@ -34,7 +34,7 @@
     border-radius: 2px;
   }
   
-  .autouser {
+  .autouser, .absrel {
     position: relative;
     width: 100%;
     height: 100%;
@@ -44,7 +44,7 @@
     cursor: pointer;
     z-index: 3;
   }
-  
+
   .knobs {
     z-index: 2;
   }
@@ -88,6 +88,41 @@
   #simmodetoggle .knobs,
   #simmodetoggle .knobs:before,
   #simmodetoggle .layer {
+    transition: 0.3s ease all;
+  }
+  
+  /* Button 2 */
+  #velotoggle .knobs:before {
+    content: "ABS";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 25px;
+    height: 10px;
+    color: #fff;
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+    padding: 9px 4px;
+    background-color: #03a9f4;
+    border-radius: 50%;
+    transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
+  }
+  
+  #velotoggle .absrel:checked + .knobs:before {
+    content: "REL";
+    left: 35px;
+    background-color: #368100;
+  }
+  
+  #velotoggle .absrel:checked ~ .layer {
+    background-color: #e4ffce;
+  }
+  
+  #velotoggle .knobs,
+  #velotoggle .knobs:before,
+  #velotoggle .layer {
     transition: 0.3s ease all;
   }
   
@@ -240,3 +275,23 @@
   /* #editParameters {
     pointer-events:none;
   } */
+
+  #simProgress {
+    width: 90%;
+    background-color: rgb(161, 161, 161);
+  }
+  
+  #simBar {
+    width: 3%;
+    height: 30px;
+    background-color: rgb(0, 86, 185);
+  }
+  
+  #simtimeinfo {
+    width: 90%;
+    text-align: center; /* To center it horizontally (if you want) */
+    line-height: 30px; /* To center it vertically */
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+  }
+    

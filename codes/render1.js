@@ -1,6 +1,11 @@
 let BABYLON = require("babylonjs");
+<<<<<<< HEAD
 
 let velos = require("./velocity_codes");
+=======
+const custom = require("./customs.js");
+let velos = require("./velocity_codes.js");
+>>>>>>> new-infogrid
 //let result = require("./inputs.js").result;
 let raddeg = velos.radians_degrees;
 let axial_velocity = velos.axial_velocity;
@@ -56,6 +61,7 @@ function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to deb
     return {node: refvect, vector: vect2};
 }
 
+<<<<<<< HEAD
 function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
 
     node.position = obj1.position;
@@ -102,6 +108,10 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
 
 function render (masses, velo, positions, array, timelim) {
     let timetrack = 0;
+=======
+
+function render (masses, velo, positions, array) {
+>>>>>>> new-infogrid
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
 
@@ -155,10 +165,20 @@ function render (masses, velo, positions, array, timelim) {
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
+<<<<<<< HEAD
         timetrack += 1/60;
         if (timetrack >= timelim) { engine.stopRenderLoop() }
         else { toRender.render(); }} )
     
+=======
+        toRender.render(); 
+        /*chk = customs.progressbar(starttime);
+        if (chk) {
+            //
+        }*/
+    });
+
+>>>>>>> new-infogrid
     window.addEventListener("resize", function () {
         engine.resize();
       });
