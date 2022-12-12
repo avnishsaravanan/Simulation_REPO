@@ -662,7 +662,7 @@ function synthObject (scene, objspecs, synthindex) {
 
 function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
     let dis = displacement(obj2, obj1); 
-    let factor = dis.total / 3;
+    let factor = 10 * dis.total;
     
     let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
     
@@ -726,14 +726,14 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
     
     vector.rotate(BABYLON.Axis.X, Math.PI/60, BABYLON.Space.LOCAL);
 
-    if (vector.rotation.y >= angle1) { vector.rotate(node.position.add(node1), raddeg(Math.atan(dis.z/dis.x)), BABYLON.Space.WORLD); };
-    if (vector.rotation.y <= angle1) { vector.rotate(node.position.add(node1), raddeg(-Math.atan(dis.z/dis.x)), BABYLON.Space.WORLD); };
+    if (vector.rotation.y > angle1) { vector.rotate(node.position.add(node1), (raddeg(Math.atan(dis.z/dis.x)) - vector.rotation.y), BABYLON.Space.WORLD); };
+    if (vector.rotation.y < angle1) { vector.rotate(node.position.add(node1), (raddeg(Math.atan(dis.z/dis.x)) - vector.rotation.y), BABYLON.Space.WORLD); };
 
-    if (vector.rotation.x >= angle2) { vector.rotate(node.position.add(node2), raddeg(Math.atan(dis.y/dis.z)), BABYLON.Space.WORLD); };
-    if (vector.rotation.x <= angle2) { vector.rotate(node.position.add(node2), raddeg(-Math.atan(dis.y/dis.z)), BABYLON.Space.WORLD); };
+    if (vector.rotation.x > angle2) { vector.rotate(node.position.add(node2), (raddeg(Math.atan(dis.y/dis.z) * Math.atan(dis.z/dis.y)) - vector.rotation.z), BABYLON.Space.WORLD); };
+    if (vector.rotation.x < angle2) { vector.rotate(node.position.add(node2), (raddeg(Math.atan(dis.y/dis.z) * Math.atan(dis.z/dis.y)) - vector.rotation.z), BABYLON.Space.WORLD); };
 
-    if (vector.rotation.z >= angle3) { vector.rotate(node.position.add(node3), raddeg(Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
-    if (vector.rotation.z <= angle3) { vector.rotate(node.position.add(node3), raddeg(-Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
+    //if (vector.rotation.z >= angle3) { vector.rotate(node.position.add(node3), raddeg(Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
+    //if (vector.rotation.z <= angle3) { vector.rotate(node.position.add(node3), raddeg(-Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
 
     console.log("exec", (raddeg(Math.atan(dis.z/dis.x)) - vector.rotation.y));
 }
