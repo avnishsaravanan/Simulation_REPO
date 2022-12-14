@@ -5,6 +5,7 @@ html,
         height: 100%;
         margin: 0px;
         padding: 0px;
+        /*font-family:Georgia, 'Times New Roman', Times, serif*/
       }
       label {
         display: inline-block;
@@ -77,6 +78,22 @@ html,
         width: 75px;
       }
 
+      .simset {
+        grid-area: simset;
+        text-align: center;
+      }
+
+      .siminfo {
+        grid-area: siminfo;
+        text-align: center;
+      }
+
+      .simput {
+        grid-area: simput;
+        text-align: center;
+        padding-left: 5px;
+      }
+
       .simul {
         grid-area: simul;
         text-align:center;
@@ -90,6 +107,7 @@ html,
           "toggle relati relati relati relati addel"
           "listel listel editel editel evepln evepln"
           "listel listel editel editel solvea solvea"
+          "simset siminfo siminfo siminfo simput simput"
           "simul simul simul simul simul simul";
         gap: 5px;
         background-color: #2196f3;
@@ -104,6 +122,7 @@ html,
             'listel listel listel listel listel listel'
             'editel editel editel editel editel editel'
             'evepln evepln evepln solvea solvea solvea'
+            'simset siminfo siminfo siminfo simput simput'
             'simul simul simul simul simul simul';
         }
       }

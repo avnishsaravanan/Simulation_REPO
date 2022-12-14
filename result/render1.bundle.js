@@ -21,8 +21,8 @@
 
 function radians_degrees (input, path) {
     const pi = Math.PI;
-    if (path == 0) {return input * (180/pi);}
-    else {return pi * input/180; }}
+    if (path == 0) {return input * (pi/180);} //degrees to radians
+    else {return input * (180/pi) }} //radians to degrees
 
 function axial_velocity(velo) {
     let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
@@ -121,7 +121,7 @@ module.exports = {coaxial_velocity: coaxial_velocity,
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 let BABYLON = __webpack_require__(1);
-
+const custom = __webpack_require__(7);
 let velos = __webpack_require__(5);
 //let result = require("./inputs.js").result;
 let raddeg = velos.radians_degrees;
@@ -146,7 +146,7 @@ function synthObject (scene, objspecs, synthindex) {
 
 function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
     let dis = displacement(obj2, obj1); 
-    let factor = 10 * dis.total;
+    let factor = dis.total;
     
     let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
     
@@ -167,75 +167,97 @@ function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to deb
    
     let vect2 = BABYLON.MeshBuilder.CreateLineSystem("arrow", {lines: vectpts, updatable: true}, scene);
     vect2.parent = refvect;
+    let posync = Math.sqrt(centre.x**2 + centre.y**2 + centre.z**2);
 
     vect2.rotate(BABYLON.Axis.Y, -Math.atan(dis.z/dis.x), BABYLON.Space.WORLD);
     vect2.rotate(BABYLON.Axis.Z, Math.atan(dis.y/dis.x), BABYLON.Space.WORLD);
     //vect2.rotate(BABYLON.Axis.X, -Math.atan(dis.y/dis.z), BABYLON.Space.WORLD);
-    vect2.translate(new BABYLON.Vector3(dis.x, dis.y, dis.z).normalize(), 
-                       (Math.sqrt(centre.x**2 + centre.y**2 + centre.z**2))/10,
-                       BABYLON.Space.WORLD);
+    vect2.translate(BABYLON.Axis.X, (posync/10), BABYLON.Space.LOCAL);
 
-    return {node: refvect, vector: vect2};
+    return {node: refvect, vector: vect2, rot: (vect2.rotationQuaternion.toEulerAngles()) };
 }
 
 function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
 
     node.position = obj1.position;
+    //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
+
     if ((obj1.position.x - pos1[0]) >= 100 ||
         (obj1.position.y - pos1[1]) >= 100 ||
         (obj1.position.z - pos1[2]) >= 100 ) {}
     
     else {
-    obj1.position.x += 0.1 * velo1.x;
+    obj1.position.x += 0.1 * -velo1.x;
     obj1.position.y += 0.1 * velo1.y;
-    obj1.position.z += 0.1* velo1.z; }
+    obj1.position.z += 0.1 * -velo1.z; }
 
     if ((obj2.position.x - pos2[0]) >= 100 ||
         (obj2.position.y - pos2[1]) >= 100 ||
         (obj2.position.z - pos2[2]) >= 100 ) {}
 
     else {
-    obj2.position.x += 0.1 * velo2.x;
+    obj2.position.x += 0.1 * -velo2.x;
     obj2.position.y += 0.1 * velo2.y;
-    obj2.position.z += 0.1 * velo2.z; }
+    obj2.position.z += 0.1 * -velo2.z; }
 
     //let disref = displacement (pos2, pos1);
     let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
                            [obj1.position.x, obj1.position.y, obj1.position.z]);
-    let angle1 = raddeg(Math.atan(dis.z/dis.x));
-    let angle2 = raddeg(Math.atan(dis.y/dis.z));
-    let angle3 = raddeg(Math.atan(dis.y/dis.x))
-    
+    let disref = displacement(pos2, pos1);
+
+    let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
+    let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
+
     let node1 = new BABYLON.Vector3(0, 1, 0); let node2 = new BABYLON.Vector3(1, 0, 0); let node3 = new BABYLON.Vector3(0, 0, 1)
     
-    vector.rotate(BABYLON.Axis.X, Math.PI/60, BABYLON.Space.LOCAL);
+    //vector.rotate(BABYLON.Axis.X, Math.PI/60, BABYLON.Space.LOCAL);
 
-    if (vector.rotation.y > angle1) { vector.rotate(node.position.add(node1), (raddeg(Math.atan(dis.z/dis.x)) - vector.rotation.y), BABYLON.Space.WORLD); };
-    if (vector.rotation.y < angle1) { vector.rotate(node.position.add(node1), (raddeg(Math.atan(dis.z/dis.x)) - vector.rotation.y), BABYLON.Space.WORLD); };
+    if (!(angle1r == angle1)) { vector.rotate(node.position.add(node1), (angle1 - angle1r), BABYLON.Space.WORLD); };
+    if (!(angle2r == angle2)) { vector.rotate(node.position.add(node2), (angle2 - angle2r), BABYLON.Space.WORLD); }
+    if (!(angle3r == angle3)) { vector.rotate(node.position.add(node3), (angle3 - angle3r), BABYLON.Space.WORLD); }
+    vector.rotate(BABYLON.Axis.Z, raddeg(90, 0), BABYLON.Space.LOCAL);
+    vector.rotate(BABYLON.Axis.Y, raddeg(90, 0), BABYLON.Space.LOCAL);
+    vector.rotate(BABYLON.Axis.X, raddeg(90, 0), BABYLON.Space.LOCAL);
 
-    if (vector.rotation.x > angle2) { vector.rotate(node.position.add(node2), (raddeg(Math.atan(dis.y/dis.z) * Math.atan(dis.z/dis.y)) - vector.rotation.z), BABYLON.Space.WORLD); };
-    if (vector.rotation.x < angle2) { vector.rotate(node.position.add(node2), (raddeg(Math.atan(dis.y/dis.z) * Math.atan(dis.z/dis.y)) - vector.rotation.z), BABYLON.Space.WORLD); };
-
-    //if (vector.rotation.z >= angle3) { vector.rotate(node.position.add(node3), raddeg(Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
-    //if (vector.rotation.z <= angle3) { vector.rotate(node.position.add(node3), raddeg(-Math.atan(dis.y/dis.x)), BABYLON.Space.WORLD); };
-
-    console.log("exec", (raddeg(Math.atan(dis.z/dis.x)) - vector.rotation.y));
+    vector.scaling.x = (dis.total/disref.total);
+    //vector.translate(BABYLON.Axis.X, (dis.total/2 - dis.total/10), BABYLON.Space.LOCAL);
+    
+    //console.log(angle3 - angle3r); 
 }
 
-function render (masses, velo, positions, array, timelim) {
-    let timetrack = 0;
+function render (masses, velo, positions, array, timelim2) {
+    let timetrack = 0; let off = false;
+    let stopbtn = document.getElementById("simstop"); stopbtn.onclick = function() { off = true; };
+    let reset = document.getElementById("rstcam"); 
+    let timelim1 = Number(document.getElementById("e1time").value); 
+    let e1pos = Array.from(document.getElementsByName("e1xyz")); e1pos.forEach(function(n) { Number(n); });
+    let e2pos = Array.from(document.getElementsByName("e2xyz")); e2pos.forEach(function(n) { Number(n); });
+
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
+
+    function eventplot (timelim1, timelim2, pos1, pos2, scene) {
+        let e1 = null; let e2 = null;
+        let mat1 = new BABYLON.StandardMaterial; mat1.emissiveColor = new BABYLON.Color3(1, 0, 0);
+        let mat2 = new BABYLON.StandardMaterial; mat2.emissiveColor = new BABYLON.Color3(0, 0, 1);
+    
+        if (timetrack >= timelim1) { e1 = BABYLON.MeshBuilder.CreateBox('e1', { size: 1.5 }, scene); e1.material = mat1; 
+                                                                        e1.position = new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]) };
+        if (timetrack >= (timelim2-5)) { e2 = BABYLON.MeshBuilder.CreateBox('e2', { size: 1.5 }, scene); e2.material = mat2 
+                                                                        e2.position = new BABYLON.Vector3(pos2[0], pos2[1], pos2[2]) };
+        return {e1: e1, e2: e2}; }
 
     function createScene() {
 
     let scene = new BABYLON.Scene(engine);
-    let primary = 10;
-    const origin = new BABYLON.Mesh;
+    let primary = 100;
+    scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
-    const camera = new BABYLON.ArcRotateCamera('', Math.PI*2, Math.PI, 10, new BABYLON.Vector3.Zero(), scene);
+    const camera = new BABYLON.ArcRotateCamera('', raddeg(180, 0), 0, 100, new BABYLON.Vector3(100, 0, 0), scene);
+    camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
+    camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
     camera.attachControl(canvas, true);
-    const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene);
+    const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene); 
      
     let originpts = [[new BABYLON.Vector3(0, 0, 0),
                       new BABYLON.Vector3(primary, 0, 0)],
@@ -267,19 +289,25 @@ function render (masses, velo, positions, array, timelim) {
     let velo1 = axial_velocity(velo[checked[0]]); let velo2 = axial_velocity(velo[checked[1]]);
 
     let vect1 = synthVector(scene, pos1, pos2);
-    let node = vect1.node; let vect2 = vect1.vector;
+    let node = vect1.node; let vect2 = vect1.vector; let rot1 = vect1.rot.y; let rot2 = vect1.rot.z;
+
+    reset.onclick = function() { camera.position = new BABYLON.Vector3(100, 0, 0); camera.target = new BABYLON.Vector3(100, 0, 0); };
 
     scene.registerBeforeRender(function () {
         augment(current0, current1, pos1, pos2, velo1, velo2, vect2, node);
+        timetrack += 1/60;
+        let e1Mesh = eventplot(timelim1, timelim2, e1pos, e2pos, scene).e1;
+        if (timetrack >= timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1; e1Mesh.rotation.z += 0.1; }
+        let e2Mesh = eventplot(timelim1, timelim2, e1pos, e2pos, scene).e2;
+        if (timetrack >= timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1; }
     })
 
     return scene; }
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        timetrack += 1/60;
-        if (timetrack >= timelim) { engine.stopRenderLoop() }
-        else { toRender.render(); }} )
+        if ((timetrack >= timelim2) || off == true) { engine.stopRenderLoop(); }
+        else { toRender.render(); }} );
     
     window.addEventListener("resize", function () {
         engine.resize();
@@ -288,6 +316,74 @@ function render (masses, velo, positions, array, timelim) {
     module.exports = render;
 
 
+
+/***/ }),
+/* 7 */
+/***/ ((module) => {
+
+
+  //progress bar
+function progressbar(starttime) {
+    var i = 0;
+    function move() {
+        if (i == 0) {
+            i = 1;
+            var elem = document.getElementById("simBar");
+            var width = 10;
+            var id = setInterval(frame, 10);
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    i = 0;
+                } else {
+                    width++;
+                    elem.style.width = width + "%";
+                    elem.innerHTML = width + "%";
+                }
+            }
+        }
+    }
+}
+
+
+// alert
+function CustomAlert(){
+    this.alert = function(message,title){
+      //document.body.innerHTML = document.body.innerHTML + '<div id="dialogoverlay"></div><div id="dialogbox" class="slit-in-vertical"><div><div id="dialogboxhead"></div><div id="dialogboxbody"></div><div id="dialogboxfoot"></div></div></div>';
+  
+      let dialogoverlay = document.getElementById('dialogoverlay');
+      let dialogbox = document.getElementById('dialogbox');
+      
+      let winH = window.innerHeight;
+      dialogoverlay.style.height = winH+"px";
+      
+      dialogbox.style.top = "100px";
+  
+      dialogoverlay.style.display = "block";
+      dialogbox.style.display = "block";
+      
+      document.getElementById('dialogboxhead').style.display = 'block';
+  
+      if(typeof title === 'undefined') {
+        document.getElementById('dialogboxhead').style.display = 'none';
+      } else {
+        document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+      }
+      document.getElementById('dialogboxbody').innerHTML = message;
+      document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';
+    };
+    
+    this.ok = function(){
+      document.getElementById('dialogbox').style.display = "none";
+      document.getElementById('dialogoverlay').style.display = "none";
+    };
+  }
+
+  
+  
+  //let customAlert = new CustomAlert();
+
+module.exports = {progressbar: progressbar, CustomAlert: CustomAlert};
 
 /***/ })
 /******/ 	]);

@@ -5,8 +5,8 @@
 
 function radians_degrees (input, path) {
     const pi = Math.PI;
-    if (path == 0) {return input * (180/pi);}
-    else {return pi * input/180; }}
+    if (path == 0) {return input * (pi/180);} //degrees to radians
+    else {return input * (180/pi) }} //radians to degrees
 
 function axial_velocity(velo) {
     let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));

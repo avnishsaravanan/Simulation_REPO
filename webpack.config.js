@@ -6,7 +6,8 @@ module.exports = {
         interaction: './codes/interaction.js',
         simulation: './codes/simulation.js',
         inputs: './codes/inputs.js',
-        render1:'./codes/render1.js'
+        render1:'./codes/render1.js',
+        customs:'./codes/customs.js'
         
         /*index: {
             import: './codes/home.js',
