@@ -121,7 +121,8 @@
             simulateClick(elem);
           }
         });
-        customAlert.alert('Object Added','Info');
+        //customAlert.alert('Object Added','Info');
+        custom.newalert.alert('Object Added','Info');
       } else {
         // update arrims
         arrsimobjects[(upobj() - 1)] = arrsimobject;
@@ -204,9 +205,9 @@
       let time = Number(document.getElementById("e2time").value) + 5;
       console.log(time);
       event.preventDefault();
+      custom.simtimer.simtimestart();
       inputs(masses, velocities);
       graphics(masses, velocities, positions, arrsimobjects, time);
-      custom.progressbar(Date.now());
       //addScript('renderCanvas','./render1.bundle.js');      
     };
 

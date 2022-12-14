@@ -5,7 +5,6 @@ let velos = require("./velocity_codes.js");
 let raddeg = velos.radians_degrees;
 let axial_velocity = velos.axial_velocity;
 let displacement = velos.displacement;
-
 let checked = [0, 1];
 
 function synthObject (scene, objspecs, synthindex) {
@@ -184,8 +183,15 @@ function render (masses, velo, positions, array, timelim2) {
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        if ((timetrack >= timelim2) || off == true) { engine.stopRenderLoop(); }
-        else { toRender.render(); }} );
+        timetrack += 1/60;
+        if (timetrack >= timelim) { 
+            custom.simtimer.simtimestop();
+            engine.stopRenderLoop(); 
+        } else { 
+            custom.simtimer.setsimtime(timelim);
+            toRender.render();
+        }
+    })
     
     window.addEventListener("resize", function () {
         engine.resize();
