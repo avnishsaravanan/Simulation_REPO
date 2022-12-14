@@ -848,11 +848,11 @@ function render (masses, velo, positions, array, timelim2) {
     let toRender = createScene();
     engine.runRenderLoop(function () {
         timetrack += 1/60;
-        if (timetrack >= timelim) { 
+        if (timetrack >= timelim2) { 
             custom.simtimer.simtimestop();
             engine.stopRenderLoop(); 
         } else { 
-            custom.simtimer.setsimtime(timelim);
+            custom.simtimer.setsimtime(timelim2);
             toRender.render();
         }
     })
