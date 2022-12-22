@@ -15,19 +15,19 @@ let velos = __webpack_require__(5);
     coaxial_displacement = velos.coaxial_displacement;
     axial_velocity = velos.axial_velocity;
 
-function inputs (masses, velo) {
+function inputs (masses, velo, checks) {
 //    let interaction = require("./interaction.js");
     //let masses = interaction.masses;
     //let positions = interaction.positions;
     let velocities = [];
     let result;
     
-    let process = velo.map(elem => { return axial_velocity(elem); });
+    let process = velo.map(elem => axial_velocity(elem) );
     process.forEach(function(n) { velocities.push(n); });
     console.log('from inputs js: velocities', velocities);
     // to wait until all elements are loaded
 
-let checked = [0, 1];
+let checked = checks;
 let dt_PA;
 let dt_QA;
 let dp_PA;
@@ -95,7 +95,6 @@ function sol_var() {
                                      dp_PA = null;
                                      buffer = document.querySelector("#deltafx > #deltat").value;
                                      if (buffer == 0) { dt_PA = null; } else { dt_PA = Number(buffer) };
-                                     console.log(dt_PA);
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 

@@ -20,6 +20,7 @@
   let velocities = [[0.5, 45, 45], [0.8, 45, 45]];
   let positions = [[30, 30, 30], [50, 50, 50]];
   let masses = [30, 50];
+
   let checks = ['obj1','obj2']; //,'obj3','obj4','obj5','obj6','obj7','obj8','obj9'];
   //let simtime = 5;
 
@@ -202,12 +203,17 @@
     // initialize run simulation interactions 
     simrun = document.getElementById('simbtn');
     simrun.onclick = function() {
-      let time = Number(document.getElementById("e2time").value) + 5;
+      let time = Number(document.getElementById("e2time").value);
+      const objlist = Array.from(objectslist);
       console.log(time);
       event.preventDefault();
       custom.simtimer.simtimestart();
-      inputs(masses, velocities);
-      graphics(masses, velocities, positions, arrsimobjects, time);
+      let checked = [upobj()-1, Number(checks[1].match(/\d+/))-1];
+      inputs(masses, velocities, checked);
+      graphics(masses, velocities, positions, arrsimobjects, time, checked);
+      const siminfo = document.getElementById("siminfo");
+      siminfo.innerText = `Simulation is currently running for objects '${objlist[checked[0]].innerText}' and '${objlist[checked[1]].innerText}'`;
+      console.log(objlist[0].innerText);
       //addScript('renderCanvas','./render1.bundle.js');      
     };
 

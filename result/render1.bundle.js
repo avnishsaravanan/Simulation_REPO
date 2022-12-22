@@ -127,7 +127,6 @@ let velos = __webpack_require__(5);
 let raddeg = velos.radians_degrees;
 let axial_velocity = velos.axial_velocity;
 let displacement = velos.displacement;
-let checked = [0, 1];
 
 function synthObject (scene, objspecs, synthindex) {
     let object;
@@ -221,30 +220,33 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
     vector.scaling.x = (dis.total/disref.total);
     //vector.translate(BABYLON.Axis.X, (dis.total/2 - dis.total/10), BABYLON.Space.LOCAL);
     
-    //console.log(angle3 - angle3r); 
+    //console.log(angle3 - angle3r);
 }
 
-function render (masses, velo, positions, array, timelim2) {
+function eventplot (pos1, pos2, e, scene) {
+    let ev = new BABYLON.Mesh;
+    let mat1 = new BABYLON.StandardMaterial; mat1.emissiveColor = new BABYLON.Color3(1, 0, 0);
+    let mat2 = new BABYLON.StandardMaterial; mat2.emissiveColor = new BABYLON.Color3(0, 0, 1);
+
+    if (e == 'e1') { ev = BABYLON.MeshBuilder.CreateBox('e1', { size: 2.5 }, scene) 
+    ev.material = mat1; ev.position = new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]) };
+    
+    if (e == 'e2') { ev = BABYLON.MeshBuilder.CreateBox('e2', { size: 2.5 }, scene); 
+    ev.material = mat2; ev.position = new BABYLON.Vector3(pos2[0], pos2[1], pos2[2]) };
+    
+    return ev };
+
+function render (masses, velo, positions, array, timelim2, checks) {
     let timetrack = 0; let off = false;
     let stopbtn = document.getElementById("simstop"); stopbtn.onclick = function() { off = true; };
-    let reset = document.getElementById("rstcam"); 
+    let reset = document.getElementById("rstcam"); let simrun = document.getElementById("simbtn");
     let timelim1 = Number(document.getElementById("e1time").value); 
-    let e1pos = Array.from(document.getElementsByName("e1xyz")); e1pos.forEach(function(n) { Number(n); });
-    let e2pos = Array.from(document.getElementsByName("e2xyz")); e2pos.forEach(function(n) { Number(n); });
-
+    let e1 = Array.from(document.getElementsByName("e1xyz")); let e1pos = e1.map(n => Number(n.value) );
+    let e2 = Array.from(document.getElementsByName("e2xyz")); let e2pos = e2.map(n => Number(n.value) );
+    let start = Date.now()/1000;
+    let checked = checks;
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
-
-    function eventplot (timelim1, timelim2, pos1, pos2, scene) {
-        let e1 = null; let e2 = null;
-        let mat1 = new BABYLON.StandardMaterial; mat1.emissiveColor = new BABYLON.Color3(1, 0, 0);
-        let mat2 = new BABYLON.StandardMaterial; mat2.emissiveColor = new BABYLON.Color3(0, 0, 1);
-    
-        if (timetrack >= timelim1) { e1 = BABYLON.MeshBuilder.CreateBox('e1', { size: 1.5 }, scene); e1.material = mat1; 
-                                                                        e1.position = new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]) };
-        if (timetrack >= (timelim2-5)) { e2 = BABYLON.MeshBuilder.CreateBox('e2', { size: 1.5 }, scene); e2.material = mat2 
-                                                                        e2.position = new BABYLON.Vector3(pos2[0], pos2[1], pos2[2]) };
-        return {e1: e1, e2: e2}; }
 
     function createScene() {
 
@@ -252,7 +254,7 @@ function render (masses, velo, positions, array, timelim2) {
     let primary = 100;
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
-    const camera = new BABYLON.ArcRotateCamera('', raddeg(180, 0), 0, 100, new BABYLON.Vector3(100, 0, 0), scene);
+    const camera = new BABYLON.ArcRotateCamera('', 0, 0, 100, new BABYLON.Vector3(100, 0, 0), scene);
     camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
     camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
     camera.attachControl(canvas, true);
@@ -285,33 +287,36 @@ function render (masses, velo, positions, array, timelim2) {
     let current1 = new BABYLON.Mesh("obj2");
     current1 = synthObject(scene, array, checked[1]);
     let pos2 = positions[checked[1]];
-    let velo1 = axial_velocity(velo[checked[0]]); let velo2 = axial_velocity(velo[checked[1]]);
+    let velo1 = axial_velocity(velo[checked[0]]); let velo2 = axial_velocity(velo[checked[1]]); console.log('from render', velo1, velo2)
 
     let vect1 = synthVector(scene, pos1, pos2);
-    let node = vect1.node; let vect2 = vect1.vector; let rot1 = vect1.rot.y; let rot2 = vect1.rot.z;
+    let node = vect1.node; let vect2 = vect1.vector;
 
-    reset.onclick = function() { camera.position = new BABYLON.Vector3(100, 0, 0); camera.target = new BABYLON.Vector3(100, 0, 0); };
+    reset.onclick = function() { camera.position = new BABYLON.Vector3.Zero(); camera.target = new BABYLON.Vector3(100, 0, 0); };
+    let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
 
     scene.registerBeforeRender(function () {
         augment(current0, current1, pos1, pos2, velo1, velo2, vect2, node);
-        timetrack += 1/60;
-        let e1Mesh = eventplot(timelim1, timelim2, e1pos, e2pos, scene).e1;
-        if (timetrack >= timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1; e1Mesh.rotation.z += 0.1; }
-        let e2Mesh = eventplot(timelim1, timelim2, e1pos, e2pos, scene).e2;
-        if (timetrack >= timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1; }
+        timetrack = (Date.now()/1000) - start;
+        if (timetrack >= timelim1) { e1Mesh.setEnabled(true) }; 
+        if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
+        if (timetrack > timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1, e1Mesh.rotation.z += 0.1 };
+        if (timetrack > timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1 };
     })
 
     return scene; }
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        timetrack += 1/60;
-        if (timetrack >= timelim) { 
+        if (timetrack >= (timelim2 + 5) || !!off) { 
             custom.simtimer.simtimestop();
-            engine.stopRenderLoop(); 
+            custom.simtimer.simtimereset();
+            engine.stopRenderLoop();
+            simrun.disabled = false; 
         } else { 
-            custom.simtimer.setsimtime(timelim);
+            custom.simtimer.setsimtime(timelim2 + 5);
             toRender.render();
+            simrun.disabled = true;
         }
     })
     
