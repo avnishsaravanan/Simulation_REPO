@@ -855,7 +855,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        if (timetrack >= (timelim2 + 5) || !!off) { 
+        if (timetrack >= (timelim22 + 5) || !!off) { 
             custom.simtimer.simtimestop();
             custom.simtimer.simtimereset();
             engine.stopRenderLoop();
