@@ -17,7 +17,7 @@
     {0:"Sphere7", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere8", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
     {0:"Sphere9", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45} ];*/
-  let velocities = [[0.5, 45, 45], [0.8, 45, 45]];
+  let velocities = [[0.001, 30, 45], [0.01, 50, 80]];
   let positions = [[30, 30, 30], [50, 50, 50]];
   let masses = [30, 50];
 
@@ -95,7 +95,7 @@
         if (elem.id == 'objname' || elem.id == 'objcolor') {
           arrsimobject[x] = elem.value;
         } else {
-          arrsimobject[x] = Number(elem.value); x
+          arrsimobject[x] = Number(elem.value); 
         }
         x+=1;
       });
@@ -126,11 +126,11 @@
         custom.newalert.alert('Object Added','Info');
       } else {
         // update arrims
-        arrsimobjects[(upobj() - 1)] = arrsimobject;
+        arrsimobjects[(upobj()-1)] = arrsimobject;
 
-        velocities[(upobj() -1)] = [arrsimobject[7], arrsimobject[8], arrsimobject[9]];
-        positions[(upobj() -1)] = [arrsimobject[4], arrsimobject[5], arrsimobject[6]];
-        masses[(upobj() -1)] = arrsimobject[2];
+        velocities[(upobj()-1)] = [arrsimobject[7], arrsimobject[8], arrsimobject[9]];
+        positions[(upobj()-1)] = [arrsimobject[4], arrsimobject[5], arrsimobject[6]];
+        masses[(upobj()-1)] = arrsimobject[2];
 
         document.getElementById("objlabel"+(upobj())).childNodes[0].textContent = arrsimobject[0];
         customAlert.alert('Updates Saved','Info'); // beautify
@@ -204,15 +204,15 @@
     simrun = document.getElementById('simbtn');
     simrun.onclick = function() {
       let time = Number(document.getElementById("e2time").value);
-      const objlist = Array.from(objectslist);
-      console.log(time);
+      const objlist = Array.from(document.getElementsByClassName("checkcontainer"));
       event.preventDefault();
       custom.simtimer.simtimestart();
       let checked = [upobj()-1, Number(checks[1].match(/\d+/))-1];
+      //if (checked[0] > checked[1]) { checked[0] = checked.splice(1, 1, checked[0])[0]};
       inputs(masses, velocities, checked);
       graphics(masses, velocities, positions, arrsimobjects, time, checked);
       const siminfo = document.getElementById("siminfo");
-      siminfo.innerText = `Simulation is currently running for objects '${objlist[checked[0]].innerText}' and '${objlist[checked[1]].innerText}'`;
+      siminfo.textContent = `Simulation is currently running for objects '${objlist[checked[0]].innerText}' and '${objlist[checked[1]].innerText}'`;
       console.log(objlist[0].innerText);
       //addScript('renderCanvas','./render1.bundle.js');      
     };
@@ -220,9 +220,9 @@
     // velo toggle interactions 
     velomode.onclick = function () {
       if (this.checked) {
-        document.getElementById('veloabsrel').innerText = "Veloity: Relative";
+        document.getElementById('veloabsrel').innerText = "Velocity: Relative";
       } else {
-        document.getElementById('veloabsrel').innerText = "Veloity: Absolute";
+        document.getElementById('veloabsrel').innerText = "Velocity: Absolute";
       }
     };
     

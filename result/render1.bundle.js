@@ -25,9 +25,9 @@ function radians_degrees (input, path) {
     else {return input * (180/pi) }} //radians to degrees
 
 function axial_velocity(velo) {
-    let veloX = velo[0] * Math.cos(radians_degrees(velo[1]));
-    let veloY = velo[0] * Math.sin(radians_degrees(velo[1])) * Math.sin(radians_degrees(velo[2]));
-    let veloZ = velo[0] * Math.sin(radians_degrees(velo[1])) * Math.cos(radians_degrees(velo[2]));
+    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0));
+    let veloY = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.sin(radians_degrees(velo[2], 0));
+    let veloZ = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.cos(radians_degrees(velo[2], 0));
     console.log("done, from first call");
     return {x : veloX, y : veloY, z : veloZ};
 }
@@ -185,18 +185,18 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
         (obj1.position.z - pos1[2]) >= 100 ) {}
     
     else {
-    obj1.position.x += 0.1 * -velo1.x;
-    obj1.position.y += 0.1 * velo1.y;
-    obj1.position.z += 0.1 * -velo1.z; }
+    obj1.position.x += 5 * velo1.x;
+    obj1.position.y += 5 * velo1.y;
+    obj1.position.z += 5 * velo1.z; }
 
     if ((obj2.position.x - pos2[0]) >= 100 ||
         (obj2.position.y - pos2[1]) >= 100 ||
         (obj2.position.z - pos2[2]) >= 100 ) {}
 
     else {
-    obj2.position.x += 0.1 * -velo2.x;
-    obj2.position.y += 0.1 * velo2.y;
-    obj2.position.z += 0.1 * -velo2.z; }
+    obj2.position.x += 5 * velo2.x;
+    obj2.position.y += 5 * velo2.y;
+    obj2.position.z += 5 * velo2.z; }
 
     //let disref = displacement (pos2, pos1);
     let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
@@ -237,9 +237,10 @@ function eventplot (pos1, pos2, e, scene) {
     return ev };
 
 function render (masses, velo, positions, array, timelim2, checks) {
-    let timetrack = 0; let off = false;
-    let stopbtn = document.getElementById("simstop"); stopbtn.onclick = function() { off = true; };
-    let reset = document.getElementById("rstcam"); let simrun = document.getElementById("simbtn");
+    let timetrack = 0; let simoff = false; let userel = null;
+    const stopbtn = document.getElementById("simstop"); stopbtn.onclick = function() { simoff = true; };
+    const reset = document.getElementById("rstcam"); const simrun = document.getElementById("simbtn");
+    const rel = document.getElementById("absrel"); if (rel.checked) { userel = true } else { userel = false };
     let timelim1 = Number(document.getElementById("e1time").value); 
     let e1 = Array.from(document.getElementsByName("e1xyz")); let e1pos = e1.map(n => Number(n.value) );
     let e2 = Array.from(document.getElementsByName("e2xyz")); let e2pos = e2.map(n => Number(n.value) );
@@ -254,12 +255,12 @@ function render (masses, velo, positions, array, timelim2, checks) {
     let primary = 100;
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
-    const camera = new BABYLON.ArcRotateCamera('', 0, 0, 100, new BABYLON.Vector3(100, 0, 0), scene);
+    const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
     camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
     camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
     camera.attachControl(canvas, true);
     const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene); 
-     
+    
     let originpts = [[new BABYLON.Vector3(0, 0, 0),
                       new BABYLON.Vector3(primary, 0, 0)],
                       [new BABYLON.Vector3(0, 0, 0),
@@ -288,11 +289,16 @@ function render (masses, velo, positions, array, timelim2, checks) {
     current1 = synthObject(scene, array, checked[1]);
     let pos2 = positions[checked[1]];
     let velo1 = axial_velocity(velo[checked[0]]); let velo2 = axial_velocity(velo[checked[1]]); console.log('from render', velo1, velo2)
+    if (!!userel) { let temp = velo2;
+                    velo2 = {x: Math.abs(temp.x - velo1.x),
+                             y: Math.abs(temp.y - velo1.y),
+                             z: Math.abs(temp.z - velo1.z) }
+                    velo1 = {x: 0, y: 0, z: 0}}
 
     let vect1 = synthVector(scene, pos1, pos2);
     let node = vect1.node; let vect2 = vect1.vector;
 
-    reset.onclick = function() { camera.position = new BABYLON.Vector3.Zero(); camera.target = new BABYLON.Vector3(100, 0, 0); };
+    reset.onclick = function() { camera.position = new BABYLON.Vector3(); };
     let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
 
     scene.registerBeforeRender(function () {
@@ -308,15 +314,17 @@ function render (masses, velo, positions, array, timelim2, checks) {
 
     let toRender = createScene();
     engine.runRenderLoop(function () {
-        if (timetrack >= (timelim2 + 5) || !!off) { 
+        if (timetrack >= (timelim2 + 5) || !!simoff) { 
             custom.simtimer.simtimestop();
             custom.simtimer.simtimereset();
             engine.stopRenderLoop();
             simrun.disabled = false; 
+            rel.disabled = false;
         } else { 
             custom.simtimer.setsimtime(timelim2 + 5);
             toRender.render();
             simrun.disabled = true;
+            rel.disabled = true;
         }
     })
     
