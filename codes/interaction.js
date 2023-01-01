@@ -209,7 +209,7 @@
       custom.simtimer.simtimestart();
       let checked = [upobj()-1, Number(checks[1].match(/\d+/))-1];
       //if (checked[0] > checked[1]) { checked[0] = checked.splice(1, 1, checked[0])[0]};
-      inputs(masses, velocities, checked);
+      inputs(masses, velocities, positions, checked);
       graphics(masses, velocities, positions, arrsimobjects, time, checked);
       const siminfo = document.getElementById("siminfo");
       siminfo.textContent = `Simulation is currently running for objects '${objlist[checked[0]].innerText}' and '${objlist[checked[1]].innerText}'`;

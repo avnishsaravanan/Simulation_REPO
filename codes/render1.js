@@ -1,10 +1,11 @@
-let BABYLON = require("babylonjs");
+const BABYLON = require("babylonjs");
 const custom = require("./customs.js");
+const simselect = require("./simselect.js");
 let velos = require("./velocity_codes.js");
 //let result = require("./inputs.js").result;
-let raddeg = velos.radians_degrees;
-let axial_velocity = velos.axial_velocity;
-let displacement = velos.displacement;
+const raddeg = velos.radians_degrees;
+const axial_velocity = velos.axial_velocity;
+const displacement = velos.displacement;
 
 function synthObject (scene, objspecs, synthindex) {
     let object;
@@ -126,12 +127,15 @@ function render (masses, velo, positions, array, timelim2, checks) {
     let checked = checks;
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
+    let simmsg = new custom.CustomAlert();
 
     function createScene() {
 
     let scene = new BABYLON.Scene(engine);
     let primary = 100;
-    scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+    if (store.BG == "black") { scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); }
+    else { scene.clearColor = new BABYLON.Color4(0, 0, 0.8, 1); let ground = new BABYLON.MeshBuilder.CreatePlane('grnd', {size: 200, sideOrientation: DOUBLESIDE}, scene); 
+           let groundmat = new BABYLON.StandardMaterial; groundmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5), ground.material = groundmat };
 
     const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
     camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
@@ -178,6 +182,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
 
     reset.onclick = function() { camera.position = new BABYLON.Vector3(); };
     let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
+    let store = simselect(masses, velocities, positions, checked, null, "graphics");
 
     scene.registerBeforeRender(function () {
         augment(current0, current1, pos1, pos2, velo1, velo2, vect2, node);
@@ -198,6 +203,8 @@ function render (masses, velo, positions, array, timelim2, checks) {
             engine.stopRenderLoop();
             simrun.disabled = false; 
             rel.disabled = false;
+            simmsg.alert(graphics.simmsg, "Simulation concluded")
+            document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() };
         } else { 
             custom.simtimer.setsimtime(timelim2 + 5);
             toRender.render();

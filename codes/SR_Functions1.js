@@ -9,7 +9,6 @@
 - 
 - equation element highlighter */
 
-
 const c = 1;
 let velos = require("./velocity_codes");
 coaxial_displacement = velos.coaxial_displacement;
@@ -20,7 +19,6 @@ function equations (input) {
 
     this.content = {};    
     this.content = input; 
-    console.log("from sr functions,", this.content);
 
     dt_P = this.content.dt_P;
     dt_Q = this.content.dt_Q;
@@ -36,7 +34,6 @@ function equations (input) {
          
     this.case1 = function case1() { //delta T in frame Q
         //basic form of Lorentz transformation
-        //account for asynchronised separation later
         term1 = (colinear_velo.x * colinear_dis.x);
         term2 = (colinear_velo.y * colinear_dis.y);
         term3 = (colinear_velo.z * colinear_dis.z);
@@ -48,8 +45,7 @@ function equations (input) {
         term2 = (colinear_velo.y * colinear_dis.y);
         term3 = (colinear_velo.z * colinear_dis.z);
         term4 = (dt_Q + (term1 + term2 + term3));
-        this.content.dt_P = term4 * LzF; 
-        console.log("from SR functions 2", this.content.dt_P) };
+        this.content.dt_P = term4 * LzF; }
     
     this.case3 = function case3() {  //displacement in frame Q
         term1 = (dp_P.x - (colinear_velo.x * dt_P));
@@ -77,11 +73,9 @@ function equations (input) {
         term2 = (c**2/LzF * (colinear_velo.total));
         this.content.dp_P = term2 * (dt_Q + term1); };
     
-    this.case7 = function case7() {
-        this.content.energy1 = (mass1 * LzF * (c**2)); };
-    
-    this.case8 = function case8() {
-        this.content.energy2 = (mass2 * LzF * (c**2)); };
+    this.en = function () {
+        this.content.energy1 = (mass1 * LzF * (c**2));
+        this.content.energy2 = (mass2 * LzF * (c**2)); }    
 
     return this;
 }

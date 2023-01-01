@@ -101,10 +101,10 @@
     
         dialogoverlay.style.display = "block";
         dialogbox.style.display = "block";
-        
+         
         document.getElementById('dialogboxhead').style.display = 'block';
     
-        if(typeof title === 'undefined') {
+        if(typeof title === 'undefined') {  
           document.getElementById('dialogboxhead').style.display = 'none';
         } else {
           document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
