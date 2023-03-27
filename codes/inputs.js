@@ -2,10 +2,11 @@
 //imports - 
 
 let velos = require("./velocity_codes.js");
-    let coaxial_velocity = velos.coaxial_velocity;
-    let displacement = velos.displacement;
-    let coaxial_displacement = velos.coaxial_displacement;
-    let axial_velocity = velos.axial_velocity;
+    const coaxial_velocity = velos.coaxial_velocity;
+    const displacement = velos.displacement;
+    const coaxial_displacement = velos.coaxial_displacement;
+    const axial_velocity = velos.axial_velocity;
+const simselect = require("./simselect.js");
 
 function inputs (masses, velo, positions, checks) {
 //    let interaction = require("./interaction.js");
@@ -110,7 +111,7 @@ input = { dt_P: dt_PA,
 
 console.log("from input js: input", input);
 
-result = new equations(input);
+result = simselect(masses, velocities, positions, checked, input, "calc"); console.log(result);
 
 if (input.dp_Q == null && solvefx.value == "deltat1") { result.case1(); result.case3();}
 if (input.dp_P == null && solvefx.value == "deltat") { result.case2(); result.case4();}
@@ -119,8 +120,8 @@ if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax") { res
 if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax1") { result.case6();}
 
 if (input.dp_Q == null && (input.dp_P.total == 0 || input.dp_P.total >= 1)) { result.case1(); result.case3(); }
-if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { result.case2(); result.case4(); }     
- 
+if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { result.case2(); result.case4(); } 
+
 result.en();
 
 let dt = document.querySelector("#deltafx > #deltat");   dt.setAttribute('value', result.content.dt_P);

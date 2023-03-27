@@ -18,7 +18,7 @@ function axial_velocity(velo) {
 
 function displacement(term2, term1) {
     if (!term1) { term1 = [0, 0, 0]; }
-    dis = {};
+    let dis = {};
     dis.x = term2[0] - term1[0];
     dis.y = term2[1] - term1[1];
     dis.z = term2[2] - term1[2];
@@ -29,8 +29,8 @@ function displacement(term2, term1) {
 function coaxial_displacement(relvelo, pos2, pos1) {
     if (pos1[0] == null && pos2[0] == null) { console.log("null condition"); return null }
     else {
-    coaxial_dis = {};
-    dis = displacement(pos2, pos1)
+    let coaxial_dis = {};
+    let dis = displacement(pos2, pos1)
     coefs = coaxial_velocity(relvelo, pos2, pos1).coefs;
     coaxial_dis.x = coefs[0] * dis.x;
     coaxial_dis.y = coefs[1] * dis.y;

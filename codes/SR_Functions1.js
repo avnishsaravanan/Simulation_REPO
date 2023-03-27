@@ -11,9 +11,9 @@
 
 const c = 1;
 let velos = require("./velocity_codes");
-coaxial_displacement = velos.coaxial_displacement;
-coaxial_velocity = velos.coaxial_velocity;
-displacement = velos.displacement;
+const coaxial_displacement = velos.coaxial_displacement;
+const coaxial_velocity = velos.coaxial_velocity;
+const displacement = velos.displacement;
 
 function equations (input) {
 
@@ -72,7 +72,7 @@ function equations (input) {
         term1 = ( LzF * - dt_Q);
         term2 = (c**2/LzF * (colinear_velo.total));
         this.content.dp_P = term2 * (dt_Q + term1); };
-    
+        
     this.en = function () {
         this.content.energy1 = (mass1 * LzF * (c**2));
         this.content.energy2 = (mass2 * LzF * (c**2)); }    

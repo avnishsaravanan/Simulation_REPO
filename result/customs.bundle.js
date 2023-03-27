@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 7:
+/***/ 8:
 /***/ ((module) => {
 
 
@@ -107,10 +107,10 @@
     
         dialogoverlay.style.display = "block";
         dialogbox.style.display = "block";
-        
+         
         document.getElementById('dialogboxhead').style.display = 'block';
     
-        if(typeof title === 'undefined') {
+        if(typeof title === 'undefined') {  
           document.getElementById('dialogboxhead').style.display = 'none';
         } else {
           document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
@@ -165,7 +165,7 @@
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(7);
+/******/ 	var __webpack_exports__ = __webpack_require__(8);
 /******/ 	
 /******/ })()
 ;

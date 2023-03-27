@@ -18,8 +18,8 @@
     {"objname":"Sphere2", "objsize":8, "objmass":50, "objcolor":"#535353", "objposx":50, "objposy":50, "objposz":50, "speed":0.5, "xyangle":50, "yzangle":80} ];*/
 
   let inputs = __webpack_require__(3);
-  let graphics = __webpack_require__(6);
-  const custom = __webpack_require__(7);
+  let graphics = __webpack_require__(9);
+  const custom = __webpack_require__(8);
   let arrsimobjects = [
     {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80} ];
@@ -222,11 +222,10 @@
       custom.simtimer.simtimestart();
       let checked = [upobj()-1, Number(checks[1].match(/\d+/))-1];
       //if (checked[0] > checked[1]) { checked[0] = checked.splice(1, 1, checked[0])[0]};
-      inputs(masses, velocities, checked);
+      inputs(masses, velocities, positions, checked);
       graphics(masses, velocities, positions, arrsimobjects, time, checked);
       const siminfo = document.getElementById("siminfo");
       siminfo.textContent = `Simulation is currently running for objects '${objlist[checked[0]].innerText}' and '${objlist[checked[1]].innerText}'`;
-      siminfo.textContent.bold = true;
       console.log(objlist[0].innerText);
       //addScript('renderCanvas','./render1.bundle.js');      
     };
@@ -323,14 +322,15 @@
 
 //detail queryselectors if necessary
 //imports - 
-let equations = __webpack_require__(4);
-let velos = __webpack_require__(5);
-    coaxial_velocity = velos.coaxial_velocity;
-    displacement = velos.displacement;
-    coaxial_displacement = velos.coaxial_displacement;
-    axial_velocity = velos.axial_velocity;
 
-function inputs (masses, velo, checks) {
+let velos = __webpack_require__(4);
+    const coaxial_velocity = velos.coaxial_velocity;
+    const displacement = velos.displacement;
+    const coaxial_displacement = velos.coaxial_displacement;
+    const axial_velocity = velos.axial_velocity;
+const simselect = __webpack_require__(5);
+
+function inputs (masses, velo, positions, checks) {
 //    let interaction = require("./interaction.js");
     //let masses = interaction.masses;
     //let positions = interaction.positions;
@@ -394,21 +394,21 @@ function sol_var() {
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax1") { if (event2.pos == null || event1.pos == null) {dp_PA = null}
+    if (solvefx.value == "deltax1") { if (event2.x == null || event1.x == null) {dp_PA = null}
                                       else {dp_PA = displacement(event2.pos, event1.pos)}; 
                                      dt_PA = (event2.time - event1.time);
-                                     buffer = document.querySelector("#deltafx > #deltat")
+                                     document.getElementById("deltat1").focus(); buffer = document.querySelector("#deltafx > #deltat1").value;
                                      if (buffer == 0) { dt_QA = null; } else { dt_QA = Number(buffer) };
                                      dp_QA = null;
                                      mass1 = masses[checked[1]];
                                      mass2 = masses[checked[0]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax")  { if (event2.pos == null || event1.pos == null) {dp_QA = null}
+    if (solvefx.value == "deltax")  { if (event2.x == null || event1.x == null) {dp_QA = null}
                                       else {dp_QA = displacement(event2.pos, event1.pos)};  
                                      dt_QA = (event2.time - event1.time);
                                      dp_PA = null;
-                                     buffer = document.querySelector("#deltafx > #deltat").value;
+                                     document.getElementById("deltat").focus(); buffer = document.querySelector("#deltafx > #deltat").value;
                                      if (buffer == 0) { dt_PA = null; } else { dt_PA = Number(buffer) };
                                      mass1 = masses[checked[0]];
                                      mass2 = masses[checked[1]];
@@ -418,6 +418,9 @@ function sol_var() {
 
 sol_var();
 
+if (colinear_veloA == null) { colinear_veloA.total = relvelo.total; }
+let r = displacement(positions[checked[1]], positions[checked[0]]);
+
 input = { dt_P: dt_PA, 
     dt_Q: dt_QA, 
     dp_P: dp_PA,
@@ -425,12 +428,12 @@ input = { dt_P: dt_PA,
     colinear_velo: colinear_veloA, 
     colinear_dis: colinear_disA,
     mass1: mass1,
-    mass2: mass2 };
-
-if (input.colinear_velo == null) { colinear_veloA.total = relvelo.total; }
+    mass2: mass2, 
+    dist: r };
 
 console.log("from input js: input", input);
-result = new equations(input);
+
+result = simselect(masses, velocities, positions, checked, input, "calc"); console.log(result);
 
 if (input.dp_Q == null && solvefx.value == "deltat1") { result.case1(); result.case3();}
 if (input.dp_P == null && solvefx.value == "deltat") { result.case2(); result.case4();}
@@ -439,24 +442,17 @@ if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax") { res
 if (input.dp_Q == null && input.dp_P == null && solvefx.value == "deltax1") { result.case6();}
 
 if (input.dp_Q == null && (input.dp_P.total == 0 || input.dp_P.total >= 1)) { result.case1(); result.case3(); }
-if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { result.case2(); result.case4(); }     
- 
-result.case7();
-result.case8();
+if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { result.case2(); result.case4(); } 
 
-let dt = document.querySelector("#deltafx > #deltat");
-let dt1 = document.querySelector("#deltafx > #deltat1");
-let dx = document.querySelector("#deltafx > #deltax");
-let dx1 = document.querySelector("#deltafx > #deltax1");
-let e1 = document.querySelector("#deltafx > #energy");
-let e2 = document.querySelector("#deltafx > #energy1");
+result.en();
 
-dt.setAttribute('value', result.content.dt_P);
-dt1.setAttribute('value', result.content.dt_Q);
-dx.setAttribute('value', result.content.dp_P);
-dx1.setAttribute('value', result.content.dp_Q);
-e1.setAttribute('value', result.content.energy1);
-e2.setAttribute('value', result.content.energy2);
+let dt = document.querySelector("#deltafx > #deltat");   dt.setAttribute('value', result.content.dt_P);
+let dt1 = document.querySelector("#deltafx > #deltat1"); dt1.setAttribute('value', result.content.dt_Q);
+let dx = document.querySelector("#deltafx > #deltax");   dx.setAttribute('value', result.content.dp_P);
+let dx1 = document.querySelector("#deltafx > #deltax1"); dx1.setAttribute('value', result.content.dp_Q);
+let e1 = document.querySelector("#deltafx > #energy");   e1.setAttribute('value', result.content.energy1);
+let e2 = document.querySelector("#deltafx > #energy1");  e2.setAttribute('value', result.content.energy2);
+
 
 console.log("ins outs recognised");
     }
@@ -466,100 +462,6 @@ module.exports = inputs;
 
 /***/ }),
 /* 4 */
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
- //arguments/parameters: velocity vector, event positions, object positions
-/*functions list:
-- converting between axes
-- event plotter
-- alerting when values are beyond bounds, done
-- element checkboxes, done
-- equation element checkbox, done
-- all calculations, done
-- 
-- equation element highlighter */
-
-
-const c = 1;
-let velos = __webpack_require__(5);
-coaxial_displacement = velos.coaxial_displacement;
-coaxial_velocity = velos.coaxial_velocity;
-displacement = velos.displacement;
-
-function equations (input) {
-
-    this.content = {};    
-    this.content = input; 
-    console.log("from sr functions,", this.content);
-
-    dt_P = this.content.dt_P;
-    dt_Q = this.content.dt_Q;
-    dp_P = this.content.dp_P;
-    dp_Q = this.content.dp_Q;
-    mass1 = this.content.mass1;
-    mass2 = this.content.mass2;
-    colinear_dis = this.content.colinear_dis;
-    colinear_velo = this.content.colinear_velo;
-    
-    velo_sum = ((colinear_velo.x**2) + (colinear_velo.y**2) + (colinear_velo.z**2));
-    const LzF = (1/Math.sqrt(1 - (velo_sum/c**2))); //check whether Lorentz factor is directional
-         
-    this.case1 = function case1() { //delta T in frame Q
-        //basic form of Lorentz transformation
-        //account for asynchronised separation later
-        term1 = (colinear_velo.x * colinear_dis.x);
-        term2 = (colinear_velo.y * colinear_dis.y);
-        term3 = (colinear_velo.z * colinear_dis.z);
-        term4 = (dt_P + (-term1 - term2 - term3)/c**2);
-        this.content.dt_Q = term4 * LzF; };
-
-    this.case2 = function case2() { //delta T in frame P
-        term1 = (colinear_velo.x * colinear_dis.x);
-        term2 = (colinear_velo.y * colinear_dis.y);
-        term3 = (colinear_velo.z * colinear_dis.z);
-        term4 = (dt_Q + (term1 + term2 + term3));
-        this.content.dt_P = term4 * LzF; 
-        console.log("from SR functions 2", this.content.dt_P) };
-    
-    this.case3 = function case3() {  //displacement in frame Q
-        term1 = (dp_P.x - (colinear_velo.x * dt_P));
-        term2 = (dp_P.y - (colinear_velo.y * dt_P));
-        term3 = (dp_P.z - (colinear_velo.z * dt_P));
-        term4 = [(term1 * LzF), (term2 * LzF), (term3 * LzF)];
-        this.content.dp_Q = displacement(term4).total;
-        this.content.dp_P = dp_P.total; };
-
-    this.case4 = function case4() { //displacement in frame p
-        term1 = (dp_Q.x - (colinear_velo.x * dt_Q));
-        term2 = (dp_Q.y - (colinear_velo.y * dt_Q));
-        term3 = (dp_Q.z - (colinear_velo.z * dt_Q));
-        term4 = [(term1 * LzF), (term2 * LzF), (term3 * LzF)];
-        this.content.dp_P = displacement(term4).total;
-        this.content.dp_Q = dp_Q.total; };
-    
-    this.case6 = function case6() { //delta x' without delta x - assuming 100% coaxial velo
-        term1 = ( LzF * - dt_P);
-        term2 = (c**2/LzF * -(colinear_velo.total));
-        this.content.dp_P = term2 * (dt_Q + term1); };
-    
-    this.case5 = function case5() { //delta x without delta x' - assuming 100% coaxial velo
-        term1 = ( LzF * - dt_Q);
-        term2 = (c**2/LzF * (colinear_velo.total));
-        this.content.dp_P = term2 * (dt_Q + term1); };
-    
-    this.case7 = function case7() {
-        this.content.energy1 = (mass1 * LzF * (c**2)); };
-    
-    this.case8 = function case8() {
-        this.content.energy2 = (mass2 * LzF * (c**2)); };
-
-    return this;
-}
-
-module.exports = equations;
-
-/***/ }),
-/* 5 */
 /***/ ((module) => {
 
 //coaxial velocity - xyz, total
@@ -582,7 +484,7 @@ function axial_velocity(velo) {
 
 function displacement(term2, term1) {
     if (!term1) { term1 = [0, 0, 0]; }
-    dis = {};
+    let dis = {};
     dis.x = term2[0] - term1[0];
     dis.y = term2[1] - term1[1];
     dis.z = term2[2] - term1[2];
@@ -593,8 +495,8 @@ function displacement(term2, term1) {
 function coaxial_displacement(relvelo, pos2, pos1) {
     if (pos1[0] == null && pos2[0] == null) { console.log("null condition"); return null }
     else {
-    coaxial_dis = {};
-    dis = displacement(pos2, pos1)
+    let coaxial_dis = {};
+    let dis = displacement(pos2, pos1)
     coefs = coaxial_velocity(relvelo, pos2, pos1).coefs;
     coaxial_dis.x = coefs[0] * dis.x;
     coaxial_dis.y = coefs[1] * dis.y;
@@ -665,227 +567,197 @@ module.exports = {coaxial_velocity: coaxial_velocity,
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-let BABYLON = __webpack_require__(1);
-const custom = __webpack_require__(7);
-let velos = __webpack_require__(5);
-//let result = require("./inputs.js").result;
-let raddeg = velos.radians_degrees;
-let axial_velocity = velos.axial_velocity;
-let displacement = velos.displacement;
+// units - velocity as percent of c, distance as 200 = 1 AU
+const GR = __webpack_require__(6); const SR = __webpack_require__(7); //const NM = require("./NM_Functions3");
+let imp = __webpack_require__(4); const velos = imp.axial_velocity; const dis = imp.displacement;
+const custom = __webpack_require__(8);
 
-function synthObject (scene, objspecs, synthindex) {
-    let object;
-    let param = objspecs[synthindex];
-    let color = new BABYLON.Color4.FromHexString(param[3]);
-    let input_param = {diameter: param[1], segments: 20};
-    object = BABYLON.MeshBuilder.CreateSphere(param[0], input_param, scene);
-    let mat = new BABYLON.StandardMaterial('', scene);
-    mat.diffuseColor = color;
-    //mat.specularColor = new BABYLON.Color4(1, 1, 1, 0.5);
-    object.material = mat;
-    object.position = new BABYLON.Vector3(param[4], param[5], param[6]);
-    return object; 
+/* param */ let masses; let positions; let velocities; let checked; let input; 
+
+function simselect (masses, velocities, positions, checked, input, type) {
+
+let eq_input = new String;
+let M = (masses[checked[1]] >= 0.05) || (masses[checked[0]] >= 0.05);
+let V = dis([velos(velocities[checked[1]]).x, velos(velocities[checked[1]]).y, velos(velocities[checked[1]]).z], 
+            [velos(velocities[checked[0]]).x, velos(velocities[checked[0]]).y, velos(velocities[checked[1]]).z]) >= 0.1;
+let P = dis(positions[checked[1]], positions[checked[0]]).total >= 20;
+
+const mode = document.getElementById("autouser"); const simselect = document.getElementsByName("simselect"); let equation;
+simselect.forEach(function(op) { if (op.checked) { equation = op.id }});
+
+if (!mode.checked) { //auto select condition
+    equation = null;
+    if (M || P) { equation = "sim-gen" };
+    if (V && !equation=="sim-gen") { equation = "sim-spl" };
+    if (!equation) { equation = "sim-new"};        
+    document.getElementById(equation).checked = true
 }
 
-function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
-    let dis = displacement(obj2, obj1); 
-    let factor = dis.total;
-    
-    let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
-    
-    let refvect = new BABYLON.TransformNode("root");
-    refvect.position = new BABYLON.Vector3.Zero();
-        
-    //calculation of midpoint
-    let term1 = new BABYLON.Vector3(dis.x/2, dis.y/2, dis.z/2);
-    let term2 = new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]);
-    let centre = term1.add(term2);
-    
-    let arrowpts = [new BABYLON.Vector3(0, (0.2 * factor), 0), new BABYLON.Vector3(0.3 * factor, 0, 0),
-                    new BABYLON.Vector3(0, (-0.2 * factor), 0),  new BABYLON.Vector3(0, (0.2 * factor), 0)];
-            
-    let trans = vectpts[0][1].subtract(vectpts[0][0]).scale(0.5).x;
-    arrowpts.forEach(function(n) { n.x += trans; });
-    vectpts.push(arrowpts);
-   
-    let vect2 = BABYLON.MeshBuilder.CreateLineSystem("arrow", {lines: vectpts, updatable: true}, scene);
-    vect2.parent = refvect;
-    let posync = Math.sqrt(centre.x**2 + centre.y**2 + centre.z**2);
+if (type == "calc") {
+    if (equation == "sim-gen") { return GR(input) }; 
+    if (equation == "sim-spl") { return SR(input) };
+    //  if (equation == "SIMNEW") { return NM(input) }; 
 
-    vect2.rotate(BABYLON.Axis.Y, -Math.atan(dis.z/dis.x), BABYLON.Space.WORLD);
-    vect2.rotate(BABYLON.Axis.Z, Math.atan(dis.y/dis.x), BABYLON.Space.WORLD);
-    //vect2.rotate(BABYLON.Axis.X, -Math.atan(dis.y/dis.z), BABYLON.Space.WORLD);
-    vect2.translate(BABYLON.Axis.X, (posync/10), BABYLON.Space.LOCAL);
+    //document.getElementById("sinfo").textContent;
 
-    return {node: refvect, vector: vect2, rot: (vect2.rotationQuaternion.toEulerAngles()) };
+
 }
 
-function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
-
-    node.position = obj1.position;
-    //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
-
-    if ((obj1.position.x - pos1[0]) >= 100 ||
-        (obj1.position.y - pos1[1]) >= 100 ||
-        (obj1.position.z - pos1[2]) >= 100 ) {}
-    
-    else {
-    obj1.position.x += 5 * velo1.x;
-    obj1.position.y += 5 * velo1.y;
-    obj1.position.z += 5 * velo1.z; }
-
-    if ((obj2.position.x - pos2[0]) >= 100 ||
-        (obj2.position.y - pos2[1]) >= 100 ||
-        (obj2.position.z - pos2[2]) >= 100 ) {}
-
-    else {
-    obj2.position.x += 5 * velo2.x;
-    obj2.position.y += 5 * velo2.y;
-    obj2.position.z += 5 * velo2.z; }
-
-    //let disref = displacement (pos2, pos1);
-    let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
-                           [obj1.position.x, obj1.position.y, obj1.position.z]);
-    let disref = displacement(pos2, pos1);
-
-    let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
-    let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
-
-    let node1 = new BABYLON.Vector3(0, 1, 0); let node2 = new BABYLON.Vector3(1, 0, 0); let node3 = new BABYLON.Vector3(0, 0, 1)
-    
-    //vector.rotate(BABYLON.Axis.X, Math.PI/60, BABYLON.Space.LOCAL);
-
-    if (!(angle1r == angle1)) { vector.rotate(node.position.add(node1), (angle1 - angle1r), BABYLON.Space.WORLD); };
-    if (!(angle2r == angle2)) { vector.rotate(node.position.add(node2), (angle2 - angle2r), BABYLON.Space.WORLD); }
-    if (!(angle3r == angle3)) { vector.rotate(node.position.add(node3), (angle3 - angle3r), BABYLON.Space.WORLD); }
-    vector.rotate(BABYLON.Axis.Z, raddeg(90, 0), BABYLON.Space.LOCAL);
-    vector.rotate(BABYLON.Axis.Y, raddeg(90, 0), BABYLON.Space.LOCAL);
-    vector.rotate(BABYLON.Axis.X, raddeg(90, 0), BABYLON.Space.LOCAL);
-
-    vector.scaling.x = (dis.total/disref.total);
-    //vector.translate(BABYLON.Axis.X, (dis.total/2 - dis.total/10), BABYLON.Space.LOCAL);
-    
-    //console.log(angle3 - angle3r);
+if (type == "graphics") {
+    let graphics = {BG: null, arrow: true, augment: true, ST: false, simmsg: new String};
+    if (equation == "sim-gen" || equation == "sim-spl") { graphics.BG = "black" };
+    if (equation == "sim-gen") { graphics.augment = false; graphics.arrow = true; graphics.ST = true };
+    if (equation == "sim-gen") { graphics.simmsg = "                 "};
+    if (equation == "sim-spl") { graphics.simmsg = "                 "};
+    if (equation == "sim-new") { graphics.simmsg = "                 "};
+    return graphics;
 }
 
-function eventplot (pos1, pos2, e, scene) {
-    let ev = new BABYLON.Mesh;
-    let mat1 = new BABYLON.StandardMaterial; mat1.emissiveColor = new BABYLON.Color3(1, 0, 0);
-    let mat2 = new BABYLON.StandardMaterial; mat2.emissiveColor = new BABYLON.Color3(0, 0, 1);
-
-    if (e == 'e1') { ev = BABYLON.MeshBuilder.CreateBox('e1', { size: 2.5 }, scene) 
-    ev.material = mat1; ev.position = new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]) };
-    
-    if (e == 'e2') { ev = BABYLON.MeshBuilder.CreateBox('e2', { size: 2.5 }, scene); 
-    ev.material = mat2; ev.position = new BABYLON.Vector3(pos2[0], pos2[1], pos2[2]) };
-    
-    return ev };
-
-function render (masses, velo, positions, array, timelim2, checks) {
-    let timetrack = 0; let simoff = false; let userel = null;
-    const stopbtn = document.getElementById("simstop"); stopbtn.onclick = function() { simoff = true; };
-    const reset = document.getElementById("rstcam"); const simrun = document.getElementById("simbtn");
-    const rel = document.getElementById("absrel"); if (rel.checked) { userel = true } else { userel = false };
-    let timelim1 = Number(document.getElementById("e1time").value); 
-    let e1 = Array.from(document.getElementsByName("e1xyz")); let e1pos = e1.map(n => Number(n.value) );
-    let e2 = Array.from(document.getElementsByName("e2xyz")); let e2pos = e2.map(n => Number(n.value) );
-    let start = Date.now()/1000;
-    let checked = checks;
-    const canvas = document.getElementById("renderCanvas");
-    const engine = new BABYLON.Engine(canvas, true);
-
-    function createScene() {
-
-    let scene = new BABYLON.Scene(engine);
-    let primary = 100;
-    scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-
-    const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
-    camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
-    camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
-    camera.attachControl(canvas, true);
-    const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene); 
-    
-    let originpts = [[new BABYLON.Vector3(0, 0, 0),
-                      new BABYLON.Vector3(primary, 0, 0)],
-                      [new BABYLON.Vector3(0, 0, 0),
-                      new BABYLON.Vector3(0, primary, 0)],
-                      [new BABYLON.Vector3(0, 0, 0),
-                      new BABYLON.Vector3(0, 0, primary) ]];
-       
-    const originset = BABYLON.MeshBuilder.CreateLineSystem('originset', {lines: originpts}, scene);
-    let originpt2 = [[new BABYLON.Vector3((0.9 * primary), (0.03 * primary), 0), new BABYLON.Vector3(primary, 0, 0), 
-        new BABYLON.Vector3((0.9 * primary), (-0.03 * primary), 0)]];
-       
-    arrows = [];
-    arrows[0] = new BABYLON.MeshBuilder.CreateLineSystem("arrowsX", {lines: originpt2}, scene);
-    arrows[1] = arrows[0].clone();
-    arrows[1].rotate(BABYLON.Axis.Z, Math.PI/2, BABYLON.Space.WORLD);
-    arrows[2] = arrows[1].clone();
-    arrows[2].rotate(BABYLON.Axis.Y, Math.PI/2, BABYLON.Space.WORLD);
-    arrows[2].rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.WORLD);
-
-    //sim objects
-    let current0 = new BABYLON.Mesh("obj1");
-    current0 = synthObject(scene, array, checked[0]);
-    let pos1 = positions[checked[0]];
-    
-    let current1 = new BABYLON.Mesh("obj2");
-    current1 = synthObject(scene, array, checked[1]);
-    let pos2 = positions[checked[1]];
-    let velo1 = axial_velocity(velo[checked[0]]); let velo2 = axial_velocity(velo[checked[1]]); console.log('from render', velo1, velo2)
-    if (!!userel) { let temp = velo2;
-                    velo2 = {x: Math.abs(temp.x - velo1.x),
-                             y: Math.abs(temp.y - velo1.y),
-                             z: Math.abs(temp.z - velo1.z) }
-                    velo1 = {x: 0, y: 0, z: 0}}
-
-    let vect1 = synthVector(scene, pos1, pos2);
-    let node = vect1.node; let vect2 = vect1.vector;
-
-    reset.onclick = function() { camera.position = new BABYLON.Vector3(); };
-    let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
-
-    scene.registerBeforeRender(function () {
-        augment(current0, current1, pos1, pos2, velo1, velo2, vect2, node);
-        timetrack = (Date.now()/1000) - start;
-        if (timetrack >= timelim1) { e1Mesh.setEnabled(true) }; 
-        if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
-        if (timetrack > timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1, e1Mesh.rotation.z += 0.1 };
-        if (timetrack > timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1 };
-    })
-
-    return scene; }
-
-    let toRender = createScene();
-    engine.runRenderLoop(function () {
-        if (timetrack >= (timelim2 + 5) || !!simoff) { 
-            custom.simtimer.simtimestop();
-            custom.simtimer.simtimereset();
-            engine.stopRenderLoop();
-            simrun.disabled = false; 
-            rel.disabled = false;
-        } else { 
-            custom.simtimer.setsimtime(timelim2 + 5);
-            toRender.render();
-            simrun.disabled = true;
-            rel.disabled = true;
-        }
-    })
-    
-    window.addEventListener("resize", function () {
-        engine.resize();
-      });
 }
-    module.exports = render;
-
+module.exports = simselect;
 
 
 /***/ }),
+/* 6 */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+let velos = __webpack_require__(4);
+const c = 1;
+const G = 0.022322; //inaccuracy = ~9.5
+
+function equations (input) {
+    
+    this.content = {};
+    this.content = input;
+
+    dt_P = this.content.dt_P;
+    dt_Q = this.content.dt_Q;
+    dp_P = this.content.dp_P.total;
+    dp_Q = this.content.dp_Q.total;
+    mass1 = this.content.mass1;
+    mass2 = this.content.mass2;
+    distance = this.content.distance;
+
+    this.case1 = function case1() { // heavier object frame Q
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
+        this.content.dt_Q = (dt_P * (mass2/mass1) / term1); };
+        // this.content.dt_Q = dt_P * term1;
+    
+   this.case2 = function case2() { // lighter object frame P
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
+        this.content.dt_P = dt_Q * (mass1/mass2) / term1; }
+    
+    this.case3 = function case3() {
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
+        this.content.dp_Q = dp_P * (mass2/mas1) / term1;
+        this.content.dp_P = dp_P.total }
+
+    this.case4 = function case4() {
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
+        this.content.dp_P = dp_Q * (mass1/mass2) * term1; 
+        this.content.dp_Q = dp_Q.total; }
+
+    this.en = function case5() {
+        this.content.energy1 = mass1 * c**2;
+        this.content.energy1 = mass2 * c**2; }
+    
+    return this;
+}
+module.exports = equations; 
+
+/***/ }),
 /* 7 */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+ //arguments/parameters: velocity vector, event positions, object positions
+/*functions list:
+- converting between axes
+- event plotter
+- alerting when values are beyond bounds, done
+- element checkboxes, done
+- equation element checkbox, done
+- all calculations, done
+- 
+- equation element highlighter */
+
+const c = 1;
+let velos = __webpack_require__(4);
+const coaxial_displacement = velos.coaxial_displacement;
+const coaxial_velocity = velos.coaxial_velocity;
+const displacement = velos.displacement;
+
+function equations (input) {
+
+    this.content = {};    
+    this.content = input; 
+
+    dt_P = this.content.dt_P;
+    dt_Q = this.content.dt_Q;
+    dp_P = this.content.dp_P;
+    dp_Q = this.content.dp_Q;
+    mass1 = this.content.mass1;
+    mass2 = this.content.mass2;
+    colinear_dis = this.content.colinear_dis;
+    colinear_velo = this.content.colinear_velo;
+    
+    velo_sum = ((colinear_velo.x**2) + (colinear_velo.y**2) + (colinear_velo.z**2));
+    const LzF = (1/Math.sqrt(1 - (velo_sum/c**2))); //check whether Lorentz factor is directional
+         
+    this.case1 = function case1() { //delta T in frame Q
+        //basic form of Lorentz transformation
+        term1 = (colinear_velo.x * colinear_dis.x);
+        term2 = (colinear_velo.y * colinear_dis.y);
+        term3 = (colinear_velo.z * colinear_dis.z);
+        term4 = (dt_P + (-term1 - term2 - term3)/c**2);
+        this.content.dt_Q = term4 * LzF; };
+
+    this.case2 = function case2() { //delta T in frame P
+        term1 = (colinear_velo.x * colinear_dis.x);
+        term2 = (colinear_velo.y * colinear_dis.y);
+        term3 = (colinear_velo.z * colinear_dis.z);
+        term4 = (dt_Q + (term1 + term2 + term3));
+        this.content.dt_P = term4 * LzF; }
+    
+    this.case3 = function case3() {  //displacement in frame Q
+        term1 = (dp_P.x - (colinear_velo.x * dt_P));
+        term2 = (dp_P.y - (colinear_velo.y * dt_P));
+        term3 = (dp_P.z - (colinear_velo.z * dt_P));
+        term4 = [(term1 * LzF), (term2 * LzF), (term3 * LzF)];
+        this.content.dp_Q = displacement(term4).total;
+        this.content.dp_P = dp_P.total; };
+
+    this.case4 = function case4() { //displacement in frame p
+        term1 = (dp_Q.x - (colinear_velo.x * dt_Q));
+        term2 = (dp_Q.y - (colinear_velo.y * dt_Q));
+        term3 = (dp_Q.z - (colinear_velo.z * dt_Q));
+        term4 = [(term1 * LzF), (term2 * LzF), (term3 * LzF)];
+        this.content.dp_P = displacement(term4).total;
+        this.content.dp_Q = dp_Q.total; };
+    
+    this.case6 = function case6() { //delta x' without delta x - assuming 100% coaxial velo
+        term1 = ( LzF * - dt_P);
+        term2 = (c**2/LzF * -(colinear_velo.total));
+        this.content.dp_P = term2 * (dt_Q + term1); };
+    
+    this.case5 = function case5() { //delta x without delta x' - assuming 100% coaxial velo
+        term1 = ( LzF * - dt_Q);
+        term2 = (c**2/LzF * (colinear_velo.total));
+        this.content.dp_P = term2 * (dt_Q + term1); };
+        
+    this.en = function () {
+        this.content.energy1 = (mass1 * LzF * (c**2));
+        this.content.energy2 = (mass2 * LzF * (c**2)); }    
+
+    return this;
+}
+
+module.exports = equations;
+
+/***/ }),
+/* 8 */
 /***/ ((module) => {
 
 
@@ -991,10 +863,10 @@ function render (masses, velo, positions, array, timelim2, checks) {
     
         dialogoverlay.style.display = "block";
         dialogbox.style.display = "block";
-        
+         
         document.getElementById('dialogboxhead').style.display = 'block';
     
-        if(typeof title === 'undefined') {
+        if(typeof title === 'undefined') {  
           document.getElementById('dialogboxhead').style.display = 'none';
         } else {
           document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
@@ -1015,6 +887,255 @@ function render (masses, velo, positions, array, timelim2, checks) {
     //let customAlert = new CustomAlert();
   
   module.exports = {progressbar: progressbar, CustomAlert: CustomAlert, newalert: newalert, simtimer: simtimer, simTimer: simTimer};
+
+/***/ }),
+/* 9 */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const BABYLON = __webpack_require__(1);
+const custom = __webpack_require__(8);
+const simselect = __webpack_require__(5);
+let velos = __webpack_require__(4);
+//let result = require("./inputs.js").result;
+const raddeg = velos.radians_degrees;
+const axial_velocity = velos.axial_velocity;
+const displacement = velos.displacement;
+
+function synthObject (scene, objspecs, synthindex) {
+    let object;
+    let param = objspecs[synthindex];
+    let color = new BABYLON.Color4.FromHexString(param[3]);
+    let input_param = {diameter: param[1], segments: 20};
+    object = BABYLON.MeshBuilder.CreateSphere(param[0], input_param, scene);
+    let mat = new BABYLON.StandardMaterial('', scene);
+    mat.diffuseColor = color;
+    //mat.specularColor = new BABYLON.Color4(1, 1, 1, 0.5);
+    object.material = mat;
+    object.position = new BABYLON.Vector3(param[4], param[5], param[6]);
+    return object; 
+}
+
+function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
+    let dis = displacement(obj2, obj1); 
+    let factor = dis.total;
+    let newpoints = [new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]).add(new BABYLON.Vector3(3, 3, 3)), new BABYLON.Vector3(obj2[0], obj2[1], obj2[2]).subtract(new BABYLON.Vector3(3, 3, 3))];
+    //let newpoints2 = [newpoints[1], newpoints[0].add(new BABYLON.Vector3(factor * 0.5, factor * 0.1, 0))];
+    //let newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints, updatable: true}, scene);
+    //let newvector2 = new BABYLON.MeshBuilder.CreateLines("new2", {points: newpoints2}, scene);
+    //let newpoints3 = [newpoints[1], newpoints[0].add(new BABYLON.Vector3(factor * 0.5, factor * -0.1, 0))];
+    //let newvector3 = new BABYLON.MeshBuilder.CreateLines("new3", {points: newpoints3}, scene);
+    //let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
+    
+    /*let refvect = new BABYLON.TransformNode("root");
+    refvect.position = new BABYLON.Vector3.Zero();
+        
+    //calculation of midpoint
+    let term1 = new BABYLON.Vector3(dis.x/2, dis.y/2, dis.z/2);
+    let term2 = new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]);
+    let centre = term1.add(term2);
+    
+    let arrowpts = [new BABYLON.Vector3(0, (0.2 * factor), 0), new BABYLON.Vector3(0.3 * factor, 0, 0),
+                    new BABYLON.Vector3(0, (-0.2 * factor), 0),  new BABYLON.Vector3(0, (0.2 * factor), 0)];
+            
+    let trans = vectpts[0][1].subtract(vectpts[0][0]).scale(0.5).x;
+    arrowpts.forEach(function(n) { n.x += trans; });
+    vectpts.push(arrowpts);
+   
+    let vect2 = BABYLON.MeshBuilder.CreateLineSystem("arrow", {lines: vectpts, updatable: true}, scene);
+    vect2.parent = refvect;
+    let posync = Math.sqrt(centre.x**2 + centre.y**2 + centre.z**2);
+
+    vect2.rotate(BABYLON.Axis.Y, -Math.atan(dis.z/dis.x), BABYLON.Space.WORLD);
+    vect2.rotate(BABYLON.Axis.Z, Math.atan(dis.y/dis.x), BABYLON.Space.WORLD);
+    //vect2.rotate(BABYLON.Axis.X, -Math.atan(dis.y/dis.z), BABYLON.Space.WORLD);
+    vect2.translate(BABYLON.Axis.X, (posync/10), BABYLON.Space.LOCAL);*/
+
+    //return {node: refvect, vector: vect2, rot: (vect2.rotationQuaternion.toEulerAngles()) };
+    //return newvector;
+}
+
+function synthPointer (scene, obj, velo) {
+    let length1 = Math.sqrt(velo.x**2 + velo.y**2, velo.z**2);
+    let factor = length1 * 5;
+    let vectpts = [new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)];
+    let arrowpts = [new BABYLON.Vector3(factor, (0.1 * factor), 0), new BABYLON.Vector3((0.4 * factor) + factor, 0, 0), new BABYLON.Vector3(factor, (-0.1 * factor), 0)];
+    vectpts.push(arrowpts);
+    let pointer = new BABYLON.LinesMesh;
+    pointer = new BABYLON.MeshBuilder.CreateLineSystem("ptr", {lines: vectpts, updatable: true}, scene);
+    let ptrorient = pointer.rotationQuaternion.toEulerAngles();
+    while (!(ptrorient.x == Math.atan(velo.y/velo.z))) { pointer.rotate(BABYLON.Axis.X, raddeg(0.1, 0), BABYLON.Space.LOCAL); };
+    while (!(ptrorient.y == Math.atan(velo.z/velo.x))) { pointer.rotate(BABYLON.Axis.Y, raddeg(0.1, 0), BABYLON.Space.LOCAL); };
+    while (!(ptrorient.z == Math.atan(velo.y/velo.x))) { pointer.rotate(BABYLON.Axis.Z, raddeg(0.1, 0), BABYLON.Space.LOCAL); };
+    pointer.position = obj.position;
+}
+
+function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, pointer2, scene) {
+    
+    //node.position = obj1.position;
+    //pointer1.position = obj1.position;
+    //pointer2.position = obj2.position;
+    //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
+
+    while ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
+        obj1.position.x += 0.5 * velo1.x;
+        obj1.position.y += 0.5 * velo1.y;
+        obj1.position.z += 0.5 * velo1.z; }
+    while ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
+        obj2.position.x += 0.5 * velo2.x;
+        obj2.position.y += 0.5 * velo2.y;
+        obj2.position.z += 0.5 * velo2.z; }
+    
+    //let disref = displacement (pos2, pos1);
+    let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
+                           [obj1.position.x, obj1.position.y, obj1.position.z]);
+    let disref = displacement(pos2, pos1);
+ 
+    let factor = dis.total;
+    let newpoints = [new BABYLON.Vector3(obj1.position.x, obj1.position.y, obj1.position.z).add(new BABYLON.Vector3(3, 3, 3)), new BABYLON.Vector3(obj2.position.x, obj2.position.y, obj2.position.z).subtract(new BABYLON.Vector3(3, 3, 3))];
+    let newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints}, scene);
+
+    //let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
+    //let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
+
+    //let node1 = new BABYLON.Vector3(0, 1, 0); let node2 = new BABYLON.Vector3(1, 0, 0); let node3 = new BABYLON.Vector3(0, 0, 1)
+    
+    //vector.rotate(BABYLON.Axis.X, Math.PI/60, BABYLON.Space.LOCAL);
+
+    /*while (!(angle1r == angle1)) { vector.rotate(node.position.add(node1), ((angle1 - angle1r)-0.2), BABYLON.Space.WORLD); };
+    while (!(angle2r == angle2)) { vector.rotate(node.position.add(node2), ((angle2 - angle2r)-0.2), BABYLON.Space.WORLD); }
+    while (!(angle3r == angle3)) { vector.rotate(node.position.add(node3), ((angle3 - angle3r)-0.2), BABYLON.Space.WORLD); }
+    /*vector.rotate(BABYLON.Axis.Z, raddeg(90, 0), BABYLON.Space.LOCAL);
+    vector.rotate(BABYLON.Axis.Y, raddeg(90, 0), BABYLON.Space.LOCAL);
+    vector.rotate(BABYLON.Axis.X, raddeg(90, 0), BABYLON.Space.LOCAL); */
+    /*let orient = function (a, b, c, velo, nde, pointer) { while (!(pointer.rotation[a] == Math.atan(velo[b]/velo[c]))) { vector.rotate(node.position.add(nde), Math.atan(velo[b]/velo[c])-0.1, BABYLON.Space.WORLD); }};
+    orient('x', 'y', 'z', velo1, node2, pointer1); orient('y', 'z', 'x', velo1, node1, pointer1); orient('z', 'y', 'x', velo1, node3, pointer1);
+    orient('x', 'y', 'z', velo2, node2, pointer2); orient('y', 'z', 'x', velo2, node1, pointer2); orient('z', 'y', 'x', velo2, node3, pointer2);
+    vector.scaling.x = (dis.total/disref.total);*/
+    //vector.translate(BABYLON.Axis.X, (dis.total/2 - dis.total/10), BABYLON.Space.LOCAL);
+}
+
+function eventplot (pos1, pos2, e, scene) {
+    let ev = new BABYLON.Mesh;
+    let mat1 = new BABYLON.StandardMaterial; mat1.emissiveColor = new BABYLON.Color3(1, 0, 0);
+    let mat2 = new BABYLON.StandardMaterial; mat2.emissiveColor = new BABYLON.Color3(0, 0, 1);
+
+    if (e == 'e1') { ev = BABYLON.MeshBuilder.CreateBox('e1', { size: 2.5 }, scene) 
+    ev.material = mat1; ev.position = new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]) };
+    
+    if (e == 'e2') { ev = BABYLON.MeshBuilder.CreateBox('e2', { size: 2.5 }, scene); 
+    ev.material = mat2; ev.position = new BABYLON.Vector3(pos2[0], pos2[1], pos2[2]) };
+    
+    return ev };
+
+function staticMatrix (objspecs, synthindex) {};
+
+function render (masses, velo, positions, array, timelim2, checks) {
+    let timetrack = 0; let simoff = false; let userel = null;
+    const stopbtn = document.getElementById("simstop"); stopbtn.onclick = function() { simoff = true; };
+    const reset = document.getElementById("rstcam"); const simrun = document.getElementById("simbtn");
+    const rel = document.getElementById("absrel"); if (rel.checked) { userel = true } else { userel = false };
+    let timelim1 = Number(document.getElementById("e1time").value); 
+    let e1 = Array.from(document.getElementsByName("e1xyz")); let e1pos = e1.map(n => Number(n.value) );
+    let e2 = Array.from(document.getElementsByName("e2xyz")); let e2pos = e2.map(n => Number(n.value) );
+    let start = Date.now()/1000;
+    let checked = checks;
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true);
+    let simmsg = new custom.CustomAlert();
+    let properties = simselect(masses, velo, positions, checked, null, "graphics");
+
+    function createScene() {
+    const scene = new BABYLON.Scene(engine);
+    let primary = 100;
+    
+    const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(-45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
+    camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
+    camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
+    camera.attachControl(canvas, true);
+    const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene); 
+    let properties = simselect(masses, velo, positions, checked, null, "graphics");
+
+    if (properties.BG == "black") { scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); }
+    else { scene.clearColor = new BABYLON.Color4(0, 0, 0.8, 1); let ground = new BABYLON.MeshBuilder.CreatePlane('grnd', {size: 200, sideOrientation: DOUBLESIDE}, scene); 
+           let groundmat = new BABYLON.StandardMaterial; groundmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5), ground.material = groundmat
+           camera.radius -= 50 };
+    
+    let originpts = [[new BABYLON.Vector3(0, 0, 0),
+                      new BABYLON.Vector3(primary, 0, 0)],
+                      [new BABYLON.Vector3(0, 0, 0),
+                      new BABYLON.Vector3(0, primary, 0)],
+                      [new BABYLON.Vector3(0, 0, 0),
+                      new BABYLON.Vector3(0, 0, primary) ]];
+       
+    const originset = BABYLON.MeshBuilder.CreateLineSystem('originset', {lines: originpts}, scene);
+    let originpt2 = [[new BABYLON.Vector3((0.9 * primary), (0.03 * primary), 0), new BABYLON.Vector3(primary, 0, 0), 
+        new BABYLON.Vector3((0.9 * primary), (-0.03 * primary), 0)]];
+       
+    arrows = [];
+    arrows[0] = new BABYLON.MeshBuilder.CreateLineSystem("arrowsX", {lines: originpt2}, scene);
+    arrows[1] = arrows[0].clone();
+    arrows[1].rotate(BABYLON.Axis.Z, Math.PI/2, BABYLON.Space.WORLD);
+    arrows[2] = arrows[1].clone();
+    arrows[2].rotate(BABYLON.Axis.Y, Math.PI/2, BABYLON.Space.WORLD);
+    arrows[2].rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.WORLD);
+
+    //sim objects
+    let current0 = new BABYLON.Mesh("obj1");
+    current0 = synthObject(scene, array, checked[0]);
+    let pos1 = positions[checked[0]];
+    
+    let current1 = new BABYLON.Mesh("obj2");
+    current1 = synthObject(scene, array, checked[1]);
+    let pos2 = positions[checked[1]];
+    let velo1 = axial_velocity(velo[checked[0]]); let velo2 = axial_velocity(velo[checked[1]]); console.log('from render', velo1, velo2)
+    if (!!userel) { let temp = velo2;
+                    velo2 = {x: Math.abs(temp.x - velo1.x),
+                             y: Math.abs(temp.y - velo1.y),
+                             z: Math.abs(temp.z - velo1.z) }
+                    velo1 = {x: 0, y: 0, z: 0}}
+    let node = null; let vect1 = null;
+    //if (!!properties.augment) { vect1 = synthVector(scene, pos1, pos2); };
+    //node = vect1.node vect2 = vect1.vector; };
+
+    reset.onclick = function() { camera.position = new BABYLON.Vector3(0, 0, (Math.cos(45) * 100)); };
+    let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
+    
+    scene.registerBeforeRender(function () {
+        augment(current0, current1, pos1, pos2, velo1, velo2, vect1, node, null, null, scene);
+        timetrack = (Date.now()/1000) - start;
+        if (timetrack >= timelim1) { e1Mesh.setEnabled(true) }; 
+        if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
+        if (timetrack > timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1, e1Mesh.rotation.z += 0.1 };
+        if (timetrack > timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1 };
+    })
+
+    return scene; }
+
+    let toRender = createScene();
+    engine.runRenderLoop(function () {
+        if (timetrack >= (timelim2 + 5) || !!simoff) { 
+            custom.simtimer.simtimestop();
+            custom.simtimer.simtimereset();
+            engine.stopRenderLoop();
+            simrun.disabled = false; 
+            rel.disabled = false;
+            simmsg.alert(properties.simmsg, "Simulation concluded")
+            document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() };
+        } else { 
+            custom.simtimer.setsimtime(timelim2 + 5);
+            toRender.render();
+            simrun.disabled = true;
+            rel.disabled = true;
+        }
+    })
+    
+    window.addEventListener("resize", function () {
+        engine.resize();
+      });
+}
+    module.exports = render;
+
+
 
 /***/ })
 /******/ 	]);

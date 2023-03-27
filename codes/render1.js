@@ -24,10 +24,15 @@ function synthObject (scene, objspecs, synthindex) {
 function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to debug
     let dis = displacement(obj2, obj1); 
     let factor = dis.total;
+    let newpoints = [new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]).add(new BABYLON.Vector3(3, 3, 3)), new BABYLON.Vector3(obj2[0], obj2[1], obj2[2]).subtract(new BABYLON.Vector3(3, 3, 3))];
+    //let newpoints2 = [newpoints[1], newpoints[0].add(new BABYLON.Vector3(factor * 0.5, factor * 0.1, 0))];
+    //let newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints, updatable: true}, scene);
+    //let newvector2 = new BABYLON.MeshBuilder.CreateLines("new2", {points: newpoints2}, scene);
+    //let newpoints3 = [newpoints[1], newpoints[0].add(new BABYLON.Vector3(factor * 0.5, factor * -0.1, 0))];
+    //let newvector3 = new BABYLON.MeshBuilder.CreateLines("new3", {points: newpoints3}, scene);
+    //let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
     
-    let vectpts = [[new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)]];
-    
-    let refvect = new BABYLON.TransformNode("root");
+    /*let refvect = new BABYLON.TransformNode("root");
     refvect.position = new BABYLON.Vector3.Zero();
         
     //calculation of midpoint
@@ -49,57 +54,70 @@ function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to deb
     vect2.rotate(BABYLON.Axis.Y, -Math.atan(dis.z/dis.x), BABYLON.Space.WORLD);
     vect2.rotate(BABYLON.Axis.Z, Math.atan(dis.y/dis.x), BABYLON.Space.WORLD);
     //vect2.rotate(BABYLON.Axis.X, -Math.atan(dis.y/dis.z), BABYLON.Space.WORLD);
-    vect2.translate(BABYLON.Axis.X, (posync/10), BABYLON.Space.LOCAL);
+    vect2.translate(BABYLON.Axis.X, (posync/10), BABYLON.Space.LOCAL);*/
 
-    return {node: refvect, vector: vect2, rot: (vect2.rotationQuaternion.toEulerAngles()) };
+    //return {node: refvect, vector: vect2, rot: (vect2.rotationQuaternion.toEulerAngles()) };
+    //return newvector;
 }
 
-function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node) {
+function synthPointer (scene, obj, velo) {
+    let length1 = Math.sqrt(velo.x**2 + velo.y**2, velo.z**2);
+    let factor = length1 * 5;
+    let vectpts = [new BABYLON.Vector3.Zero(), new BABYLON.Vector3(factor, 0, 0)];
+    let arrowpts = [new BABYLON.Vector3(factor, (0.1 * factor), 0), new BABYLON.Vector3((0.4 * factor) + factor, 0, 0), new BABYLON.Vector3(factor, (-0.1 * factor), 0)];
+    vectpts.push(arrowpts);
+    let pointer = new BABYLON.LinesMesh;
+    pointer = new BABYLON.MeshBuilder.CreateLineSystem("ptr", {lines: vectpts, updatable: true}, scene);
+    let ptrorient = pointer.rotationQuaternion.toEulerAngles();
+    while (!(ptrorient.x == Math.atan(velo.y/velo.z))) { pointer.rotate(BABYLON.Axis.X, raddeg(0.1, 0), BABYLON.Space.LOCAL); };
+    while (!(ptrorient.y == Math.atan(velo.z/velo.x))) { pointer.rotate(BABYLON.Axis.Y, raddeg(0.1, 0), BABYLON.Space.LOCAL); };
+    while (!(ptrorient.z == Math.atan(velo.y/velo.x))) { pointer.rotate(BABYLON.Axis.Z, raddeg(0.1, 0), BABYLON.Space.LOCAL); };
+    pointer.position = obj.position;
+}
 
-    node.position = obj1.position;
+function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, pointer2, scene) {
+    
+    //node.position = obj1.position;
+    //pointer1.position = obj1.position;
+    //pointer2.position = obj2.position;
     //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
 
-    if ((obj1.position.x - pos1[0]) >= 100 ||
-        (obj1.position.y - pos1[1]) >= 100 ||
-        (obj1.position.z - pos1[2]) >= 100 ) {}
+    while ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
+        obj1.position.x += 0.5 * velo1.x;
+        obj1.position.y += 0.5 * velo1.y;
+        obj1.position.z += 0.5 * velo1.z; }
+    while ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
+        obj2.position.x += 0.5 * velo2.x;
+        obj2.position.y += 0.5 * velo2.y;
+        obj2.position.z += 0.5 * velo2.z; }
     
-    else {
-    obj1.position.x += 5 * velo1.x;
-    obj1.position.y += 5 * velo1.y;
-    obj1.position.z += 5 * velo1.z; }
-
-    if ((obj2.position.x - pos2[0]) >= 100 ||
-        (obj2.position.y - pos2[1]) >= 100 ||
-        (obj2.position.z - pos2[2]) >= 100 ) {}
-
-    else {
-    obj2.position.x += 5 * velo2.x;
-    obj2.position.y += 5 * velo2.y;
-    obj2.position.z += 5 * velo2.z; }
-
     //let disref = displacement (pos2, pos1);
     let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
                            [obj1.position.x, obj1.position.y, obj1.position.z]);
     let disref = displacement(pos2, pos1);
+ 
+    let factor = dis.total;
+    let newpoints = [new BABYLON.Vector3(obj1.position.x, obj1.position.y, obj1.position.z).add(new BABYLON.Vector3(3, 3, 3)), new BABYLON.Vector3(obj2.position.x, obj2.position.y, obj2.position.z).subtract(new BABYLON.Vector3(3, 3, 3))];
+    let newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints}, scene);
 
-    let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
-    let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
+    //let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
+    //let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
 
-    let node1 = new BABYLON.Vector3(0, 1, 0); let node2 = new BABYLON.Vector3(1, 0, 0); let node3 = new BABYLON.Vector3(0, 0, 1)
+    //let node1 = new BABYLON.Vector3(0, 1, 0); let node2 = new BABYLON.Vector3(1, 0, 0); let node3 = new BABYLON.Vector3(0, 0, 1)
     
     //vector.rotate(BABYLON.Axis.X, Math.PI/60, BABYLON.Space.LOCAL);
 
-    if (!(angle1r == angle1)) { vector.rotate(node.position.add(node1), (angle1 - angle1r), BABYLON.Space.WORLD); };
-    if (!(angle2r == angle2)) { vector.rotate(node.position.add(node2), (angle2 - angle2r), BABYLON.Space.WORLD); }
-    if (!(angle3r == angle3)) { vector.rotate(node.position.add(node3), (angle3 - angle3r), BABYLON.Space.WORLD); }
-    vector.rotate(BABYLON.Axis.Z, raddeg(90, 0), BABYLON.Space.LOCAL);
+    /*while (!(angle1r == angle1)) { vector.rotate(node.position.add(node1), ((angle1 - angle1r)-0.2), BABYLON.Space.WORLD); };
+    while (!(angle2r == angle2)) { vector.rotate(node.position.add(node2), ((angle2 - angle2r)-0.2), BABYLON.Space.WORLD); }
+    while (!(angle3r == angle3)) { vector.rotate(node.position.add(node3), ((angle3 - angle3r)-0.2), BABYLON.Space.WORLD); }
+    /*vector.rotate(BABYLON.Axis.Z, raddeg(90, 0), BABYLON.Space.LOCAL);
     vector.rotate(BABYLON.Axis.Y, raddeg(90, 0), BABYLON.Space.LOCAL);
-    vector.rotate(BABYLON.Axis.X, raddeg(90, 0), BABYLON.Space.LOCAL);
-
-    vector.scaling.x = (dis.total/disref.total);
+    vector.rotate(BABYLON.Axis.X, raddeg(90, 0), BABYLON.Space.LOCAL); */
+    /*let orient = function (a, b, c, velo, nde, pointer) { while (!(pointer.rotation[a] == Math.atan(velo[b]/velo[c]))) { vector.rotate(node.position.add(nde), Math.atan(velo[b]/velo[c])-0.1, BABYLON.Space.WORLD); }};
+    orient('x', 'y', 'z', velo1, node2, pointer1); orient('y', 'z', 'x', velo1, node1, pointer1); orient('z', 'y', 'x', velo1, node3, pointer1);
+    orient('x', 'y', 'z', velo2, node2, pointer2); orient('y', 'z', 'x', velo2, node1, pointer2); orient('z', 'y', 'x', velo2, node3, pointer2);
+    vector.scaling.x = (dis.total/disref.total);*/
     //vector.translate(BABYLON.Axis.X, (dis.total/2 - dis.total/10), BABYLON.Space.LOCAL);
-    
-    //console.log(angle3 - angle3r);
 }
 
 function eventplot (pos1, pos2, e, scene) {
@@ -115,6 +133,8 @@ function eventplot (pos1, pos2, e, scene) {
     
     return ev };
 
+function staticMatrix (objspecs, synthindex) {};
+
 function render (masses, velo, positions, array, timelim2, checks) {
     let timetrack = 0; let simoff = false; let userel = null;
     const stopbtn = document.getElementById("simstop"); stopbtn.onclick = function() { simoff = true; };
@@ -128,20 +148,23 @@ function render (masses, velo, positions, array, timelim2, checks) {
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
     let simmsg = new custom.CustomAlert();
+    let properties = simselect(masses, velo, positions, checked, null, "graphics");
 
     function createScene() {
-
-    let scene = new BABYLON.Scene(engine);
+    const scene = new BABYLON.Scene(engine);
     let primary = 100;
-    if (store.BG == "black") { scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); }
-    else { scene.clearColor = new BABYLON.Color4(0, 0, 0.8, 1); let ground = new BABYLON.MeshBuilder.CreatePlane('grnd', {size: 200, sideOrientation: DOUBLESIDE}, scene); 
-           let groundmat = new BABYLON.StandardMaterial; groundmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5), ground.material = groundmat };
-
-    const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
+    
+    const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(-45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
     camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
     camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
     camera.attachControl(canvas, true);
     const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene); 
+    let properties = simselect(masses, velo, positions, checked, null, "graphics");
+
+    if (properties.BG == "black") { scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); }
+    else { scene.clearColor = new BABYLON.Color4(0, 0, 0.8, 1); let ground = new BABYLON.MeshBuilder.CreatePlane('grnd', {size: 200, sideOrientation: DOUBLESIDE}, scene); 
+           let groundmat = new BABYLON.StandardMaterial; groundmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5), ground.material = groundmat
+           camera.radius -= 50 };
     
     let originpts = [[new BABYLON.Vector3(0, 0, 0),
                       new BABYLON.Vector3(primary, 0, 0)],
@@ -176,16 +199,15 @@ function render (masses, velo, positions, array, timelim2, checks) {
                              y: Math.abs(temp.y - velo1.y),
                              z: Math.abs(temp.z - velo1.z) }
                     velo1 = {x: 0, y: 0, z: 0}}
+    let node = null; let vect1 = null;
+    //if (!!properties.augment) { vect1 = synthVector(scene, pos1, pos2); };
+    //node = vect1.node vect2 = vect1.vector; };
 
-    let vect1 = synthVector(scene, pos1, pos2);
-    let node = vect1.node; let vect2 = vect1.vector;
-
-    reset.onclick = function() { camera.position = new BABYLON.Vector3(); };
+    reset.onclick = function() { camera.position = new BABYLON.Vector3(0, 0, (Math.cos(45) * 100)); };
     let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
-    let store = simselect(masses, velocities, positions, checked, null, "graphics");
-
+    
     scene.registerBeforeRender(function () {
-        augment(current0, current1, pos1, pos2, velo1, velo2, vect2, node);
+        augment(current0, current1, pos1, pos2, velo1, velo2, vect1, node, null, null, scene);
         timetrack = (Date.now()/1000) - start;
         if (timetrack >= timelim1) { e1Mesh.setEnabled(true) }; 
         if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
@@ -203,7 +225,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
             engine.stopRenderLoop();
             simrun.disabled = false; 
             rel.disabled = false;
-            simmsg.alert(graphics.simmsg, "Simulation concluded")
+            simmsg.alert(properties.simmsg, "Simulation concluded")
             document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() };
         } else { 
             custom.simtimer.setsimtime(timelim2 + 5);
