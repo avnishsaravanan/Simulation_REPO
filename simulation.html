@@ -52,7 +52,8 @@
       </div>
       
       <div class="addel">
-        <button id="dummy" hidden="true"></button>
+        <button id="QM" name="QM" style="font-size:24px;color:blue"><i class="fa fa-question-circle"></i></button>
+        <button id="IN" name="IN" style="font-size:24px"><i class="fa fa-info-circle"></i></button>
       </div>      
 
       <div class="listel">
@@ -176,7 +177,14 @@
 
       <div class="siminfo">
         <p id="sinfo" style="text-align:center; margin:auto;"><b>Input all values and Run Simulation</b></p>
+        <p id="simeqn" style="text-align:center; margin:auto;"><i>Equation of Simulation will come here</i></p>
       </div>      
+
+      <div class="simval">
+        <p id="sval" style="text-align:center; margin:auto;"><b>Validate Equation</b></p>
+        <input type="text" id="equation" name="equation"></input>
+        <p style="text-align:center; margin:auto"></p><input type="submit" id="valeqn" value="Validate"></input><br>
+      </div>
 
       <div class="simput">
         <p>Simulation Progress</p>
@@ -198,6 +206,7 @@
     </div>
     
     <div id="dialogoverlay" style="display: none;"></div>
+
     <div id="dialogbox" class="slit-in-vertical" style="display: none;">
       <div>
         <div id="dialogboxhead"></div>
@@ -205,6 +214,7 @@
         <div id="dialogboxfoot"></div>
       </div>
     </div>
+
   </body>
   <footer>
 

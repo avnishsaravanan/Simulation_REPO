@@ -321,8 +321,8 @@ function equations (input) {
 
     dt_P = this.content.dt_P;
     dt_Q = this.content.dt_Q;
-    dp_P = this.content.dp_P.total;
-    dp_Q = this.content.dp_Q.total;
+    dp_P = this.content.dp_P;
+    dp_Q = this.content.dp_Q;
     mass1 = this.content.mass1;
     mass2 = this.content.mass2;
     distance = this.content.distance;
@@ -338,13 +338,17 @@ function equations (input) {
     
     this.case3 = function case3() {
         term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
-        this.content.dp_Q = dp_P * (mass2/mas1) / term1;
+        term2 = (mass2/mas1) / term1;
+        term3 = dp_P.x * term2; term4 = dp_P.y * term2; term5 = dp_P.z * term2;
+        this.content.dp_Q = velos.displacement(term3, term4, terms5).total;
         this.content.dp_P = dp_P.total }
 
     this.case4 = function case4() {
         term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
-        this.content.dp_P = dp_Q * (mass1/mass2) * term1; 
-        this.content.dp_Q = dp_Q.total; }
+        term2 = (mass1/mass2) * term1; 
+        term3 = dp_Q.x * term2; term4 = dp_Q.y; term5 = dp_Q.z * term2;
+        this.content.dp_P = velos.displacement(term3, term4, term5).total;
+        this.content.dp_Q = dp_Q.total }
 
     this.en = function case5() {
         this.content.energy1 = mass1 * c**2;
@@ -536,7 +540,7 @@ module.exports = equations;
   
   // alert
   function CustomAlert(){
-      this.alert = function(message,title){
+      this.alert = function(message,title,type){
         //document.body.innerHTML = document.body.innerHTML + '<div id="dialogoverlay"></div><div id="dialogbox" class="slit-in-vertical"><div><div id="dialogboxhead"></div><div id="dialogboxbody"></div><div id="dialogboxfoot"></div></div></div>';
     
         let dialogoverlay = document.getElementById('dialogoverlay');
@@ -549,16 +553,22 @@ module.exports = equations;
     
         dialogoverlay.style.display = "block";
         dialogbox.style.display = "block";
-         
-        document.getElementById('dialogboxhead').style.display = 'block';
-    
-        if(typeof title === 'undefined') {  
+           
+        if(typeof title !== 'undefined') 
+        /*{  
           document.getElementById('dialogboxhead').style.display = 'none';
-        } else {
-          document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+        } else*/ {
+          document.getElementById('dialogboxhead').style.display = 'block';
+          if (type === 'info') {
+            document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-info-circle" aria-hidden="true"></i> '+ title;
+            document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">Close</button>';
+          } else {
+            document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+            document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';  
+          }
         }
         document.getElementById('dialogboxbody').innerHTML = message;
-        document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';
+        
       };
       
       this.ok = function(){

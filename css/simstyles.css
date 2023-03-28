@@ -88,6 +88,11 @@ html,
         text-align: center;
       }
 
+      .simval {
+        grid-area: simval;
+        text-align: center;
+      }
+
       .simput {
         grid-area: simput;
         text-align: center;
@@ -107,7 +112,7 @@ html,
           "toggle relati relati relati relati addel"
           "listel listel editel editel evepln evepln"
           "listel listel editel editel solvea solvea"
-          "simset siminfo siminfo siminfo simput simput"
+          "simset siminfo simval simval simput simput"
           "simul simul simul simul simul simul";
         gap: 5px;
         background-color: #2196f3;
@@ -122,7 +127,7 @@ html,
             'listel listel listel listel listel listel'
             'editel editel editel editel editel editel'
             'evepln evepln evepln solvea solvea solvea'
-            'simset siminfo siminfo siminfo simput simput'
+            'simset siminfo simval simval simput simput'
             'simul simul simul simul simul simul';
         }
       }
