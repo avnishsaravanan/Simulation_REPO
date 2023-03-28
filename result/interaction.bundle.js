@@ -47,8 +47,11 @@
     const objectslist = document.getElementsByName('simobject');
     let okbtn =  document.getElementById('dummy');
     const velomode = document.getElementById('absrel');
+    const qmk = document.getElementById('QM');
+    const inf = document.getElementById('IN');
     //var arrsimobject = {0:"Spherex", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45};
     let trigger = 'self';
+    let customAlert = new custom.CustomAlert();
                 
     // initialize auto/user toggle interactions 
     simmode.onclick = function () {
@@ -112,7 +115,6 @@
         }
         x+=1;
       });
-      let customAlert = new custom.CustomAlert();
       if (addup == "add") {
         arrsimobjects.push(arrsimobject);
         //doubt
@@ -135,8 +137,8 @@
             simulateClick(elem);
           }
         });
-        //customAlert.alert('Object Added','Info');
-        custom.newalert.alert('Object Added','Info');
+        customAlert.alert('Object Added','Info','alert');
+        //custom.newalert.alert('Object Added','Info');
       } else {
         // update arrims
         arrsimobjects[(upobj()-1)] = arrsimobject;
@@ -146,14 +148,9 @@
         masses[(upobj()-1)] = arrsimobject[2];
 
         document.getElementById("objlabel"+(upobj())).childNodes[0].textContent = arrsimobject[0];
-        customAlert.alert('Updates Saved','Info'); // beautify
+        customAlert.alert('Updates Saved','Info','alert'); // beautify
       }
-      okbtn =  document.getElementById('okbtn');
-      //custom ok
-      okbtn.onclick = function (){
-        event.preventDefault();
-        customAlert.ok();
-      };
+      alertok();
     }
 
     // initialize checkbox interactions
@@ -238,7 +235,18 @@
         document.getElementById('veloabsrel').innerText = "Velocity: Absolute";
       }
     };
+
+    // question and info
+    qmk.onclick = function () {
+      customAlert.alert('The simulation interface is designed after the fact that all relativity requires definitive properties of the objects and frames of reference, and the space and time interval between events under observations. <br><br>-	The provided two objects have default properties, and you may either edit these as per your requirement, or create new objects entirely to document a larger dataset. You may have up to 10 objects, but only any two can appear in the simulation run at a time. <br><br>-	In the object list, to add a new object have 0 preselected, to edit an existing object have only that one selected, and to run simulation have 2 objects selected. <br><br>-	Next, set the space and time coordinates of two events. Event 2 must ALWAYS have larger coordinates than event 1 for the relativistic effects to be visible. <br><br>-	The spatial (distance) and temporal (duration) interval between E2 and E1 will be different in varying frames of reference. <br><br>-	The equation displayed below is the one that corresponds to the simulation. Hover cursor over a term to see its corresponding graphical component be highlighted in the simulation canvas. <br><br>-	Setting mode to ‘auto’ will adjust the equation depending on scale and parameters set by you. Do not that all the equations support the principle of ‘constant spacetime interval’, however, which suggests that the difference of the squares of duration and distance measured in a frame of reference will always be constant.','How to run the sim','info');
+      alertok();
+    };
     
+    inf.onclick = function () {
+      customAlert.alert('SR explained that measurements of length and duration in space and time were not absolute constants, but dependent on the velocity of the frame of reference from which the measurement was made. More specifically, its relative velocity – because any two frames of reference recording different measurements translate between one another in the exact same way; there is no absolute frame or static aether. SR also proved that mass and energy are equivalent quantities in the scope of momentum and four-vectors.<br><br>You can investigate special relativity in the simulation using the corresponding equation. The key details of the objects here will be their total velocity.<br><br>The breakthrough resulting from but also inseparable to SR, was general relativity. It was a revised theory of gravity that extrapolated mass as a fundamental quantity in space and time to the ‘transmission’ of gravity across objects. A new geometric and topological entity known as spacetime was conceptualised and accounted for gravity as the curvature of spacetime. An object traveling in a ‘straight’ geodesic path with constant velocity will be manipulated in a region of curved spacetime caused by a massive object. The medium is spacetime, which, analogous to the role of velocity in special relativity, causes time and length dilation, length contraction and redshift. GR is based on the variance of the laws of physics in accelerated frames of reference, the converse being a postulate for SR. GR was a completely novel upheaval of physics that has come to complement the other major field of quantum mechanics.','About Relativity','info');
+      alertok();
+    };
+
     //functions
     function processparam(state, num) {
       document.getElementById("editParameters").reset();
@@ -261,6 +269,14 @@
       }
     }
 
+  //alertok
+  function alertok(){
+    okbtn =  document.getElementById('okbtn');
+    //custom ok
+    okbtn.onclick = function (){
+      event.preventDefault();
+      customAlert.ok();
+    };
   } //init ends
 
   //common functions
@@ -292,6 +308,7 @@
     }
   }
 
+  }
 
   module.exports = {  arrsimobjects: arrsimobjects,
                       velocities: velocities,
@@ -651,14 +668,14 @@ function equations (input) {
         this.content.dt_P = dt_Q * (mass1/mass2) / term1; }
     
     this.case3 = function case3() {
-        term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
         term2 = (mass2/mas1) / term1;
         term3 = dp_P.x * term2; term4 = dp_P.y * term2; term5 = dp_P.z * term2;
         this.content.dp_Q = velos.displacement(term3, term4, terms5).total;
         this.content.dp_P = dp_P.total }
 
     this.case4 = function case4() {
-        term1 = Math.sqrt(1 - (2 * G * mass2)/(distance.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
         term2 = (mass1/mass2) * term1; 
         term3 = dp_Q.x * term2; term4 = dp_Q.y; term5 = dp_Q.z * term2;
         this.content.dp_P = velos.displacement(term3, term4, term5).total;
@@ -854,7 +871,7 @@ module.exports = equations;
   
   // alert
   function CustomAlert(){
-      this.alert = function(message,title){
+      this.alert = function(message,title,type){
         //document.body.innerHTML = document.body.innerHTML + '<div id="dialogoverlay"></div><div id="dialogbox" class="slit-in-vertical"><div><div id="dialogboxhead"></div><div id="dialogboxbody"></div><div id="dialogboxfoot"></div></div></div>';
     
         let dialogoverlay = document.getElementById('dialogoverlay');
@@ -867,16 +884,22 @@ module.exports = equations;
     
         dialogoverlay.style.display = "block";
         dialogbox.style.display = "block";
-         
-        document.getElementById('dialogboxhead').style.display = 'block';
-    
-        if(typeof title === 'undefined') {  
+           
+        if(typeof title !== 'undefined') 
+        /*{  
           document.getElementById('dialogboxhead').style.display = 'none';
-        } else {
-          document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+        } else*/ {
+          document.getElementById('dialogboxhead').style.display = 'block';
+          if (type === 'info') {
+            document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-info-circle" aria-hidden="true"></i> '+ title;
+            document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">Close</button>';
+          } else {
+            document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+            document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';  
+          }
         }
         document.getElementById('dialogboxbody').innerHTML = message;
-        document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';
+        
       };
       
       this.ok = function(){

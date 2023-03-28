@@ -200,14 +200,14 @@ function equations (input) {
         this.content.dt_P = dt_Q * (mass1/mass2) / term1; }
     
     this.case3 = function case3() {
-        term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
         term2 = (mass2/mas1) / term1;
         term3 = dp_P.x * term2; term4 = dp_P.y * term2; term5 = dp_P.z * term2;
         this.content.dp_Q = velos.displacement(term3, term4, terms5).total;
         this.content.dp_P = dp_P.total }
 
     this.case4 = function case4() {
-        term1 = Math.sqrt(1 - (2 * G * mass2)/(distance.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
         term2 = (mass1/mass2) * term1; 
         term3 = dp_Q.x * term2; term4 = dp_Q.y; term5 = dp_Q.z * term2;
         this.content.dp_P = velos.displacement(term3, term4, term5).total;
@@ -403,7 +403,7 @@ module.exports = equations;
   
   // alert
   function CustomAlert(){
-      this.alert = function(message,title){
+      this.alert = function(message,title,type){
         //document.body.innerHTML = document.body.innerHTML + '<div id="dialogoverlay"></div><div id="dialogbox" class="slit-in-vertical"><div><div id="dialogboxhead"></div><div id="dialogboxbody"></div><div id="dialogboxfoot"></div></div></div>';
     
         let dialogoverlay = document.getElementById('dialogoverlay');
@@ -416,16 +416,22 @@ module.exports = equations;
     
         dialogoverlay.style.display = "block";
         dialogbox.style.display = "block";
-         
-        document.getElementById('dialogboxhead').style.display = 'block';
-    
-        if(typeof title === 'undefined') {  
+           
+        if(typeof title !== 'undefined') 
+        /*{  
           document.getElementById('dialogboxhead').style.display = 'none';
-        } else {
-          document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+        } else*/ {
+          document.getElementById('dialogboxhead').style.display = 'block';
+          if (type === 'info') {
+            document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-info-circle" aria-hidden="true"></i> '+ title;
+            document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">Close</button>';
+          } else {
+            document.getElementById('dialogboxhead').innerHTML = '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> '+ title;
+            document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';  
+          }
         }
         document.getElementById('dialogboxbody').innerHTML = message;
-        document.getElementById('dialogboxfoot').innerHTML = '<button class="pure-material-button-contained active" id="okbtn">OK</button>';
+        
       };
       
       this.ok = function(){
