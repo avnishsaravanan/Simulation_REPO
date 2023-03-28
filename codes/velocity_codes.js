@@ -9,7 +9,7 @@ function radians_degrees (input, path) {
     else {return input * (180/pi) }} //radians to degrees
 
 function axial_velocity(velo) {
-    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0));
+    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0)); //* Math.cos(velo[2], 0)
     let veloY = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.sin(radians_degrees(velo[2], 0));
     let veloZ = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.cos(radians_degrees(velo[2], 0));
     console.log("done, from first call");

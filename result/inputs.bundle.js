@@ -115,7 +115,7 @@ input = { dt_P: dt_PA,
     colinear_dis: colinear_disA,
     mass1: mass1,
     mass2: mass2, 
-    dist: r };
+    distance: r };
 
 console.log("from input js: input", input);
 
@@ -161,7 +161,7 @@ function radians_degrees (input, path) {
     else {return input * (180/pi) }} //radians to degrees
 
 function axial_velocity(velo) {
-    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0));
+    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0)); //* Math.cos(velo[2], 0)
     let veloY = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.sin(radians_degrees(velo[2], 0));
     let veloZ = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.cos(radians_degrees(velo[2], 0));
     console.log("done, from first call");
@@ -266,9 +266,9 @@ const custom = __webpack_require__(8);
 function simselect (masses, velocities, positions, checked, input, type) {
 
 let eq_input = new String;
-let M = (masses[checked[1]] >= 0.05) || (masses[checked[0]] >= 0.05);
+let M = (masses[checked[1]] >= 0.55) || (masses[checked[0]] >= 0.55);
 let V = dis([velos(velocities[checked[1]]).x, velos(velocities[checked[1]]).y, velos(velocities[checked[1]]).z], 
-            [velos(velocities[checked[0]]).x, velos(velocities[checked[0]]).y, velos(velocities[checked[1]]).z]) >= 0.1;
+            [velos(velocities[checked[0]]).x, velos(velocities[checked[0]]).y, velos(velocities[checked[1]]).z]).total >= 0.1;
 let P = dis(positions[checked[1]], positions[checked[0]]).total >= 20;
 
 const mode = document.getElementById("autouser"); const simselect = document.getElementsByName("simselect"); let equation;
@@ -321,30 +321,34 @@ function equations (input) {
 
     dt_P = this.content.dt_P;
     dt_Q = this.content.dt_Q;
-    dp_P = this.content.dp_P.total;
-    dp_Q = this.content.dp_Q.total;
+    dp_P = this.content.dp_P;
+    dp_Q = this.content.dp_Q;
     mass1 = this.content.mass1;
     mass2 = this.content.mass2;
     distance = this.content.distance;
 
     this.case1 = function case1() { // heavier object frame Q
-        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(distance.total * c**2));
         this.content.dt_Q = (dt_P * (mass2/mass1) / term1); };
         // this.content.dt_Q = dt_P * term1;
     
    this.case2 = function case2() { // lighter object frame P
-        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
         this.content.dt_P = dt_Q * (mass1/mass2) / term1; }
     
     this.case3 = function case3() {
-        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
-        this.content.dp_Q = dp_P * (mass2/mas1) / term1;
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
+        term2 = (mass2/mas1) / term1;
+        term3 = dp_P.x * term2; term4 = dp_P.y * term2; term5 = dp_P.z * term2;
+        this.content.dp_Q = velos.displacement(term3, term4, terms5).total;
         this.content.dp_P = dp_P.total }
 
     this.case4 = function case4() {
-        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
-        this.content.dp_P = dp_Q * (mass1/mass2) * term1; 
-        this.content.dp_Q = dp_Q.total; }
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(distance.total * c**2));
+        term2 = (mass1/mass2) * term1; 
+        term3 = dp_Q.x * term2; term4 = dp_Q.y; term5 = dp_Q.z * term2;
+        this.content.dp_P = velos.displacement(term3, term4, term5).total;
+        this.content.dp_Q = dp_Q.total }
 
     this.en = function case5() {
         this.content.energy1 = mass1 * c**2;

@@ -429,7 +429,7 @@ input = { dt_P: dt_PA,
     colinear_dis: colinear_disA,
     mass1: mass1,
     mass2: mass2, 
-    dist: r };
+    distance: r };
 
 console.log("from input js: input", input);
 
@@ -475,7 +475,7 @@ function radians_degrees (input, path) {
     else {return input * (180/pi) }} //radians to degrees
 
 function axial_velocity(velo) {
-    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0));
+    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0)); //* Math.cos(velo[2], 0)
     let veloY = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.sin(radians_degrees(velo[2], 0));
     let veloZ = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.cos(radians_degrees(velo[2], 0));
     console.log("done, from first call");
@@ -580,9 +580,9 @@ const custom = __webpack_require__(8);
 function simselect (masses, velocities, positions, checked, input, type) {
 
 let eq_input = new String;
-let M = (masses[checked[1]] >= 0.05) || (masses[checked[0]] >= 0.05);
+let M = (masses[checked[1]] >= 0.55) || (masses[checked[0]] >= 0.55);
 let V = dis([velos(velocities[checked[1]]).x, velos(velocities[checked[1]]).y, velos(velocities[checked[1]]).z], 
-            [velos(velocities[checked[0]]).x, velos(velocities[checked[0]]).y, velos(velocities[checked[1]]).z]) >= 0.1;
+            [velos(velocities[checked[0]]).x, velos(velocities[checked[0]]).y, velos(velocities[checked[1]]).z]).total >= 0.1;
 let P = dis(positions[checked[1]], positions[checked[0]]).total >= 20;
 
 const mode = document.getElementById("autouser"); const simselect = document.getElementsByName("simselect"); let equation;
@@ -635,30 +635,34 @@ function equations (input) {
 
     dt_P = this.content.dt_P;
     dt_Q = this.content.dt_Q;
-    dp_P = this.content.dp_P.total;
-    dp_Q = this.content.dp_Q.total;
+    dp_P = this.content.dp_P;
+    dp_Q = this.content.dp_Q;
     mass1 = this.content.mass1;
     mass2 = this.content.mass2;
     distance = this.content.distance;
 
     this.case1 = function case1() { // heavier object frame Q
-        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(distance.total * c**2));
         this.content.dt_Q = (dt_P * (mass2/mass1) / term1); };
         // this.content.dt_Q = dt_P * term1;
     
    this.case2 = function case2() { // lighter object frame P
-        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
         this.content.dt_P = dt_Q * (mass1/mass2) / term1; }
     
     this.case3 = function case3() {
-        term1 = Math.sqrt(1 - (2 * G * mass1)/(dist.total * c**2));
-        this.content.dp_Q = dp_P * (mass2/mas1) / term1;
+        term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
+        term2 = (mass2/mas1) / term1;
+        term3 = dp_P.x * term2; term4 = dp_P.y * term2; term5 = dp_P.z * term2;
+        this.content.dp_Q = velos.displacement(term3, term4, terms5).total;
         this.content.dp_P = dp_P.total }
 
     this.case4 = function case4() {
-        term1 = Math.sqrt(1 - (2 * G * mass2)/(dist.total * c**2));
-        this.content.dp_P = dp_Q * (mass1/mass2) * term1; 
-        this.content.dp_Q = dp_Q.total; }
+        term1 = Math.sqrt(1 - (2 * G * mass2)/(distance.total * c**2));
+        term2 = (mass1/mass2) * term1; 
+        term3 = dp_Q.x * term2; term4 = dp_Q.y; term5 = dp_Q.z * term2;
+        this.content.dp_P = velos.displacement(term3, term4, term5).total;
+        this.content.dp_Q = dp_Q.total }
 
     this.en = function case5() {
         this.content.energy1 = mass1 * c**2;
@@ -901,6 +905,9 @@ const raddeg = velos.radians_degrees;
 const axial_velocity = velos.axial_velocity;
 const displacement = velos.displacement;
 
+let oldpoints;
+let oldvectoptions = {points: oldpoints, updatable: true}; let newvector;
+
 function synthObject (scene, objspecs, synthindex) {
     let object;
     let param = objspecs[synthindex];
@@ -976,14 +983,14 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
     //pointer2.position = obj2.position;
     //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
 
-    while ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
-        obj1.position.x += 0.5 * velo1.x;
-        obj1.position.y += 0.5 * velo1.y;
-        obj1.position.z += 0.5 * velo1.z; }
-    while ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
-        obj2.position.x += 0.5 * velo2.x;
-        obj2.position.y += 0.5 * velo2.y;
-        obj2.position.z += 0.5 * velo2.z; }
+    if ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
+        obj1.position.x += 5 * velo1.x;
+        obj1.position.y += 5 * velo1.y;
+        obj1.position.z += 5 * velo1.z; }
+    if ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
+        obj2.position.x += 5 * velo2.x;
+        obj2.position.y += 5 * velo2.y;
+        obj2.position.z += 5 * velo2.z; }
     
     //let disref = displacement (pos2, pos1);
     let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
@@ -992,7 +999,7 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
  
     let factor = dis.total;
     let newpoints = [new BABYLON.Vector3(obj1.position.x, obj1.position.y, obj1.position.z).add(new BABYLON.Vector3(3, 3, 3)), new BABYLON.Vector3(obj2.position.x, obj2.position.y, obj2.position.z).subtract(new BABYLON.Vector3(3, 3, 3))];
-    let newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints}, scene);
+    newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints}, scene);
 
     //let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
     //let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
@@ -1048,7 +1055,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
     const scene = new BABYLON.Scene(engine);
     let primary = 100;
     
-    const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(-45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
+    const camera = new BABYLON.ArcRotateCamera('', raddeg(0, 0), raddeg(70, 0), 400, new BABYLON.Vector3(300, 300, 400), scene, true);
     camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
     camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
     camera.attachControl(canvas, true);
@@ -1082,8 +1089,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
     //sim objects
     let current0 = new BABYLON.Mesh("obj1");
     current0 = synthObject(scene, array, checked[0]);
-    let pos1 = positions[checked[0]];
-    
+    let pos1 = positions[checked[0]]; console.log(current0.position);
     let current1 = new BABYLON.Mesh("obj2");
     current1 = synthObject(scene, array, checked[1]);
     let pos2 = positions[checked[1]];
@@ -1097,9 +1103,12 @@ function render (masses, velo, positions, array, timelim2, checks) {
     //if (!!properties.augment) { vect1 = synthVector(scene, pos1, pos2); };
     //node = vect1.node vect2 = vect1.vector; };
 
-    reset.onclick = function() { camera.position = new BABYLON.Vector3(0, 0, (Math.cos(45) * 100)); };
+    reset.onclick = function() { camera.position = new BABYLON.Vector3(300 + Math.cos(70)*400, 300 + Math.cos(70)*400, 300); };
     let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
     
+    oldvectoptions.points = [new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]), new BABYLON.Vector3(pos2[0], pos2[1], pos2[2])];
+    newvector = new BABYLON.MeshBuilder.CreateLines("old", oldvectoptions, scene); oldvectoptions.instance = newvector;
+
     scene.registerBeforeRender(function () {
         augment(current0, current1, pos1, pos2, velo1, velo2, vect1, node, null, null, scene);
         timetrack = (Date.now()/1000) - start;

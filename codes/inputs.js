@@ -107,7 +107,7 @@ input = { dt_P: dt_PA,
     colinear_dis: colinear_disA,
     mass1: mass1,
     mass2: mass2, 
-    dist: r };
+    distance: r };
 
 console.log("from input js: input", input);
 

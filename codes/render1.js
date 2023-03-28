@@ -7,6 +7,9 @@ const raddeg = velos.radians_degrees;
 const axial_velocity = velos.axial_velocity;
 const displacement = velos.displacement;
 
+let oldpoints;
+let oldvectoptions = {points: oldpoints, updatable: true}; let newvector;
+
 function synthObject (scene, objspecs, synthindex) {
     let object;
     let param = objspecs[synthindex];
@@ -82,14 +85,14 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
     //pointer2.position = obj2.position;
     //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
 
-    while ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
-        obj1.position.x += 0.5 * velo1.x;
-        obj1.position.y += 0.5 * velo1.y;
-        obj1.position.z += 0.5 * velo1.z; }
-    while ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
-        obj2.position.x += 0.5 * velo2.x;
-        obj2.position.y += 0.5 * velo2.y;
-        obj2.position.z += 0.5 * velo2.z; }
+    if ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
+        obj1.position.x += 5 * velo1.x;
+        obj1.position.y += 5 * velo1.y;
+        obj1.position.z += 5 * velo1.z; }
+    if ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
+        obj2.position.x += 5 * velo2.x;
+        obj2.position.y += 5 * velo2.y;
+        obj2.position.z += 5 * velo2.z; }
     
     //let disref = displacement (pos2, pos1);
     let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
@@ -98,7 +101,7 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
  
     let factor = dis.total;
     let newpoints = [new BABYLON.Vector3(obj1.position.x, obj1.position.y, obj1.position.z).add(new BABYLON.Vector3(3, 3, 3)), new BABYLON.Vector3(obj2.position.x, obj2.position.y, obj2.position.z).subtract(new BABYLON.Vector3(3, 3, 3))];
-    let newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints}, scene);
+    newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints}, scene);
 
     //let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
     //let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
@@ -154,7 +157,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
     const scene = new BABYLON.Scene(engine);
     let primary = 100;
     
-    const camera = new BABYLON.ArcRotateCamera('', 0, raddeg(-45, 0), 100, new BABYLON.Vector3(300, 0, 0), scene);
+    const camera = new BABYLON.ArcRotateCamera('', raddeg(0, 0), raddeg(70, 0), 400, new BABYLON.Vector3(300, 300, 400), scene, true);
     camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
     camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
     camera.attachControl(canvas, true);
@@ -188,8 +191,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
     //sim objects
     let current0 = new BABYLON.Mesh("obj1");
     current0 = synthObject(scene, array, checked[0]);
-    let pos1 = positions[checked[0]];
-    
+    let pos1 = positions[checked[0]]; console.log(current0.position);
     let current1 = new BABYLON.Mesh("obj2");
     current1 = synthObject(scene, array, checked[1]);
     let pos2 = positions[checked[1]];
@@ -203,9 +205,12 @@ function render (masses, velo, positions, array, timelim2, checks) {
     //if (!!properties.augment) { vect1 = synthVector(scene, pos1, pos2); };
     //node = vect1.node vect2 = vect1.vector; };
 
-    reset.onclick = function() { camera.position = new BABYLON.Vector3(0, 0, (Math.cos(45) * 100)); };
+    reset.onclick = function() { camera.position = new BABYLON.Vector3(300 + Math.cos(70)*400, 300 + Math.cos(70)*400, 300); };
     let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
     
+    oldvectoptions.points = [new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]), new BABYLON.Vector3(pos2[0], pos2[1], pos2[2])];
+    newvector = new BABYLON.MeshBuilder.CreateLines("old", oldvectoptions, scene); oldvectoptions.instance = newvector;
+
     scene.registerBeforeRender(function () {
         augment(current0, current1, pos1, pos2, velo1, velo2, vect1, node, null, null, scene);
         timetrack = (Date.now()/1000) - start;

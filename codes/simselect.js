@@ -8,9 +8,9 @@ const custom = require("./customs.js");
 function simselect (masses, velocities, positions, checked, input, type) {
 
 let eq_input = new String;
-let M = (masses[checked[1]] >= 0.05) || (masses[checked[0]] >= 0.05);
+let M = (masses[checked[1]] >= 0.55) || (masses[checked[0]] >= 0.55);
 let V = dis([velos(velocities[checked[1]]).x, velos(velocities[checked[1]]).y, velos(velocities[checked[1]]).z], 
-            [velos(velocities[checked[0]]).x, velos(velocities[checked[0]]).y, velos(velocities[checked[1]]).z]) >= 0.1;
+            [velos(velocities[checked[0]]).x, velos(velocities[checked[0]]).y, velos(velocities[checked[1]]).z]).total >= 0.1;
 let P = dis(positions[checked[1]], positions[checked[0]]).total >= 20;
 
 const mode = document.getElementById("autouser"); const simselect = document.getElementsByName("simselect"); let equation;
