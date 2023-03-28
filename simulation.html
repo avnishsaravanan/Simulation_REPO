@@ -9,6 +9,8 @@
     <script src = "./result/interaction.bundle.js"></script>
     <script src = "./result/inputs.bundle.js"></script>
     <script src = "./result/render1.bundle.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <title>Relativity Simulations</title>
     
@@ -106,7 +108,9 @@
               <label for="angle_xy">X-Y angle</label>
               <input type="number" name="objparams" id="xyangle" placeholder="0-90" required="required" min=0 max=89 step=1 style="width:100px; height: 15px; text-align: right;" disabled></input><br>
               <label for="angle_yz">Y-Z angle</label>
-              <input type="number" name="objparams" id="yzangle" placeholder="0-90" required="required" min=0 max=89 step=1 style="width:100px; height: 15px; text-align: right;" disabled></input><br><br>
+              <input type="number" name="objparams" id="yzangle" placeholder="0-90" required="required" min=0 max=89 step=1 style="width:100px; height: 15px; text-align: right;" disabled></input><br>
+              <label for="angle_xz">X-Z angle</label>
+              <input type="number" name="objparams" id="xzangle" placeholder="0-90" required="required" min=0 max=89 step=1 style="width:100px; height: 15px; text-align: right;" disabled></input><br><br>
               <p style="text-align:center; margin:auto;"><input type="submit" id="savbtn" value="Save" disabled></input></p>
           </form>
       </div>
@@ -177,7 +181,8 @@
 
       <div class="siminfo">
         <p id="sinfo" style="text-align:center; margin:auto;"><b>Input all values and Run Simulation</b></p>
-        <p id="simeqn" style="text-align:center; margin:auto;"><i>Equation of Simulation will come here</i></p>
+        <p id="simeqn" style="text-align:center; margin:auto;"><i>Equation of Simulation will come here like</i><br> When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+          \[x = {-b \pm \sqrt{b^2-4ac} \over 2a}.\]</p>
       </div>      
 
       <div class="simval">
