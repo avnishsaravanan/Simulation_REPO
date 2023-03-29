@@ -156,7 +156,7 @@ for (a2 = 0; a2 == Math.PI; a2 += Math.PI/inc2) { //Y-Z
     ribbons1.push(ribbon1); }
     const ribbons2 = []; const ribbons3 = [];
     ribbons1.forEach(function(ribbon) { let ribbon2 = ribbon.clone('layer2'); ribbon2.rotate(BABYLON.Axis.Z, Math.PI/2, BABYLON.Space.WORLD); ribbon2.position = objpos; ribbons2.push(ribbon2) }); //X-Z
-    ribbons1.forEach(function(ribbon) { let ribbon3 = ribbon.clone('layer2'); ribbon2.rotate(BABYLON.Axis.Y, Math.PI/2, BABYLON.Space.WORLD); ribbon3.position = objpos; ribbons3.push(ribbon3) }); //X-Y
+    ribbons1.forEach(function(ribbon) { let ribbon3 = ribbon.clone('layernp'); ribbon2.rotate(BABYLON.Axis.Y, Math.PI/2, BABYLON.Space.WORLD); ribbon3.position = objpos; ribbons3.push(ribbon3) }); //X-Y
     ribbons1.forEach(function(ribbon) {ribbon.position = objpos}); 
 }
 
