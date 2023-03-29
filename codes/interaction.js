@@ -108,7 +108,7 @@
         velocities.push([arrsimobject[7], 
                         arrsimobject[8], 
                         arrsimobject[9], 
-                        arrsimobject[10] ]);
+                        arrsimobject[10]]);
         positions.push([arrsimobject[4],
                        arrsimobject[5],
                        arrsimobject[6]]);
