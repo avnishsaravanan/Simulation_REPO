@@ -3,6 +3,7 @@
     "babylonjs": "^5.0.0-rc.13",
     "babylonjs-gui": "^5.0.0-rc.13",
     "babylonjs-loaders": "^5.0.0-rc.13",
+    "mathjax": "^3.2.2",
     "requirejs": "^2.3.6"
   },
   "name": "simulation_repo",
