@@ -3,13 +3,13 @@
   /*let arrsimobjects = [
     {"objname":"Sphere1", "objsize":5, "objmass":30, "objcolor":"#535353", "objposx":30, "objposy":30, "objposz":30, "speed":0.3, "xyangle":30, "yzangle":45},
     {"objname":"Sphere2", "objsize":8, "objmass":50, "objcolor":"#535353", "objposx":50, "objposy":50, "objposz":50, "speed":0.5, "xyangle":50, "yzangle":80} ];*/
-
+  //const MathJax = require("mathjax");
   let inputs = require("./inputs.js");
   let graphics = require("./render1.js");
   const custom = require("./customs.js");
   let arrsimobjects = [
-    {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
-    {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80} ];
+    {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45, 10: 45},
+    {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80, 10: 40} ];
     /*{0:"Sphere3", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere4", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
     {0:"Sphere5", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
@@ -17,7 +17,7 @@
     {0:"Sphere7", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere8", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
     {0:"Sphere9", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45} ];*/
-  let velocities = [[0.001, 30, 45], [0.01, 50, 80]];
+  let velocities = [[0.001, 30, 45, 45], [0.01, 50, 80, 40]];
   let positions = [[30, 30, 30], [50, 50, 50]];
   let masses = [30, 50];
 
@@ -107,7 +107,8 @@
         //doubt
         velocities.push([arrsimobject[7], 
                         arrsimobject[8], 
-                        arrsimobject[9]]);
+                        arrsimobject[9], 
+                        arrsimobject[10] ]);
         positions.push([arrsimobject[4],
                        arrsimobject[5],
                        arrsimobject[6]]);
@@ -130,7 +131,7 @@
         // update arrims
         arrsimobjects[(upobj()-1)] = arrsimobject;
 
-        velocities[(upobj()-1)] = [arrsimobject[7], arrsimobject[8], arrsimobject[9]];
+        velocities[(upobj()-1)] = [arrsimobject[7], arrsimobject[8], arrsimobject[9], arrsimobject[10]];
         positions[(upobj()-1)] = [arrsimobject[4], arrsimobject[5], arrsimobject[6]];
         masses[(upobj()-1)] = arrsimobject[2];
 
@@ -208,9 +209,19 @@
       //if (checked[0] > checked[1]) { checked[0] = checked.splice(1, 1, checked[0])[0]};
       inputs(masses, velocities, positions, checked);
       graphics(masses, velocities, positions, arrsimobjects, time, checked);
-      const siminfo = document.getElementById("siminfo");
-      siminfo.textContent = `Simulation is currently running for objects '${objlist[checked[0]].innerText}' and '${objlist[checked[1]].innerText}'`;
+      const siminfo = document.getElementById("sinfo");
+      
+      // notify names of objects in Sim
+      siminfo.innerHTML = `<b>Simulation is currently running for objects '${objlist[checked[0]].innerText}' and '${objlist[checked[1]].innerText}'</b>`;
       console.log(objlist[0].innerText);
+      
+      // show eqn basis condition 
+      let simeqn = document.getElementById("simeqn0");
+      simeqn.style.display = 'none';
+      // put conditions here
+      simeqn = document.getElementById("simeqn1"); //modify name as needed 
+      simeqn.innerHTML = '<i>When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are \[x = {-b \pm \sqrt{b^2-4ac} \over 2a}.\]</i>';
+      
       //addScript('renderCanvas','./render1.bundle.js');      
     };
 
@@ -240,7 +251,7 @@
       col=0;
       document.querySelectorAll('#editParameters input, #editParameters select, #editParameters button, #editParameters textarea').forEach(function(elem) {
         elem.disabled = state;
-        if (num != 100 && col < 10) {
+        if (num != 100 && col < 11) {
           elem.value = arrsimobjects[num-1][col];
           col++;
         }          
