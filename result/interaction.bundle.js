@@ -231,10 +231,11 @@
       console.log(objlist[0].innerText);
       
       // show eqn basis condition 
-      let simeqn = document.getElementById("simeqn0"); let ind = 0;
+      let simeqn = document.getElementById("simeqn0"); 
       simeqn.style.display = 'none';
       let type = simeqnfn(masses, velocities, positions, checked, null, "eval");
       let solvefor = document.getElementById("solvefx");
+      let ind = 0;
       if (type == "sim-spl") {
         if (solvefor.value == "deltat1") { ind = 1 }; if (solvefor.value == "deltat")  { ind = 2 }; if (solvefor.value == "deltax1") { ind = 3 }; if (solvefor.value == "deltax") {ind = 4 };
         if (solvefor.value == "deltax1" && document.getElementById("dx").value == null) { ind = 5 }; if (solvefor.value == "deltax" && document.getElementById("dx1").value == null) { ind = 6 };
