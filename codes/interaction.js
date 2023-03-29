@@ -8,8 +8,8 @@
   let graphics = require("./render1.js");
   const custom = require("./customs.js");
   let arrsimobjects = [
-    {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
-    {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80} ];
+    {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45, 10: 50},
+    {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80, 10: 50} ];
     /*{0:"Sphere3", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere4", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
     {0:"Sphere5", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
@@ -107,7 +107,8 @@
         //doubt
         velocities.push([arrsimobject[7], 
                         arrsimobject[8], 
-                        arrsimobject[9]]);
+                        arrsimobject[9], 
+                        arrsimobject[10]]);
         positions.push([arrsimobject[4],
                        arrsimobject[5],
                        arrsimobject[6]]);
@@ -130,7 +131,7 @@
         // update arrims
         arrsimobjects[(upobj()-1)] = arrsimobject;
 
-        velocities[(upobj()-1)] = [arrsimobject[7], arrsimobject[8], arrsimobject[9]];
+        velocities[(upobj()-1)] = [arrsimobject[7], arrsimobject[8], arrsimobject[9], arrsimobject[10]];
         positions[(upobj()-1)] = [arrsimobject[4], arrsimobject[5], arrsimobject[6]];
         masses[(upobj()-1)] = arrsimobject[2];
 

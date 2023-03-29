@@ -24,9 +24,9 @@ function radians_degrees (input, path) {
     else {return input * (180/pi) }} //radians to degrees
 
 function axial_velocity(velo) {
-    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0)); //* Math.cos(velo[2], 0)
+    let veloX = velo[0] * Math.cos(radians_degrees(velo[1], 0)) * Math.cos(radians_degrees(velo[3], 0));
     let veloY = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.sin(radians_degrees(velo[2], 0));
-    let veloZ = velo[0] * Math.sin(radians_degrees(velo[1], 0)) * Math.cos(radians_degrees(velo[2], 0));
+    let veloZ = velo[0] * Math.sin(radians_degrees(velo[2], 0)) * Math.cos(radians_degrees(velo[3], 0));
     console.log("done, from first call");
     return {x : veloX, y : veloY, z : veloZ};
 }
@@ -493,7 +493,7 @@ function synthVector (scene, obj1, obj2) { //vectline works, arrowpts yet to deb
         
     //calculation of midpoint
     let term1 = new BABYLON.Vector3(dis.x/2, dis.y/2, dis.z/2);
-    let term2 = new BABYLON.Vector3(obj1[0], obj1[1], obj1[2]);
+    let term2 = new BABYLON.Vector3 (obj1[0], obj1[1], obj1[2]);
     let centre = term1.add(term2);
     
     let arrowpts = [new BABYLON.Vector3(0, (0.2 * factor), 0), new BABYLON.Vector3(0.3 * factor, 0, 0),
@@ -589,7 +589,30 @@ function eventplot (pos1, pos2, e, scene) {
     
     return ev };
 
-function staticMatrix (objspecs, synthindex) {};
+function staticMatrix (objspecs, synthindex, scene) {
+    
+    let ribbons1 = [];
+    let param = objspecs[synthindex];
+    const inc1 = Math.E**(param[2]/25);
+    const inc2 = Math.E**(param[2]/4.348); console.log(inc1, inc2, "from matrix");
+    const init = param[1]/2 + 5;
+    const objpos = new BABYLON.Vector3(param[4], param[5], param[6]);
+for (a2 = 0; a2 == Math.PI; a2 += Math.PI/inc2) { //Y-Z
+    let layer = [];
+    for (r = init; r == 200; r += (200-init)/inc1) { // layer of geodesics
+        let circle = [];
+        for (a1 = 0; a1 == 2 * Math.PI; a1 += 2 * Math.PI/30) { // single circle
+            let point = new BABYLON.Vector3(r * cos(a1), r*sin(a1)*cos(a2), r*sin(a1)*sin(a2));
+            circle.push(point); circle.push(circle[0]); }
+        layer.push(circle); console.log(layer); }
+    const ribbon1 = BABYLON.MeshBuilder.CreateRibbon('layer', {pathArray: layer, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
+    ribbons1.push(ribbon1); }
+    const ribbons2 = []; const ribbons3 = [];
+    ribbons1.forEach(function(ribbon) { let ribbon2 = ribbon.clone('layer2'); ribbon2.rotate(BABYLON.Axis.Z, Math.PI/2, BABYLON.Space.WORLD); ribbon2.position = objpos; ribbons2.push(ribbon2) }); //X-Z
+    ribbons1.forEach(function(ribbon) { let ribbon3 = ribbon.clone('layer2'); ribbon2.rotate(BABYLON.Axis.Y, Math.PI/2, BABYLON.Space.WORLD); ribbon3.position = objpos; ribbons3.push(ribbon3) }); //X-Y
+    ribbons1.forEach(function(ribbon) {ribbon.position = objpos}); 
+}
+
 
 function render (masses, velo, positions, array, timelim2, checks) {
     let timetrack = 0; let simoff = false; let userel = null;
@@ -601,7 +624,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
     let e2 = Array.from(document.getElementsByName("e2xyz")); let e2pos = e2.map(n => Number(n.value) );
     let start = Date.now()/1000;
     let checked = checks;
-    const canvas = document.getElementById("renderCanvas");
+    const canvas = document.getElementById("renderCanvas"); canvas.addEventListener("wheel", event => event.preventDefault());
     const engine = new BABYLON.Engine(canvas, true);
     let simmsg = new custom.CustomAlert();
     let properties = simselect(masses, velo, positions, checked, null, "graphics");
@@ -618,7 +641,7 @@ function render (masses, velo, positions, array, timelim2, checks) {
     let properties = simselect(masses, velo, positions, checked, null, "graphics");
 
     if (properties.BG == "black") { scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); }
-    else { scene.clearColor = new BABYLON.Color4(0, 0, 0.8, 1); let ground = new BABYLON.MeshBuilder.CreatePlane('grnd', {size: 200, sideOrientation: DOUBLESIDE}, scene); 
+    else { scene.clearColor = new BABYLON.Color4(0, 0, 0.6, 0.9); let ground = new BABYLON.MeshBuilder.CreatePlane('grnd', {size: 400, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene); ground.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.WORLD); ground.position.x += 100; ground.position.z += 100;
            let groundmat = new BABYLON.StandardMaterial; groundmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5), ground.material = groundmat
            camera.radius -= 50 };
     
@@ -663,9 +686,10 @@ function render (masses, velo, positions, array, timelim2, checks) {
     
     oldvectoptions.points = [new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]), new BABYLON.Vector3(pos2[0], pos2[1], pos2[2])];
     newvector = new BABYLON.MeshBuilder.CreateLines("old", oldvectoptions, scene); oldvectoptions.instance = newvector;
+    if (!!properties.ST) { staticMatrix(array, checked[1], scene) };
 
     scene.registerBeforeRender(function () {
-        augment(current0, current1, pos1, pos2, velo1, velo2, vect1, node, null, null, scene);
+        if (!properties.augment) { augment(current0, current1, pos1, pos2, velo1, velo2, vect1, node, null, null, scene) };
         timetrack = (Date.now()/1000) - start;
         if (timetrack >= timelim1) { e1Mesh.setEnabled(true) }; 
         if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
