@@ -33,6 +33,7 @@ if (type == "calc") {
 
 
 }
+if (type == "eval") {return equation};
 
 if (type == "graphics") {
     let graphics = {BG: null, arrow: true, augment: true, ST: false, simmsg: new String};

@@ -20,6 +20,7 @@
   let inputs = __webpack_require__(3);
   let graphics = __webpack_require__(9);
   const custom = __webpack_require__(8);
+  const runvalidate = __webpack_require__(10);
   let arrsimobjects = [
     {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45, 10: 45},
     {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80, 10: 40} ];
@@ -43,6 +44,7 @@
     let simulmode = "auto"; //can be a  global variable ?
     const simmode = document.getElementById('autouser');
     const simselect = document.querySelectorAll('#relati input');
+    const simeqnfn = __webpack_require__(5);
     const addelement =  document.getElementById('addbtn');
     const objectslist = document.getElementsByName('simobject');
     let okbtn =  document.getElementById('dummy');
@@ -229,14 +231,30 @@
       console.log(objlist[0].innerText);
       
       // show eqn basis condition 
-      let simeqn = document.getElementById("simeqn0");
+      let simeqn = document.getElementById("simeqn0"); let ind = 0;
       simeqn.style.display = 'none';
-      // put conditions here
-      simeqn = document.getElementById("simeqn1"); //modify name as needed 
-      simeqn.innerHTML = '<i>When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are \[x = {-b \pm \sqrt{b^2-4ac} \over 2a}.\]</i>';
-      
+      let type = simeqnfn(masses, velocities, positions, checked, null, "eval");
+      let solvefor = document.getElementById("solvefx");
+      if (type == "sim-spl") {
+        if (solvefor.value == "deltat1") { ind = 1 }; if (solvefor.value == "deltat")  { ind = 2 }; if (solvefor.value == "deltax1") { ind = 3 }; if (solvefor.value == "deltax") {ind = 4 };
+        if (solvefor.value == "deltax1" && document.getElementById("dx").value == null) { ind = 5 }; if (solvefor.value == "deltax" && document.getElementById("dx1").value == null) { ind = 6 };
+      }
+      if (type == "sim-gen") {
+        if (solvefor.value == "deltat1" || solvefor.value == "deltax1") { ind = 8 }; if (solvefor.value == "deltat"||solvefor.value == "deltax")  { ind = 9 };
+      }
+      simeqn = document.getElementById("simeqn"+ind); //modify name as needed 
+      simeqn.style.display = 'block';
+      if (type == "sim-gen") { simeqn = document.getElementById("simeqn10"); simeqn.style.display = 'block'; };
+      if (type == "sim-spl") { simeqn = document.getElementById("simeqn7"); simeqn.style.display = 'block'; };      
+      console.log(simeqn);
       //addScript('renderCanvas','./render1.bundle.js');      
     };
+
+    const validate = document.getElementById("valeqn");
+    validate.onclick = function () {
+      const valresult = runvalidate();
+      console.log(valresult[0]);
+    }
 
     // velo toggle interactions 
     velomode.onclick = function () {
@@ -633,6 +651,7 @@ if (type == "calc") {
 
 
 }
+if (type == "eval") {return equation};
 
 if (type == "graphics") {
     let graphics = {BG: null, arrow: true, augment: true, ST: false, simmsg: new String};
@@ -772,12 +791,12 @@ function equations (input) {
     this.case6 = function case6() { //delta x' without delta x - assuming 100% coaxial velo
         term1 = ( LzF * - dt_P);
         term2 = (c**2/LzF * -(colinear_velo.total));
-        this.content.dp_P = term2 * (dt_Q + term1); };
+        this.content.dp_Q = term2 * (dt_Q + term1); };
     
     this.case5 = function case5() { //delta x without delta x' - assuming 100% coaxial velo
         term1 = ( LzF * - dt_Q);
         term2 = (c**2/LzF * (colinear_velo.total));
-        this.content.dp_P = term2 * (dt_Q + term1); };
+        this.content.dp_P = term2 * (dt_P + term1); };
         
     this.en = function () {
         this.content.energy1 = (mass1 * LzF * (c**2));
@@ -1018,13 +1037,13 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
     //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
 
     if ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
-        obj1.position.x += 5 * velo1.x;
-        obj1.position.y += 5 * velo1.y;
-        obj1.position.z += 5 * velo1.z; }
+        obj1.position.x += 25 * velo1.x;
+        obj1.position.y += 25 * velo1.y;
+        obj1.position.z += 25 * velo1.z; }
     if ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
-        obj2.position.x += 5 * velo2.x;
-        obj2.position.y += 5 * velo2.y;
-        obj2.position.z += 5 * velo2.z; }
+        obj2.position.x += 25 * velo2.x;
+        obj2.position.y += 25 * velo2.y;
+        obj2.position.z += 25 * velo2.z; }
     
     //let disref = displacement (pos2, pos1);
     let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
@@ -1088,7 +1107,7 @@ for (a2 = 0; a2 == Math.PI; a2 += Math.PI/inc2) { //Y-Z
     ribbons1.push(ribbon1); }
     const ribbons2 = []; const ribbons3 = [];
     ribbons1.forEach(function(ribbon) { let ribbon2 = ribbon.clone('layer2'); ribbon2.rotate(BABYLON.Axis.Z, Math.PI/2, BABYLON.Space.WORLD); ribbon2.position = objpos; ribbons2.push(ribbon2) }); //X-Z
-    ribbons1.forEach(function(ribbon) { let ribbon3 = ribbon.clone('layer2'); ribbon2.rotate(BABYLON.Axis.Y, Math.PI/2, BABYLON.Space.WORLD); ribbon3.position = objpos; ribbons3.push(ribbon3) }); //X-Y
+    ribbons1.forEach(function(ribbon) { let ribbon3 = ribbon.clone('layernp'); ribbon2.rotate(BABYLON.Axis.Y, Math.PI/2, BABYLON.Space.WORLD); ribbon3.position = objpos; ribbons3.push(ribbon3) }); //X-Y
     ribbons1.forEach(function(ribbon) {ribbon.position = objpos}); 
 }
 
@@ -1202,6 +1221,209 @@ function render (masses, velo, positions, array, timelim2, checks) {
 }
     module.exports = render;
 
+
+
+/***/ }),
+/* 10 */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+//receive user input equation through this program directly
+//verify using reliable arbitrary values
+
+//arrays containing the distinct terms of each equation
+//convert string to object, property to exclude equation
+
+//separate function to calculate arbitrary values, randomised each time (global variables)
+//add another method to run calculation and then validate
+
+//this.translate(), this.classify(), this.validate()
+//preconditions: use D for derivative, ^ for power and roots, brackets for +/-, no splittable terms on left side, no XYZ unless for express colinear values
+
+const { coaxial_velocity } = __webpack_require__(4);
+const { coaxial_displacement } = __webpack_require__(4);
+const { axial_velocity } = __webpack_require__(4);
+const SR = __webpack_require__(7); const GR = __webpack_require__(6);
+
+
+let input = {};
+function randomise() {
+       let velo1 = Math.ceil(Math.random() * 999) / 1000
+       let XY = Math.round(Math.random() * 90);
+       let YZ = Math.round(Math.random() * 90);
+       let velo2 = axial_velocity([velo1, XY, YZ]);
+
+       input = {
+              dt_P: Math.ceil((Math.random() * 100)),
+              dp_P: {
+                     x: Math.ceil((Math.random() * 100)),
+                     y: Math.ceil((Math.random() * 100)),
+                     z: Math.ceil((Math.random() * 100))
+              },
+              //dp_Q: Math.ceil((Math.random()*100)), 
+              //dt_Q: Math.ceil((Math.random()*100)),
+              mass1: Math.ceil(Math.random() * 100) / (Math.ceil(Math.random()) * 100),
+              mass2: Math.ceil(Math.random() * 100) / (Math.ceil(Math.random()) * 100),
+              dist: Math.sqrt(Math.ceil(Math.random() * 200) ** 2 * Math.ceil(Math.random() * 200) ** 2 * Math.ceil(Math.random() * 200) ** 2),
+              colinear_velo: new Number, colinear_dis: new Number
+       }
+
+       input.colinear_velo = coaxial_velocity(velo2, [input.dp_P.x, input.dp_P.y, input.dp_P.z], [0, 0, 0]);
+       input.colinear_dis = coaxial_displacement(velo2, [input.dp_P.x, input.dp_P.y, input.dp_P.z], [0, 0, 0]);
+}
+
+function runvalidate() {
+       const collect = document.getElementById("usereqn");
+       let usersubmit = collect.value;
+       let evaluator = new equation(usersubmit);
+       let splitsec = evaluator.classify(); evaluator.translate(splitsec);
+       return evaluator.validate();
+}
+function update(arr, str, replval) { arr.forEach(function (n) { n = n[n.indexOf(str)] = replval }) };
+
+class equation {
+       constructor(eq) {
+              this.content = String(eq);
+              this.solvefor; //delta t'
+              this.type;
+              this.terms = [];
+              this.powers = [];
+              this.coefs = [];
+              this.operators = [];
+              let arr1 = [this.terms, this.coefbases, this.powerbases];
+       }
+       classify() {
+              let split = this.content.split(/(?:\s*)=(?:\s*)/g);
+              split[0] = split[0].replace("Δ" || 0, "");
+              if (split[0] == "t" || split[0] == "t1") { this.solvefor = "dt_P" };
+              if (split[0] == "t'" || split[0] == "t2") { this.solvefor = "dt_Q" };
+              if (split[0] == "d" || split[0] == "d1") { this.solvefor = "dp_P" };
+              if (split[0] == "d'" || split[0] == "d2") { this.solvefor = "dp_Q" };
+              if (split[0] == "E") { this.solvefor = "en" }
+              if (split[0] == "m" && split[1].includes("c^2")) { this.solvefor = "mrel" }
+              if (split[1].includes( true && "c")) { this.type = "GR" };
+              if (split[1].includes("v")) { this.type = "SR" };
+              if (split[1].includes("r") && !(split[1].includes("c"))) { this.type = "NM" };
+              return split;
+       }
+       translate(split) {
+              this.terms[0] = split[0];
+              let terms1 = Array.from(split[1].split(/(?:\s*)[+](?:\s*)/g));
+              terms1 = terms1.map(n => n.split(/(?:\s*)[-](?:\s*)/g));
+              terms1 = terms1.map(n => n.split(/(?:\s*)[*](?:\s*)/g));
+              terms1 = terms1.map(n => n.split(/(?:\s*)[/](?:\s*)/g));
+              terms1 = terms1.map(n => n.replace(/(?:\s*)[(](?=\d+[a-zA-Z])[)]/g, ""));
+              this.operators = split[1].filter(elem => !terms1.includes(elem, 0));
+              let terms2 = terms1.filter(term => String(term).includes("^"));
+              this.powers = terms2.map(term => Number(term.replace(/\d*[a-z]+\^/gi, "")));
+              this.powerbases = terms2.map(term => String(term.replace(/\^\d+/g, "")));
+              let terms3 = terms1.filter(term => String(term).includes(/(?:\d+)(?=[a-z]+)/gi))
+              this.coefs = terms3.map(term => Number(term.replace(/[a-z]+\^*\d*/gi, "")));
+              this.coefbases = terms3.map(term => String(term.replace(/\d+(?=[a-z])/gi, "")));
+
+              terms1.forEach(function (n) {
+                     if (!this.operators.includes(n) && !this.powers.includes(n) && !this.coefs.includes(n)) {
+                            this.terms.push(String(n))
+                     }
+              })
+       }
+       validate() {
+              let trial;
+              if (this.terms.includes("t")) { update(arr1, "t", input.dt_P) }
+              else { update(arr1, "t1", input.dt_P) };
+              //if (this.terms.includes("d'")) { this.terms[this.terms.indexOf("d'")] = input.dp_Q } else { this.terms.indexOf("d2") = input.dp_Q };
+              if (this.terms.includes("d")) { update(arr1, "d", input.dp_P.total) }
+              else { update(arr1, "d1", input.dp_P.total) };
+              if (this.type == "GR" || this.type == "NM") {
+                     if (this.terms.includes("M")) { update(arr1, "M", input.mass2) }
+                     else { update(arr1, "m2", input.mass2) };
+                     if (this.terms.includes("m")) { update(arr1, "m", input.mass1) }
+                     else { update(arr1, "m1", input.mass1) };
+                     update(arr1, "r", input.dist)
+              }
+              if (this.type == "SR") { trial = SR(input);  
+              if (this.solvefor == "mrel" || this.solvefor == "en") { 
+                     trial.en();
+                     if (this.terms.includes("m")) {
+                     update(arr1, "m", input.mass1) }
+              else { update(arr1, "m1", input.mass2) };
+              if (this.terms.includes("M")) { update(arr1, "M", input.mass1) }
+              else {update(arr1, "m2", input.mass1) }};
+              if (this.terms.includes("m")||this.terms.includes("m1")) { update(arr1, "E", trial.content.energy1)}
+              else { update(arr1, "E", trial.content.energy2)};
+
+              if (!this.terms.includes("v")) {
+                     update(arr1, "vx", input.colinear_velo.x)
+                     update(arr1, "vy", input.colinear_velo.z)
+                     update(arr1, "vz", input.colinear_velo.x)
+              }
+              else {
+                     update([this.terms, this.coefs, this.powers], "v", input.colinear_velo.total)
+              }
+
+              if (this.solvefor.includes("t") && (this.terms.includes("dx"))) {
+                     update(arr1, "dx", input.colinear_dis.x)
+                     update(arr1, "dy", input.colinear_dis.z)
+                     update(arr1, "dz", input.colinear_dis.x)
+              }
+              else {
+                     if (this.terms.includes("d")) { update([this.terms, this, coefs, this.powers], "d", input.colinear_dis.total) }
+                     if (this.terms.includes("d1")) { update([this.terms, this, coefs, this.powers], "d1", input.colinear_dis.total) }
+                     if (this.terms.includes("d'")) { update([this.terms, this, coefs, this.powers], "d'", input.colinear_dis.total) }
+                     if (this.terms.includes("d2")) { update([this.terms, this, coefs, this.powers], "d2", input.colinear_dis.total) }};
+              }
+
+              if (this.type == "GR") { trial = GR(input); }; if (this.type == "NM") { }
+
+              if (this.solvefor.includes("t")) {
+                     trial.case1(); if (this.terms.includes("t'")) { update(arr1, "t'", trial.content.dt_Q) }
+                     else { update(arr1, "t2'", trial.content.dt_Q) }
+              }
+              if (this.solvefor.includes("d")) {
+                     trial.case3(); if (this.terms.includes("d'")) { update(arr1, "t'", trial.content.dt_Q) }
+                     else { update([this.terms, this.powerbases, this.coefabases], "d2'", trial.content.dp_Q) }
+              }
+              let count = 0;
+              this.terms.forEach(function (term) {
+                     for (i = count; i == this.powers.length; i++) {
+                            if (this.powerbases == term) {
+                                   let ref = this.terms.indexOf(this.powerbases[i]);
+                                   this.terms[ref] = this.terms[ref] ** powers[i];
+                                   count += 1;
+                            }
+                     }
+              })
+              count = 0;
+              this.terms.forEach(function (term) {
+                     for (i = count; i == this.coefs.length; i++) {
+                            if (this.coefbases[i] == term) {
+                                   let ref = this.terms.indexOf(this.coefbases[i]);
+                                   this.terms[ref] = this.terms[ref] * coefs[i];
+                                   count += 1;
+                            }
+                     }
+              })
+              count = 0;
+              this.terms.forEach(function (term) {
+                     if (count = 0) { count += 1 } else {
+                            if (this.operators[count] == "/") { this.terms[count] = term / this.terms[count + 1]; this.terms = this.terms.splice(count + 1, 1) };
+                            if (this.operators[count] == "*") { this.terms[count] = term * this.terms[count + 1]; this.terms = this.terms.splice(count + 1, 1) };
+                            count += 1
+                     }
+              })
+              count = 0;
+              this.terms.forEach(function (term) {
+                     if (count = 0) { count += 1 } else {
+                            if (this.operators[count] == "+") { this.terms[count] = term + this.terms[count + 1]; this.terms = this.terms.splice(count + 1, 1) };
+                            if (this.operators[count] == "-") { this.terms[count] = term - this.terms[count + 1]; this.terms = this.terms.splice(count + 1, 1) };
+                            count += 1;
+                     }
+              })
+              return [this.terms[0] === this.terms[1], this.terms[1] - this.terms[0]]
+
+
+       }
+}
+module.exports = runvalidate;
 
 
 /***/ })

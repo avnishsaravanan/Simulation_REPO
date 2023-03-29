@@ -66,12 +66,12 @@ function equations (input) {
     this.case6 = function case6() { //delta x' without delta x - assuming 100% coaxial velo
         term1 = ( LzF * - dt_P);
         term2 = (c**2/LzF * -(colinear_velo.total));
-        this.content.dp_P = term2 * (dt_Q + term1); };
+        this.content.dp_Q = term2 * (dt_Q + term1); };
     
     this.case5 = function case5() { //delta x without delta x' - assuming 100% coaxial velo
         term1 = ( LzF * - dt_Q);
         term2 = (c**2/LzF * (colinear_velo.total));
-        this.content.dp_P = term2 * (dt_Q + term1); };
+        this.content.dp_P = term2 * (dt_P + term1); };
         
     this.en = function () {
         this.content.energy1 = (mass1 * LzF * (c**2));

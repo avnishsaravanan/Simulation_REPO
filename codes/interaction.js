@@ -7,6 +7,7 @@
   let inputs = require("./inputs.js");
   let graphics = require("./render1.js");
   const custom = require("./customs.js");
+  const runvalidate = require("./validate.js");
   let arrsimobjects = [
     {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45, 10: 45},
     {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80, 10: 40} ];
@@ -30,6 +31,7 @@
     let simulmode = "auto"; //can be a  global variable ?
     const simmode = document.getElementById('autouser');
     const simselect = document.querySelectorAll('#relati input');
+    const simeqnfn = require("./simselect.js");
     const addelement =  document.getElementById('addbtn');
     const objectslist = document.getElementsByName('simobject');
     let okbtn =  document.getElementById('dummy');
@@ -216,14 +218,30 @@
       console.log(objlist[0].innerText);
       
       // show eqn basis condition 
-      let simeqn = document.getElementById("simeqn0");
+      let simeqn = document.getElementById("simeqn0"); let ind = 0;
       simeqn.style.display = 'none';
-      // put conditions here
-      simeqn = document.getElementById("simeqn1"); //modify name as needed 
-      simeqn.innerHTML = '<i>When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are \[x = {-b \pm \sqrt{b^2-4ac} \over 2a}.\]</i>';
-      
+      let type = simeqnfn(masses, velocities, positions, checked, null, "eval");
+      let solvefor = document.getElementById("solvefx");
+      if (type == "sim-spl") {
+        if (solvefor.value == "deltat1") { ind = 1 }; if (solvefor.value == "deltat")  { ind = 2 }; if (solvefor.value == "deltax1") { ind = 3 }; if (solvefor.value == "deltax") {ind = 4 };
+        if (solvefor.value == "deltax1" && document.getElementById("dx").value == null) { ind = 5 }; if (solvefor.value == "deltax" && document.getElementById("dx1").value == null) { ind = 6 };
+      }
+      if (type == "sim-gen") {
+        if (solvefor.value == "deltat1" || solvefor.value == "deltax1") { ind = 8 }; if (solvefor.value == "deltat"||solvefor.value == "deltax")  { ind = 9 };
+      }
+      simeqn = document.getElementById("simeqn"+ind); //modify name as needed 
+      simeqn.style.display = 'block';
+      if (type == "sim-gen") { simeqn = document.getElementById("simeqn10"); simeqn.style.display = 'block'; };
+      if (type == "sim-spl") { simeqn = document.getElementById("simeqn7"); simeqn.style.display = 'block'; };      
+      console.log(simeqn);
       //addScript('renderCanvas','./render1.bundle.js');      
     };
+
+    const validate = document.getElementById("valeqn");
+    validate.onclick = function () {
+      const valresult = runvalidate();
+      console.log(valresult[0]);
+    }
 
     // velo toggle interactions 
     velomode.onclick = function () {

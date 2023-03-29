@@ -10,10 +10,11 @@
 //this.translate(), this.classify(), this.validate()
 //preconditions: use D for derivative, ^ for power and roots, brackets for +/-, no splittable terms on left side, no XYZ unless for express colinear values
 
-const { coaxial_velocity } = require("./velocity_codes");
-const { coaxial_displacement } = require("./velocity_codes");
+const { coaxial_velocity } = require("./velocity_codes.js");
+const { coaxial_displacement } = require("./velocity_codes.js");
 const { axial_velocity } = require("./velocity_codes");
-const SR = require("./SR_Functions1"); const GR = require("./GR_Functions2");
+const SR = require("./SR_Functions1.js"); const GR = require("./GR_Functions2.js");
+
 
 let input = {};
 function randomise() {
@@ -41,8 +42,9 @@ function randomise() {
        input.colinear_dis = coaxial_displacement(velo2, [input.dp_P.x, input.dp_P.y, input.dp_P.z], [0, 0, 0]);
 }
 
-let usersubmit = document.getElementById("validate_eq").value;
 function runvalidate() {
+       const collect = document.getElementById("usereqn");
+       let usersubmit = collect.value;
        let evaluator = new equation(usersubmit);
        let splitsec = evaluator.classify(); evaluator.translate(splitsec);
        return evaluator.validate();

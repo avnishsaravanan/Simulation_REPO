@@ -86,13 +86,13 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
     //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
 
     if ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
-        obj1.position.x += 5 * velo1.x;
-        obj1.position.y += 5 * velo1.y;
-        obj1.position.z += 5 * velo1.z; }
+        obj1.position.x += 25 * velo1.x;
+        obj1.position.y += 25 * velo1.y;
+        obj1.position.z += 25 * velo1.z; }
     if ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
-        obj2.position.x += 5 * velo2.x;
-        obj2.position.y += 5 * velo2.y;
-        obj2.position.z += 5 * velo2.z; }
+        obj2.position.x += 25 * velo2.x;
+        obj2.position.y += 25 * velo2.y;
+        obj2.position.z += 25 * velo2.z; }
     
     //let disref = displacement (pos2, pos1);
     let dis = displacement([obj2.position.x, obj2.position.y, obj2.position.z], 
