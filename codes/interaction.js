@@ -210,6 +210,25 @@
       let checked = [upobj()-1, Number(checks[1].match(/\d+/))-1];
       //if (checked[0] > checked[1]) { checked[0] = checked.splice(1, 1, checked[0])[0]};
       inputs(masses, velocities, positions, checked);
+      let simeqn = document.getElementById("simeqn0"); 
+      simeqn.style.display = 'none';
+      let type = simeqnfn(masses, velocities, positions, checked, null, "eval");
+      let solvefor = document.getElementById("solvefx");
+      let ind = 0;
+      if (type == "sim-spl") {
+        if (solvefor.value == "deltat1") { ind = 1 }; if (solvefor.value == "deltat")  { ind = 2 }; if (solvefor.value == "deltax1") { ind = 3 }; if (solvefor.value == "deltax") {ind = 4 };
+        //if (solvefor.value == "deltax1" && !document.getElementById("dx")) { ind = 5 }; if (solvefor.value == "deltax" && !document.getElementById("dx1").value) { ind = 6 };
+      }
+      if (type == "sim-gen") {
+        if (solvefor.value == "deltat1" || solvefor.value == "deltax1") { ind = 8 }; if (solvefor.value == "deltat"||solvefor.value == "deltax")  { ind = 9 };
+      }
+      console.log(type);
+      if (type != "sim-new") {  simeqn = document.getElementById("simeqn"+ind); simeqn.style.display = 'block'; } //modify name as needed 
+      console.log(simeqn);
+      if (type == "sim-gen") { simeqn = document.getElementById("simeqn10"); simeqn.style.display = 'block'; };
+      if (type == "sim-spl") { simeqn = document.getElementById("simeqn7"); simeqn.style.display = 'block'; }; 
+      if (type == "sim-new") { simeqn = document.getElementById("simeqn11"); simeqn.style.display = 'block'; };     
+      console.log(simeqn);
       graphics(masses, velocities, positions, arrsimobjects, time, checked);
       const siminfo = document.getElementById("sinfo");
       
@@ -218,23 +237,7 @@
       console.log(objlist[0].innerText);
       
       // show eqn basis condition 
-      let simeqn = document.getElementById("simeqn0"); 
-      simeqn.style.display = 'none';
-      let type = simeqnfn(masses, velocities, positions, checked, null, "eval");
-      let solvefor = document.getElementById("solvefx");
-      let ind = 0;
-      if (type == "sim-spl") {
-        if (solvefor.value == "deltat1") { ind = 1 }; if (solvefor.value == "deltat")  { ind = 2 }; if (solvefor.value == "deltax1") { ind = 3 }; if (solvefor.value == "deltax") {ind = 4 };
-        if (solvefor.value == "deltax1" && document.getElementById("dx").value == null) { ind = 5 }; if (solvefor.value == "deltax" && document.getElementById("dx1").value == null) { ind = 6 };
-      }
-      if (type == "sim-gen") {
-        if (solvefor.value == "deltat1" || solvefor.value == "deltax1") { ind = 8 }; if (solvefor.value == "deltat"||solvefor.value == "deltax")  { ind = 9 };
-      }
-      simeqn = document.getElementById("simeqn"+ind); //modify name as needed 
-      simeqn.style.display = 'block';
-      if (type == "sim-gen") { simeqn = document.getElementById("simeqn10"); simeqn.style.display = 'block'; };
-      if (type == "sim-spl") { simeqn = document.getElementById("simeqn7"); simeqn.style.display = 'block'; };      
-      console.log(simeqn);
+      
       //addScript('renderCanvas','./render1.bundle.js');      
     };
 

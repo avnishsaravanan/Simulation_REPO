@@ -8,6 +8,7 @@ module.exports = {
         inputs: './codes/inputs.js',
         render1:'./codes/render1.js',
         customs:'./codes/customs.js'
+        //gear: './babylonthingtemp/gear.js'
         
         /*index: {
             import: './codes/home.js',

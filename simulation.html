@@ -182,17 +182,18 @@
 
       <div class="siminfo">
         <p id="sinfo" style="text-align:center; margin:auto;"><b>Simulation is yet to begin!</b></p><br>
-        <p id="simeqn0" style="text-align:center; margin:auto; display: block;"><i>Equation of Simulation will come here</i></p>
-        <p id="simeqn1" style="text-align:center; margin:auto; display: none;"><i> $$\delta t' = {\delta t - ({{v_{x}\delta x} + {v_{y}\delta y} + {v_{z}\delta z}})\over {\sqrt{1-{v_{total}^2 \over c^2}}}}$$</i></p>
-        <p id="simeqn2" style="text-align:center; margin:auto; display: none;"><i> $$\delta t = {\delta t' - ({{v_{x}\delta x'} + {v_{y}\delta y'} + {v_{z}\delta z'}})\over {\sqrt{1-{v_{total}^2 \over c^2}}}}$$</i></p>
-        <p id="simeqn3" style="text-align:center; margin:auto; display: none;"><i> $$\delta d' = \sqrt{({\delta d_{x} - v_{x}\delta t \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d_{y} - v_{y}\delta t \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d_{z} - v_{z}\delta t \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2}$$</i></p>
-        <p id="simeqn4" style="text-align:center; margin:auto; display: none;"><i> $$\delta d = \sqrt{({\delta d'_{x} - v_{x}\delta t' \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d'_{y} - v_{y}\delta t' \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d'_{z} - v_{z}\delta t' \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2}$$</i></p>
-        <p id="simeqn5" style="text-align:center; margin:auto; display: none;"><i> $$\delta d' = {-vc^2 \over {\sqrt{1-{v_{total}^2 \over c^2}}}} * ({\delta t' - {\sqrt{1-{v_{total}^2 \over c^2}}}}\delta t)$$</i></p>
-        <p id="simeqn6" style="text-align:center; margin:auto; display: none;"><i> $$\delta d = {-vc^2 \over {\sqrt{1-{v_{total}^2 \over c^2}}}} * ({\delta t - {\sqrt{1-{v_{total}^2 \over c^2}}}}\delta t')$$</i></p>
-        <p id="simeqn7" style="text-align:center; margin:auto; display: none;"><i> $$\delta E_{rel} = {mc^2 \over {\sqrt{1-{v_{total}^2 \over c^2}}}} - mc^2$$</i></p>
-        <p id="simeqn8" style="text-align:center; margin:auto; display: none;"><i> $$\delta t' = {{\delta t \over {\sqrt {1 - 2GM\over{rc^2}}}} * {M \over m}}$$</i></p>
-        <p id="simeqn9" style="text-align:center; margin:auto; display: none;"><i> $$\delta t = {{\delta t' \over {\sqrt {1 - 2GM\over{rc^2}}}} * {m \over M}}$$</i></p>
-        <p id="simeqn10" style="text-align:center; margin:auto; display: none;"><i> $$R_{\mu v} - {{1 \over 2} g_{\mu v}R} + \Lambda g_{\mu v} = {{8 \pi G \over c^4}T_{\mu v}}$$</i></p>
+        <p id="simeqn0" style="text-align:center; margin:auto; display: block;" name="poteqn"><i>Equation of Simulation will come here</i></p>
+        <p id="simeqn1" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta t' = {\delta t - ({{v_{x}\delta x} + {v_{y}\delta y} + {v_{z}\delta z}})\over {\sqrt{1-{v_{total}^2 \over c^2}}}}$$</i></p>
+        <p id="simeqn2" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta t = {\delta t' - ({{v_{x}\delta x'} + {v_{y}\delta y'} + {v_{z}\delta z'}})\over {\sqrt{1-{v_{total}^2 \over c^2}}}}$$</i></p>
+        <p id="simeqn3" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta d' = \sqrt{({\delta d_{x} - v_{x}\delta t \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d_{y} - v_{y}\delta t \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d_{z} - v_{z}\delta t \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2}$$</i></p>
+        <p id="simeqn4" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta d = \sqrt{({\delta d'_{x} - v_{x}\delta t' \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d'_{y} - v_{y}\delta t' \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2 + ({\delta d'_{z} - v_{z}\delta t' \over {\sqrt{1-{v_{total}^2 \over c^2}}}})^2}$$</i></p>
+        <p id="simeqn5" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta d' = {-vc^2 \over {\sqrt{1-{v_{total}^2 \over c^2}}}} * ({\delta t' - {\sqrt{1-{v_{total}^2 \over c^2}}}}\delta t)$$</i></p>
+        <p id="simeqn6" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta d = {-vc^2 \over {\sqrt{1-{v_{total}^2 \over c^2}}}} * ({\delta t - {\sqrt{1-{v_{total}^2 \over c^2}}}}\delta t')$$</i></p>
+        <p id="simeqn7" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta E_{rel} = {mc^2 \over {\sqrt{1-{v_{total}^2 \over c^2}}}} - mc^2$$</i></p>
+        <p id="simeqn8" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta t' = {{\delta t \over {\sqrt {1 - 2GM\over{rc^2}}}} * {M \over m}}$$</i></p>
+        <p id="simeqn9" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$\delta t = {{\delta t' \over {\sqrt {1 - 2GM\over{rc^2}}}} * {m \over M}}$$</i></p>
+        <p id="simeqn10" style="text-align:center; margin:auto; display: none;" name="poteqn"><i> $$R_{\mu v} - {{1 \over 2} g_{\mu v}R} + \Lambda g_{\mu v} = {{8 \pi G \over c^4}T_{\mu v}}$$</i></p>
+        <p id="simeqn11" style="text-align:center; margin:auto; display: none;" name = "poteqn"><i> $$E_{rel} = {{1 \over 2} mv^2}$$</i></p>
 
       </div>      
 

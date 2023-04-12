@@ -40,8 +40,8 @@ function coaxial_displacement(relvelo, pos2, pos1) {
 }
 
 function coaxial_velocity(relvelo, pos2, pos1) {
-    coaxial_velo = {};
-    let coefx; let coefy; let coefz; let ratio1; let ratio2;
+    let coaxial_velo = {};
+    let coefx; let coefy; let coefz; let ratio1; let ratio2;let ratio3; let ratio4; let ratio5; let ratio6; let rev1; let rev2;
     dis = displacement(pos2, pos1);
     if (pos2[0] == null && pos1[0] == null) { console.log("null condition"); return null }
 
@@ -49,42 +49,82 @@ function coaxial_velocity(relvelo, pos2, pos1) {
 
            if (dis.x == 0) { coaxial_velo.x = 0; coefx = 0 } 
            else { //block1
-                 if ((relvelo.x/relvelo.y) <= 1) { //block 1.1
-                    if ((dis.x/dis.y) <= (relvelo.x/relvelo.y)) { coefx = (dis.x/dis.y)/(relvelo.x/relvelo.y) }
-                    else {coefx = (dis.x/dis.y)/Math.tan(Math.atan(relvelo.x/relvelo.y) - Math.atan(dis.x/dis.y)) };
-                    }
-                 else { //block 1.2
-                    if ((dis.x/dis.y) <= (relvelo.x/relvelo.y)) { coefx = (dis.x/dis.y) / Math.tan(90 - Math.atan(relvelo.x/relvelo.y) - Math.atan(dis.x/dis.y))}
-                    else { coefx = (dis.x/dis.y)/(relvelo.x/relvelo.y) };
-                 }}
+                 if (!relvelo.y == 0) { ratio3 = (relvelo.x/relvelo.y) } else { ratio3 = Math.PI/2; }; if (!relvelo.z == 0) { ratio4 = (relvelo.x/relvelo.z) } else { ratio4 = Math.PI/2; };
+                 ratio1 = ratio3 * ratio4;
+                 if (!dis.y == 0) { ratio5 = (dis.x/dis.y) } else {ratio5 = Math.PI/2 }; if (!dis.z == 0) { ratio6 = (dis.x/dis.z) } else { ratio6 = Math.PI/2 };
+                 ratio2 = ratio3 * ratio4;
+                 //block 1.
+                if (ratio3 > ratio5) { 
+                if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                       else { rev1 = ratio5/ratio3} };};
+                if (ratio3 < ratio5) {
+                    if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                    else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                        else { rev1 = ratio3/ratio5 } }; }
+                if (ratio4 > ratio6) { 
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                            else { rev2 = ratio6/ratio4} };};
+                if (ratio4 < ratio6) {
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                        else { rev2 = ratio4/ratio6 } }; }
+                 //block 1.2
+                coefx = rev1 * rev2; }; console.log("coaxial x: ", ratio3, ratio4, ratio5, ratio6, rev1, rev2, coefx);
     
            if (dis.y == 0) { coaxial_velo.y = 0; coefy = 0 } 
            else { //block 2
-                 ratio1 = (relvelo.y/relvelo.x) * (relvelo.y/relvelo.z);
-                 ratio2 = (dis.y/dis.x) * (dis.y/dis.z); 
-
-                 if (ratio1 >= 1) { //block 2.1
-                    if (ratio2 >= ratio1) { coefy = ratio2/ratio1 }
-                    else { coefy = ratio2 / Math.tan(Math.atan(ratio2) - Math.atan(ratio1)) }; 
-                   }
-                 else { //block 2.2
-                    if (ratio2 >= ratio1) { coefy = ratio2/Math.tan(90 - Math.atan(ratio2) - Math.atan(ratio1)) }
-                    else { coefy = ratio2/ratio1 };
-                 }}
+            if (!relvelo.z == 0) { ratio3 = (relvelo.y/relvelo.z) } else { ratio3 = Math.PI/2; }; if (!relvelo.x == 0) { ratio4 = (relvelo.y/relvelo.x) } else { ratio4 = Math.PI/2; };
+                 ratio1 = ratio3 * ratio4;
+                 if (!dis.z == 0) { ratio5 = (dis.y/dis.z) } else {ratio5 = Math.PI/2 }; if (!dis.z == 0) { ratio6 = (dis.x/dis.z) } else { ratio6 = Math.PI/2 };
+                 ratio2 = ratio3 * ratio4;
+                 //block 1.
+                if (ratio3 > ratio5) { 
+                if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                       else { rev1 = ratio5/ratio3} };};
+                if (ratio3 < ratio5) {
+                    if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                    else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                        else { rev1 = ratio3/ratio5 } }; }
+                if (ratio4 > ratio6) { 
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                            else { rev2 = ratio6/ratio4} };};
+                if (ratio4 < ratio6) {
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                        else { rev2 = ratio4/ratio6 } }; }
+                coefy = rev1 * rev2;
+                 }} console.log("coaxial y: ", ratio3, ratio4, ratio5, ratio6, coefy);
     
             if (dis.z == 0) { coaxial_velo.z = 0; coefz = 0 }
-            else {//block 3
-                 ratio1 = (relvelo.z/relvelo.y) * (relvelo.z/relvelo.x);
-                 ratio2 = (dis.z/dis.y) * (dis.z/dis.x);
-                 if (ratio1 <= 1) { //block 3.1
-                    if (ratio2 <= ratio1) { coefz = ratio2/ratio1 }
-                    else { coefz = ratio1 / Math.tan(Math.atan(ratio2) - Math.atan(ratio1)) }; 
-                  }
-                 else { //block 3.2
-                   if (ratio2 <= ratio1) { coefz = ratio2 / Math.tan(90 - Math.atan(ratio2) - Math.atan(ratio1)) }
-                   else { coefz = ratio2 / ratio1 };
-              }}
-            }
+            else {
+            if (!relvelo.x == 0) { ratio3 = (relvelo.z/relvelo.x) } else { ratio3 = Math.PI/2; }; if (!relvelo.y == 0) { ratio4 = (relvelo.z/relvelo.y) } else { ratio4 = Math.PI/2; };
+                 ratio1 = ratio3 * ratio4;
+                 if (!dis.z == 0) { ratio5 = (dis.z/dis.x) } else {ratio5 = Math.PI/2 }; if (!dis.z == 0) { ratio6 = (dis.z/dis.y) } else { ratio6 = Math.PI/2 };
+                 ratio2 = ratio3 * ratio4;
+                 //block 1.
+                if (ratio3 > ratio5) { 
+                if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                       else { rev1 = ratio5/ratio3} };};
+                if (ratio3 < ratio5) {
+                    if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                    else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                        else { rev1 = ratio3/ratio5 } }; }
+                if (ratio4 > ratio6) { 
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                            else { rev2 = ratio6/ratio4} };};
+                if (ratio4 < ratio6) {
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                        else { rev2 = ratio4/ratio6 } }; }
+                coefz = rev1 * rev2;
+                 } console.log("coaxial z: ", ratio3, ratio4, ratio5, ratio6, coefy);
+              
     coaxial_velo.x = relvelo.x * coefx;
     coaxial_velo.y = relvelo.y * coefy;
     coaxial_velo.z = relvelo.z * coefz;
@@ -93,8 +133,8 @@ function coaxial_velocity(relvelo, pos2, pos1) {
     console.log('from velocity codes', coaxial_velo);
     return coaxial_velo; }
 
-module.exports = {coaxial_velocity: coaxial_velocity,
-                  displacement: displacement,
-                  coaxial_displacement: coaxial_displacement,
-                  axial_velocity: axial_velocity, 
-                  radians_degrees: radians_degrees };
+    module.exports = {coaxial_velocity: coaxial_velocity,
+        displacement: displacement,
+        coaxial_displacement: coaxial_displacement,
+        axial_velocity: axial_velocity, 
+        radians_degrees: radians_degrees };

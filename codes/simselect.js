@@ -1,5 +1,5 @@
 // units - velocity as percent of c, distance as 200 = 1 AU
-const GR = require("./GR_Functions2"); const SR = require("./SR_Functions1"); //const NM = require("./NM_Functions3");
+const GR = require("./GR_Functions2"); const SR = require("./SR_Functions1"); const NM = require("./NM_Functions3");
 let imp = require("./velocity_codes"); const velos = imp.axial_velocity; const dis = imp.displacement;
 const custom = require("./customs.js");
 
@@ -27,7 +27,7 @@ if (!mode.checked) { //auto select condition
 if (type == "calc") {
     if (equation == "sim-gen") { return GR(input) }; 
     if (equation == "sim-spl") { return SR(input) };
-    //  if (equation == "SIMNEW") { return NM(input) }; 
+    if (equation == "sim-new") { return NM(input) }; 
 
     //document.getElementById("sinfo").textContent;
 

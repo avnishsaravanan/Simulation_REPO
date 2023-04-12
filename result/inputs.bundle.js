@@ -60,7 +60,8 @@ console.log('from input js: finish declare param');
 }
 
 function sol_var() {
-
+    
+    //dx.addEventListener("input")
     declareParam();
     let solvefx = document.querySelector("#solvefx");
 
@@ -80,17 +81,18 @@ function sol_var() {
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax1") { if (event2.x == null || event1.x == null) {dp_PA = null}
+    if (solvefx.value == "deltax1") { 
+                                      if (event2.x == undefined || event1.x == undefined) {dp_PA = null}
                                       else {dp_PA = displacement(event2.pos, event1.pos)}; 
                                      dt_PA = (event2.time - event1.time);
                                      document.getElementById("deltat1").focus(); buffer = document.querySelector("#deltafx > #deltat1").value;
-                                     if (buffer == 0) { dt_QA = null; } else { dt_QA = Number(buffer) };
+                                     if (buffer == 0 || buffer == undefined) { dt_QA = null; } else { dt_QA = Number(buffer) };
                                      dp_QA = null;
                                      mass1 = masses[checked[1]];
                                      mass2 = masses[checked[0]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax")  { if (event2.x == null || event1.x == null) {dp_QA = null}
+    if (solvefx.value == "deltax")  { if (event2.x == undefined || event1.x == null) {dp_QA = null}
                                       else {dp_QA = displacement(event2.pos, event1.pos)};  
                                      dt_QA = (event2.time - event1.time);
                                      dp_PA = null;
@@ -119,7 +121,7 @@ input = { dt_P: dt_PA,
 
 console.log("from input js: input", input);
 
-result = simselect(masses, velocities, positions, checked, input, "calc"); console.log(result);
+result = simselect(masses, velocities, positions, checked, input, "calc"); console.log(result.case2());
 
 if (input.dp_Q == null && solvefx.value == "deltat1") { result.case1(); result.case3();}
 if (input.dp_P == null && solvefx.value == "deltat") { result.case2(); result.case4();}
@@ -132,10 +134,10 @@ if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { re
 
 result.en();
 
-let dt = document.querySelector("#deltafx > #deltat");   dt.setAttribute('value', result.content.dt_P);
-let dt1 = document.querySelector("#deltafx > #deltat1"); dt1.setAttribute('value', result.content.dt_Q);
-let dx = document.querySelector("#deltafx > #deltax");   dx.setAttribute('value', result.content.dp_P);
-let dx1 = document.querySelector("#deltafx > #deltax1"); dx1.setAttribute('value', result.content.dp_Q);
+let dt = document.querySelector("#deltafx > #deltat1");   dt.setAttribute('value', result.content.dt_P);
+let dt1 = document.querySelector("#deltafx > #deltat"); dt1.setAttribute('value', result.content.dt_Q);
+let dx = document.querySelector("#deltafx > #deltax1");   dx.setAttribute('value', result.content.dp_P);
+let dx1 = document.querySelector("#deltafx > #deltax"); dx1.setAttribute('value', result.content.dp_Q);
 let e1 = document.querySelector("#deltafx > #energy");   e1.setAttribute('value', result.content.energy1);
 let e2 = document.querySelector("#deltafx > #energy1");  e2.setAttribute('value', result.content.energy2);
 
@@ -192,8 +194,8 @@ function coaxial_displacement(relvelo, pos2, pos1) {
 }
 
 function coaxial_velocity(relvelo, pos2, pos1) {
-    coaxial_velo = {};
-    let coefx; let coefy; let coefz; let ratio1; let ratio2;
+    let coaxial_velo = {};
+    let coefx; let coefy; let coefz; let ratio1; let ratio2;let ratio3; let ratio4; let ratio5; let ratio6; let rev1; let rev2;
     dis = displacement(pos2, pos1);
     if (pos2[0] == null && pos1[0] == null) { console.log("null condition"); return null }
 
@@ -201,42 +203,82 @@ function coaxial_velocity(relvelo, pos2, pos1) {
 
            if (dis.x == 0) { coaxial_velo.x = 0; coefx = 0 } 
            else { //block1
-                 if ((relvelo.x/relvelo.y) <= 1) { //block 1.1
-                    if ((dis.x/dis.y) <= (relvelo.x/relvelo.y)) { coefx = (dis.x/dis.y)/(relvelo.x/relvelo.y) }
-                    else {coefx = (dis.x/dis.y)/Math.tan(Math.atan(relvelo.x/relvelo.y) - Math.atan(dis.x/dis.y)) };
-                    }
-                 else { //block 1.2
-                    if ((dis.x/dis.y) <= (relvelo.x/relvelo.y)) { coefx = (dis.x/dis.y) / Math.tan(90 - Math.atan(relvelo.x/relvelo.y) - Math.atan(dis.x/dis.y))}
-                    else { coefx = (dis.x/dis.y)/(relvelo.x/relvelo.y) };
-                 }}
+                 if (!relvelo.y == 0) { ratio3 = (relvelo.x/relvelo.y) } else { ratio3 = Math.PI/2; }; if (!relvelo.z == 0) { ratio4 = (relvelo.x/relvelo.z) } else { ratio4 = Math.PI/2; };
+                 ratio1 = ratio3 * ratio4;
+                 if (!dis.y == 0) { ratio5 = (dis.x/dis.y) } else {ratio5 = Math.PI/2 }; if (!dis.z == 0) { ratio6 = (dis.x/dis.z) } else { ratio6 = Math.PI/2 };
+                 ratio2 = ratio3 * ratio4;
+                 //block 1.
+                if (ratio3 > ratio5) { 
+                if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                       else { rev1 = ratio5/ratio3} };};
+                if (ratio3 < ratio5) {
+                    if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                    else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                        else { rev1 = ratio3/ratio5 } }; }
+                if (ratio4 > ratio6) { 
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                            else { rev2 = ratio6/ratio4} };};
+                if (ratio4 < ratio6) {
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                        else { rev2 = ratio4/ratio6 } }; }
+                 //block 1.2
+                coefx = rev1 * rev2; }; console.log("coaxial x: ", ratio3, ratio4, ratio5, ratio6, rev1, rev2, coefx);
     
            if (dis.y == 0) { coaxial_velo.y = 0; coefy = 0 } 
            else { //block 2
-                 ratio1 = (relvelo.y/relvelo.x) * (relvelo.y/relvelo.z);
-                 ratio2 = (dis.y/dis.x) * (dis.y/dis.z); 
-
-                 if (ratio1 >= 1) { //block 2.1
-                    if (ratio2 >= ratio1) { coefy = ratio2/ratio1 }
-                    else { coefy = ratio2 / Math.tan(Math.atan(ratio2) - Math.atan(ratio1)) }; 
-                   }
-                 else { //block 2.2
-                    if (ratio2 >= ratio1) { coefy = ratio2/Math.tan(90 - Math.atan(ratio2) - Math.atan(ratio1)) }
-                    else { coefy = ratio2/ratio1 };
-                 }}
+            if (!relvelo.z == 0) { ratio3 = (relvelo.y/relvelo.z) } else { ratio3 = Math.PI/2; }; if (!relvelo.x == 0) { ratio4 = (relvelo.y/relvelo.x) } else { ratio4 = Math.PI/2; };
+                 ratio1 = ratio3 * ratio4;
+                 if (!dis.z == 0) { ratio5 = (dis.y/dis.z) } else {ratio5 = Math.PI/2 }; if (!dis.z == 0) { ratio6 = (dis.x/dis.z) } else { ratio6 = Math.PI/2 };
+                 ratio2 = ratio3 * ratio4;
+                 //block 1.
+                if (ratio3 > ratio5) { 
+                if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                       else { rev1 = ratio5/ratio3} };};
+                if (ratio3 < ratio5) {
+                    if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                    else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                        else { rev1 = ratio3/ratio5 } }; }
+                if (ratio4 > ratio6) { 
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                            else { rev2 = ratio6/ratio4} };};
+                if (ratio4 < ratio6) {
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                        else { rev2 = ratio4/ratio6 } }; }
+                coefy = rev1 * rev2;
+                 }} console.log("coaxial y: ", ratio3, ratio4, ratio5, ratio6, coefy);
     
             if (dis.z == 0) { coaxial_velo.z = 0; coefz = 0 }
-            else {//block 3
-                 ratio1 = (relvelo.z/relvelo.y) * (relvelo.z/relvelo.x);
-                 ratio2 = (dis.z/dis.y) * (dis.z/dis.x);
-                 if (ratio1 <= 1) { //block 3.1
-                    if (ratio2 <= ratio1) { coefz = ratio2/ratio1 }
-                    else { coefz = ratio1 / Math.tan(Math.atan(ratio2) - Math.atan(ratio1)) }; 
-                  }
-                 else { //block 3.2
-                   if (ratio2 <= ratio1) { coefz = ratio2 / Math.tan(90 - Math.atan(ratio2) - Math.atan(ratio1)) }
-                   else { coefz = ratio2 / ratio1 };
-              }}
-            }
+            else {
+            if (!relvelo.x == 0) { ratio3 = (relvelo.z/relvelo.x) } else { ratio3 = Math.PI/2; }; if (!relvelo.y == 0) { ratio4 = (relvelo.z/relvelo.y) } else { ratio4 = Math.PI/2; };
+                 ratio1 = ratio3 * ratio4;
+                 if (!dis.z == 0) { ratio5 = (dis.z/dis.x) } else {ratio5 = Math.PI/2 }; if (!dis.z == 0) { ratio6 = (dis.z/dis.y) } else { ratio6 = Math.PI/2 };
+                 ratio2 = ratio3 * ratio4;
+                 //block 1.
+                if (ratio3 > ratio5) { 
+                if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                       else { rev1 = ratio5/ratio3} };};
+                if (ratio3 < ratio5) {
+                    if (ratio3 == Math.PI/2 && !ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio3 - Math.atan(ratio5))) }
+                    else { if (!ratio3 == Math.PI/2 && ratio5 == Math.PI/2) { rev1 = (Math.tan(ratio5 - Math.atan(ratio3))) }
+                        else { rev1 = ratio3/ratio5 } }; }
+                if (ratio4 > ratio6) { 
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                            else { rev2 = ratio6/ratio4} };};
+                if (ratio4 < ratio6) {
+                if (ratio4 == Math.PI/2 && !ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio4 - Math.atan(ratio6))) }
+                else { if (!ratio4 == Math.PI/2 && ratio6 == Math.PI/2) { rev2 = (Math.tan(ratio6 - Math.atan(ratio4))) }
+                        else { rev2 = ratio4/ratio6 } }; }
+                coefz = rev1 * rev2;
+                 } console.log("coaxial z: ", ratio3, ratio4, ratio5, ratio6, coefy);
+              
     coaxial_velo.x = relvelo.x * coefx;
     coaxial_velo.y = relvelo.y * coefy;
     coaxial_velo.z = relvelo.z * coefz;
@@ -245,11 +287,11 @@ function coaxial_velocity(relvelo, pos2, pos1) {
     console.log('from velocity codes', coaxial_velo);
     return coaxial_velo; }
 
-module.exports = {coaxial_velocity: coaxial_velocity,
-                  displacement: displacement,
-                  coaxial_displacement: coaxial_displacement,
-                  axial_velocity: axial_velocity, 
-                  radians_degrees: radians_degrees };
+    module.exports = {coaxial_velocity: coaxial_velocity,
+        displacement: displacement,
+        coaxial_displacement: coaxial_displacement,
+        axial_velocity: axial_velocity, 
+        radians_degrees: radians_degrees };
 
 
 /***/ }),
@@ -257,9 +299,9 @@ module.exports = {coaxial_velocity: coaxial_velocity,
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // units - velocity as percent of c, distance as 200 = 1 AU
-const GR = __webpack_require__(6); const SR = __webpack_require__(7); //const NM = require("./NM_Functions3");
+const GR = __webpack_require__(6); const SR = __webpack_require__(7); const NM = __webpack_require__(8);
 let imp = __webpack_require__(4); const velos = imp.axial_velocity; const dis = imp.displacement;
-const custom = __webpack_require__(8);
+const custom = __webpack_require__(9);
 
 /* param */ let masses; let positions; let velocities; let checked; let input; 
 
@@ -285,7 +327,7 @@ if (!mode.checked) { //auto select condition
 if (type == "calc") {
     if (equation == "sim-gen") { return GR(input) }; 
     if (equation == "sim-spl") { return SR(input) };
-    //  if (equation == "SIMNEW") { return NM(input) }; 
+    if (equation == "sim-new") { return NM(input) }; 
 
     //document.getElementById("sinfo").textContent;
 
@@ -335,25 +377,26 @@ function equations (input) {
     
    this.case2 = function case2() { // lighter object frame P
         term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
-        this.content.dt_P = dt_Q * (mass1/mass2) / term1; }
+        this.content.dt_P = dt_Q * (mass1/mass2) / term1; console.log(term1, this.content.dt_P) }
     
     this.case3 = function case3() {
         term1 = Math.sqrt(1 - (2 * G * mass1)/(distance.total * c**2));
-        term2 = (mass2/mas1) / term1;
+        term2 = (mass2/mass1) / term1;
         term3 = dp_P.x * term2; term4 = dp_P.y * term2; term5 = dp_P.z * term2;
-        this.content.dp_Q = velos.displacement(term3, term4, terms5).total;
+        this.content.dp_Q = velos.displacement(term3, term4, term5).total;
         this.content.dp_P = dp_P.total }
 
     this.case4 = function case4() {
         term1 = Math.sqrt(1 - (2 * G * mass2)/(distance.total * c**2));
         term2 = (mass1/mass2) * term1; 
-        term3 = dp_Q.x * term2; term4 = dp_Q.y; term5 = dp_Q.z * term2;
-        this.content.dp_P = velos.displacement(term3, term4, term5).total;
+        term3 = dp_Q.x * term2; term4 = dp_Q.y * term2; term5 = dp_Q.z * term2;
+        this.content.dp_P = velos.displacement([term3, term4, term5]).total; console.log(term1, term2, term3, term4, term5, this.content.dp_P)
         this.content.dp_Q = dp_Q.total }
 
     this.en = function case5() {
         this.content.energy1 = mass1 * c**2;
-        this.content.energy1 = mass2 * c**2; }
+        this.content.energy2 = mass2 * c**2; }
+        console.log(mass2, this.content.energy2)
     
     return this;
 }
@@ -449,6 +492,60 @@ module.exports = equations;
 
 /***/ }),
 /* 8 */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { displacement } = __webpack_require__(4);
+c = 1;
+function equations (input) {
+
+    this.content = {};    
+    this.content = input; 
+
+    dt_P = this.content.dt_P;
+    dt_Q = this.content.dt_Q;
+    dp_P = this.content.dp_P;
+    dp_Q = this.content.dp_Q;
+    mass1 = this.content.mass1;
+    mass2 = this.content.mass2;
+    colinear_dis = this.content.colinear_dis;
+    colinear_velo = this.content.colinear_velo;
+    
+    velo_sum = ((colinear_velo.x**2) + (colinear_velo.y**2) + (colinear_velo.z**2));
+    const LzF = 1; 
+         
+    this.case1 = function case1() { 
+        this.content.dt_Q = dt_P };
+
+    this.case2 = function case2() { 
+        this.content.dt_P = dt_Q; }
+    
+    this.case3 = function case3() {  
+        term1 = (dp_P.x - (colinear_velo.x * dt_P));
+        term2 = (dp_P.y - (colinear_velo.y * dt_P));
+        term3 = (dp_P.z - (colinear_velo.z * dt_P));
+        term4 = [(term1 * LzF), (term2 * LzF), (term3 * LzF)];
+        this.content.dp_Q = displacement(term4).total;
+        this.content.dp_P = dp_P.total; };
+
+    this.case4 = function case4() { //displacement in frame p
+        term1 = (dp_Q.x - (colinear_velo.x * dt_Q));
+        term2 = (dp_Q.y - (colinear_velo.y * dt_Q));
+        term3 = (dp_Q.z - (colinear_velo.z * dt_Q));
+        term4 = [(term1 * LzF), (term2 * LzF), (term3 * LzF)];
+        this.content.dp_P = displacement(term4).total;
+        this.content.dp_Q = dp_Q.total; };
+    
+    this.en = function () {
+        this.content.energy1 = 1/2 * mass1 * velo_sum;
+        this.content.energy2 = 1/2 * mass1 * velo_sum; }    
+
+    return this;
+}
+
+module.exports = equations;
+
+/***/ }),
+/* 9 */
 /***/ ((module) => {
 
 

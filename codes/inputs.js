@@ -52,7 +52,8 @@ console.log('from input js: finish declare param');
 }
 
 function sol_var() {
-
+    
+    //dx.addEventListener("input")
     declareParam();
     let solvefx = document.querySelector("#solvefx");
 
@@ -72,17 +73,18 @@ function sol_var() {
                                      mass2 = masses[checked[1]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax1") { if (event2.x == null || event1.x == null) {dp_PA = null}
+    if (solvefx.value == "deltax1") { 
+                                      if (event2.x == undefined || event1.x == undefined) {dp_PA = null}
                                       else {dp_PA = displacement(event2.pos, event1.pos)}; 
                                      dt_PA = (event2.time - event1.time);
                                      document.getElementById("deltat1").focus(); buffer = document.querySelector("#deltafx > #deltat1").value;
-                                     if (buffer == 0) { dt_QA = null; } else { dt_QA = Number(buffer) };
+                                     if (buffer == 0 || buffer == undefined) { dt_QA = null; } else { dt_QA = Number(buffer) };
                                      dp_QA = null;
                                      mass1 = masses[checked[1]];
                                      mass2 = masses[checked[0]];
                                      colinear_veloA = coaxial_velocity(relvelo, event2.pos, event1.pos); 
                                      colinear_disA = coaxial_displacement(relvelo, event2.pos, event1.pos); }
-    if (solvefx.value == "deltax")  { if (event2.x == null || event1.x == null) {dp_QA = null}
+    if (solvefx.value == "deltax")  { if (event2.x == undefined || event1.x == null) {dp_QA = null}
                                       else {dp_QA = displacement(event2.pos, event1.pos)};  
                                      dt_QA = (event2.time - event1.time);
                                      dp_PA = null;
@@ -111,7 +113,7 @@ input = { dt_P: dt_PA,
 
 console.log("from input js: input", input);
 
-result = simselect(masses, velocities, positions, checked, input, "calc"); console.log(result);
+result = simselect(masses, velocities, positions, checked, input, "calc"); console.log(result.case2());
 
 if (input.dp_Q == null && solvefx.value == "deltat1") { result.case1(); result.case3();}
 if (input.dp_P == null && solvefx.value == "deltat") { result.case2(); result.case4();}
@@ -124,10 +126,10 @@ if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { re
 
 result.en();
 
-let dt = document.querySelector("#deltafx > #deltat");   dt.setAttribute('value', result.content.dt_P);
-let dt1 = document.querySelector("#deltafx > #deltat1"); dt1.setAttribute('value', result.content.dt_Q);
-let dx = document.querySelector("#deltafx > #deltax");   dx.setAttribute('value', result.content.dp_P);
-let dx1 = document.querySelector("#deltafx > #deltax1"); dx1.setAttribute('value', result.content.dp_Q);
+let dt = document.querySelector("#deltafx > #deltat1");   dt.setAttribute('value', result.content.dt_P);
+let dt1 = document.querySelector("#deltafx > #deltat"); dt1.setAttribute('value', result.content.dt_Q);
+let dx = document.querySelector("#deltafx > #deltax1");   dx.setAttribute('value', result.content.dp_P);
+let dx1 = document.querySelector("#deltafx > #deltax"); dx1.setAttribute('value', result.content.dp_Q);
 let e1 = document.querySelector("#deltafx > #energy");   e1.setAttribute('value', result.content.energy1);
 let e2 = document.querySelector("#deltafx > #energy1");  e2.setAttribute('value', result.content.energy2);
 
