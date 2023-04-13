@@ -85,11 +85,11 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
     //pointer2.position = obj2.position;
     //vector.translate(BABYLON.Axis.X, 10, BABYLON.Space.LOCAL);
 
-    if ((obj1.position.x - pos1[0]) <= 100 || (obj1.position.y - pos1[1]) <= 100 || (obj1.position.z - pos1[2]) <= 100 ) {
+    if ((obj1.position.x - pos1[0]) <= 500 || (obj1.position.y - pos1[1]) <= 500 || (obj1.position.z - pos1[2]) <= 500 ) {
         obj1.position.x += 25 * velo1.x;
         obj1.position.y += 25 * velo1.y;
         obj1.position.z += 25 * velo1.z; }
-    if ((obj2.position.x - pos1[0]) <= 100 || (obj2.position.y - pos1[1]) <= 100 || (obj2.position.z - pos1[2]) <= 100 ) {
+    if ((obj2.position.x - pos1[0]) <= 500 || (obj2.position.y - pos1[1]) <= 500 || (obj2.position.z - pos1[2]) <= 500 ) {
         obj2.position.x += 25 * velo2.x;
         obj2.position.y += 25 * velo2.y;
         obj2.position.z += 25 * velo2.z; }
@@ -101,7 +101,7 @@ function augment (obj1, obj2, pos1, pos2, velo1, velo2, vector, node, pointer1, 
  
     let factor = dis.total;
     let newpoints = [new BABYLON.Vector3(obj1.position.x, obj1.position.y, obj1.position.z).add(new BABYLON.Vector3(3, 3, 3)), new BABYLON.Vector3(obj2.position.x, obj2.position.y, obj2.position.z).subtract(new BABYLON.Vector3(3, 3, 3))];
-    newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints}, scene);
+    newvector = new BABYLON.MeshBuilder.CreateLines("new", {points: newpoints, instance: vector}, scene);
 
     //let angle1 = Math.atan(dis.z/dis.x); let angle2 = Math.atan(dis.y/dis.x); let angle3 = Math.atan(dis.z/dis.y); let ref = vector.rotationQuaternion.toEulerAngles();
     //let angle1r = ref.y; let angle2r = ref.z; let angle3r = ref.x;
@@ -140,19 +140,19 @@ function staticMatrix (objspecs, synthindex, scene) {
     
     let param = objspecs[synthindex];
     const n = Math.E**(param[2]/25);
-    const inc2 = Math.E**(param[2]/4.348); console.log(n, inc2, "from matrix");
+    const inc2 = Math.E**(param[2]*(Math.log(10)/100)); console.log(n, inc2, "from matrix");
     const init = param[1]/2 + 5;
     const objpos = new BABYLON.Vector3(param[4], param[5], param[6]);
     let c = 0;
 
     const ribbons = [];
     const extend = [];
-    for (let r = 0; r <= 200; r += 200/n) {
+    for (let r = 0; r <= 500; r += 500/n) {
         const path = [];
-        for (let a = 0; a <= 2 * Math.PI; a += Math.PI / 15) {
+        for (let a = 0; a <= 2 * Math.PI; a += Math.PI / 10) {
             let x = 4 * (r+init) * Math.cos(a);
             let y = 0;
-            //if (Math.round(r/3) == r/3 && Math.round(a/Math.PI/15 * 3) == a/(Math.PI/15 * 3)) { y = r * 0.5 };
+            if (Math.round(r/3) == r/3 && Math.round(a/Math.PI/10 * 2) == (a/(Math.PI/10) * 2)) { y = r**2 * 0.5  };
             let z = 4 * (r+init) * Math.sin(a);
             path.push(new BABYLON.Vector3(x, y, z))
         }
@@ -160,9 +160,9 @@ function staticMatrix (objspecs, synthindex, scene) {
         extend.push(path);}
     for (let t = 0 ; t <= Math.PI; t += Math.PI / inc2) {
 	const paths = [];
-    for (let r = 0; r <= 200; r += 200/n) {
+    for (let r = 0; r <= 500; r += 500/n) {
         const path1 = [];
-        for (let a = 0; a <= 2 * Math.PI; a += Math.PI / 15) {
+        for (let a = 0; a <= 2 * Math.PI; a += Math.PI / 8) {
             let x = r * Math.cos(a);
             let y = r * Math.sin(a) * Math.sin(t);
             let z = r * Math.sin(a) * Math.cos(t);
@@ -179,7 +179,9 @@ function staticMatrix (objspecs, synthindex, scene) {
     geodesic.position = objpos;
     geodesic.material = new BABYLON.StandardMaterial("");
     geodesic.material.wireframe = true;
-	c += 1; });
+    const geodesicXY = geodesic.createInstance("ribbon"+c+"_XY"); geodesicXY.rotate(new BABYLON.Vector3(1, 0, 0), Math.PI/2, BABYLON.Space.LOCAL);
+    const geodesicYZ = geodesic.createInstance("ribbon"+c+"_YZ"); geodesicYZ.rotate(new BABYLON.Vector3(0, 0, 1), Math.PI/2, BABYLON.Space.LOCAL);
+	c += 1; });    
     const ST = BABYLON.MeshBuilder.CreateRibbon("ext", {pathArray: extend, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene);
     ST.material = new BABYLON.StandardMaterial("");
     ST.material.wireframe = true;
@@ -203,16 +205,16 @@ function render (masses, velo, positions, array, timelim2, checks) {
     let macroscale1 = new String("The observations of distance and duration deltas are now conducted in a scale large enough that Special or General relativity formulas would be useful. Note that special relativity is more useful when velocities approach the speed of light, and not only if distances are large. General discounts velocities entirely.")
 
     function createScene() {
-    const scene = new BABYLON.Scene(engine);
-    let primary = 100;
-    
+    const scene = new BABYLON.Scene(engine);    
     const camera = new BABYLON.ArcRotateCamera('', raddeg(0, 0), raddeg(70, 0), 400, new BABYLON.Vector3(300, 300, 400), scene, true);
     camera.upperAlphaLimit = raddeg(180, 0); camera.lowerAlphaLimit = raddeg(-180, 0);
     camera.upperBetaLimit = raddeg(180, 0); camera.lowerBetaLimit = raddeg(-180, 0);
     camera.attachControl(canvas, true);
     const light = new BABYLON.HemisphericLight('', new BABYLON.Vector3.Zero(), scene); 
     let properties = simselect(masses, velo, positions, checked, null, "graphics");
-
+    if (!!properties.ST) { primary = 1000; };
+    if (!!properties.BG) { primary = 100; };
+    if (!!properties.augment) { primary = 400; };
     if (properties.BG == "black") { scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); }
     else { scene.clearColor = new BABYLON.Color4(0, 0, 0.6, 0.9); let ground = new BABYLON.MeshBuilder.CreatePlane('grnd', {size: 400, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, scene); ground.rotate(BABYLON.Axis.X, Math.PI/2, BABYLON.Space.WORLD); ground.position.x += 100; ground.position.z += 100;
            let groundmat = new BABYLON.StandardMaterial; groundmat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5), ground.material = groundmat
@@ -258,23 +260,23 @@ function render (masses, velo, positions, array, timelim2, checks) {
     let e1Mesh = eventplot(e1pos, e2pos, 'e1', scene); let e2Mesh = eventplot(e1pos, e2pos, 'e2', scene); e1Mesh.setEnabled(false); e2Mesh.setEnabled(false);
     
     oldvectoptions.points = [new BABYLON.Vector3(pos1[0], pos1[1], pos1[2]), new BABYLON.Vector3(pos2[0], pos2[1], pos2[2])];
-    newvector = new BABYLON.MeshBuilder.CreateLines("old", oldvectoptions, scene); oldvectoptions.instance = newvector;
+    if (!!properties.augment) { newvector = new BABYLON.MeshBuilder.CreateLines("new", oldvectoptions, scene); oldvectoptions.instance = newvector;} else { newvector = null };
     if (!!properties.ST) { console.log("staticactivate"); staticMatrix(array, checked[1], scene) };
     
     let count = 0; let active = false;
-    /*document.getElementById("dialogboxfoot").childNodes.forEach((cn) => { 
+    document.getElementById("dialogboxfoot").childNodes.forEach((cn) => { 
         if (cn.id == "okbtn") { if (cn.style.display = "none") {active = false; } else {active = true} } });
-    if (!!active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() }; };*/
+    if (!!active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() }; };
     scene.registerBeforeRender(function () {
-        if (!properties.augment) { augment(current0, current1, pos1, pos2, velo1, velo2, vect1, node, null, null, scene) };
+        if (!!properties.augment) { augment(current0, current1, pos1, pos2, velo1, velo2, newvector, node, null, null, scene) };
         timetrack = (Date.now()/1000) - start;
         if (timetrack >= timelim1) { e1Mesh.setEnabled(true) }; 
         if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
         if (timetrack > timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1, e1Mesh.rotation.z += 0.1 };
         if (timetrack > timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1 };
-        if (count <= 3) { if (camera.radius <= 5) { alert(microscale);  /*.onclick = function() {event.preventDefault(); simmsg.ok() };*/ }; };
-        if (count <=2 ) { if (camera.radius >= 450) { camera.radius -= 10; simmsg.alert(macroscale1, "Macroscopic Scale Alert"); active = true; };};
-        //if (!!active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() }; };
+        if (count <= 3) { if (camera.radius <= 5) { camera.radius = 10; simmsg.alert(microscale,"Microscopic Scale Alert","info");  active=true; count+=1}; };
+        if (count <=2 ) { if (camera.radius >= 450) { camera.radius = 449; simmsg.alert(macroscale1, "Macroscopic Scale Alert","info"); active = true; count+=1};};
+        if (!!active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok(); active=false; }; };
         //if (active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() }; };
     })
 
