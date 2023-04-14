@@ -19,7 +19,7 @@ simselect.forEach(function(op) { if (op.checked) { equation = op.id }});
 if (!mode.checked) { //auto select condition
     equation = null;
     if (M || P) { equation = "sim-gen" };
-    if (V && !equation=="sim-gen") { equation = "sim-spl" };
+    if (V && equation != "sim-gen") { equation = "sim-spl" };
     if (!equation) { equation = "sim-new"};        
     document.getElementById(equation).checked = true
 }

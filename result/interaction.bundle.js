@@ -22,8 +22,8 @@
   const custom = __webpack_require__(9);
   const runvalidate = __webpack_require__(11);
   let arrsimobjects = [
-    {0:"Sphere1", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45, 10: 45},
-    {0:"Sphere2", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80, 10: 40} ];
+    {0:"Sphere1", 1:40, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:45, 9:45, 10: 45},
+    {0:"Sphere2", 1:60, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:45, 9:45, 10: 45} ];
     /*{0:"Sphere3", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
     {0:"Sphere4", 1:8, 2:50.01, 3:"#353535", 4:50, 5:50, 6:50, 7:0.001, 8:50, 9:80},
     {0:"Sphere5", 1:5, 2:30.01, 3:"#535353", 4:30, 5:30, 6:30, 7:0.001, 8:30, 9:45},
@@ -271,7 +271,7 @@
 
     // question and info
     qmk.onclick = function () {
-      customAlert.alert('The simulation interface is designed after the fact that all relativity requires definitive properties of the objects and frames of reference, and the space and time interval between events under observations. <br><br>-	The provided two objects have default properties, and you may either edit these as per your requirement, or create new objects entirely to document a larger dataset. You may have up to 10 objects, but only any two can appear in the simulation run at a time. <br><br>-	In the object list, to add a new object have 0 preselected, to edit an existing object have only that one selected, and to run simulation have 2 objects selected. <br><br>-	Next, set the space and time coordinates of two events. Event 2 must ALWAYS have larger coordinates than event 1 for the relativistic effects to be visible. <br><br>-	The spatial (distance) and temporal (duration) interval between E2 and E1 will be different in varying frames of reference. <br><br>-	The equation displayed below is the one that corresponds to the simulation. Hover cursor over a term to see its corresponding graphical component be highlighted in the simulation canvas. <br><br>-	Setting mode to ‘auto’ will adjust the equation depending on scale and parameters set by you. Do not that all the equations support the principle of ‘constant spacetime interval’, however, which suggests that the difference of the squares of duration and distance measured in a frame of reference will always be constant.','How to run the sim','info');
+      customAlert.alert('The simulation interface is designed after the fact that all relativity requires definitive properties of the objects and frames of reference, and the space and time interval between events under observations. <br><br>-	The provided two objects have default properties, and you may either edit these as per your requirement, or create new objects entirely to document a larger dataset. You may have up to 10 objects, but only any two can appear in the simulation run at a time. <br><br>-	In the object list, to add a new object have 0 preselected, to edit an existing object have only that one selected, and to run simulation have 2 objects selected. <br><br>-	Next, set the space and time coordinates of two events. Event 2 must ALWAYS have larger coordinates than event 1 for the relativistic effects to be visible. <br><br>-	The spatial (distance) and temporal (duration) interval between Event2 and Event1 will be different in varying frames of reference. <br><br>-	The equation displayed below is the one that corresponds to the simulation. Hover cursor over a term to see its corresponding graphical component be highlighted in the simulation canvas. <br><br>-	Setting mode to ‘auto’ will adjust the equation depending on scale and parameters set by you. <br><br> • Higher masses and distances are best represented by GR <br> • Higher differences in velocity, with lower masses require SR <br> • When none of the parameters are too large, Newtonian can be used, which discounts the relativistic properties entirely. <br><br> Do note that all the equations support the principle of ‘constant spacetime interval’, however, which suggests that the difference of the squares of duration and distance measured in a frame of reference will always be constant. <br><br> - Note on velocity angles: the XY-, YZ- and XZ- angles are all independent factors determining the direction your object travels in. These are Euler angles reflecting the orientation of a vector in a specific plane (there are 3 planes since that is how the 3 axes combine.) Note that the x-, y- and z-component of your vector will depend on any two inputs. <br><br> • X from XY and XZ <br> • Y from XY and YZ <br> • Z from YZ and XZ. <br><br> For FAQs, use the Google Docs <a href="https://docs.google.com/document/d/1i51P76aWrze_3PPU83AR9rb669H9FjcO0W3HbH76204/edit?usp=sharing" target="_blank">forum</a>','How to run the sim','info');
       alertok();
     };
     
@@ -498,10 +498,10 @@ if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { re
 
 result.en();
 
-let dt = document.querySelector("#deltafx > #deltat");   dt.setAttribute('value', result.content.dt_P);
-let dt1 = document.querySelector("#deltafx > #deltat1"); dt1.setAttribute('value', result.content.dt_Q);
-let dx = document.querySelector("#deltafx > #deltax");   dx.setAttribute('value', result.content.dp_P);
-let dx1 = document.querySelector("#deltafx > #deltax1"); dx1.setAttribute('value', result.content.dp_Q);
+let dt = document.querySelector("#deltafx > #deltat1");   dt.setAttribute('value', result.content.dt_P);
+let dt1 = document.querySelector("#deltafx > #deltat"); dt1.setAttribute('value', result.content.dt_Q);
+let dx = document.querySelector("#deltafx > #deltax1");   dx.setAttribute('value', result.content.dp_P);
+let dx1 = document.querySelector("#deltafx > #deltax"); dx1.setAttribute('value', result.content.dp_Q);
 let e1 = document.querySelector("#deltafx > #energy1");   e1.setAttribute('value', result.content.energy1);
 let e2 = document.querySelector("#deltafx > #energy");  e2.setAttribute('value', result.content.energy2);
 
@@ -683,7 +683,7 @@ simselect.forEach(function(op) { if (op.checked) { equation = op.id }});
 if (!mode.checked) { //auto select condition
     equation = null;
     if (M || P) { equation = "sim-gen" };
-    if (V && !equation=="sim-gen") { equation = "sim-spl" };
+    if (V && equation != "sim-gen") { equation = "sim-spl" };
     if (!equation) { equation = "sim-new"};        
     document.getElementById(equation).checked = true
 }
@@ -1326,8 +1326,8 @@ function render (masses, velo, positions, array, timelim2, checks) {
         if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
         if (timetrack > timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1, e1Mesh.rotation.z += 0.1 };
         if (timetrack > timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1 };
-        if (count <= 3) { if (camera.radius <= 5) { camera.radius = 10; simmsg.alert(microscale,"Microscopic Scale Alert","info");  active=true; count+=1}; };
-        if (count <=2 ) { if (camera.radius >= 450) { camera.radius = 449; simmsg.alert(macroscale1, "Macroscopic Scale Alert","info"); active = true; count+=1};};
+        if (count <= 3) { if (camera.radius <= 0.01) { camera.radius = 10; simmsg.alert(microscale,"Microscopic Scale Alert","info");  active=true; count+=1}; };
+        if (count <=3 ) { if (camera.radius >= 450) { camera.radius = 440; simmsg.alert(macroscale1, "Macroscopic Scale Alert","info"); active = true; count+=1};};
         if (!!active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok(); active=false; }; };
         //if (active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() }; };
     })

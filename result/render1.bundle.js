@@ -180,7 +180,7 @@ simselect.forEach(function(op) { if (op.checked) { equation = op.id }});
 if (!mode.checked) { //auto select condition
     equation = null;
     if (M || P) { equation = "sim-gen" };
-    if (V && !equation=="sim-gen") { equation = "sim-spl" };
+    if (V && equation != "sim-gen") { equation = "sim-spl" };
     if (!equation) { equation = "sim-new"};        
     document.getElementById(equation).checked = true
 }
@@ -823,8 +823,8 @@ function render (masses, velo, positions, array, timelim2, checks) {
         if (timetrack >= timelim2) { e2Mesh.setEnabled(true) };
         if (timetrack > timelim1) { e1Mesh.rotation.x += 0.1; e1Mesh.rotation.y += 0.1, e1Mesh.rotation.z += 0.1 };
         if (timetrack > timelim2) { e2Mesh.rotation.x += 0.1; e2Mesh.rotation.y += 0.1; e2Mesh.rotation.z += 0.1 };
-        if (count <= 3) { if (camera.radius <= 5) { camera.radius = 10; simmsg.alert(microscale,"Microscopic Scale Alert","info");  active=true; count+=1}; };
-        if (count <=2 ) { if (camera.radius >= 450) { camera.radius = 449; simmsg.alert(macroscale1, "Macroscopic Scale Alert","info"); active = true; count+=1};};
+        if (count <= 3) { if (camera.radius <= 0.01) { camera.radius = 10; simmsg.alert(microscale,"Microscopic Scale Alert","info");  active=true; count+=1}; };
+        if (count <=3 ) { if (camera.radius >= 450) { camera.radius = 440; simmsg.alert(macroscale1, "Macroscopic Scale Alert","info"); active = true; count+=1};};
         if (!!active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok(); active=false; }; };
         //if (active) { document.getElementById('okbtn').onclick = function() {event.preventDefault(); simmsg.ok() }; };
     })

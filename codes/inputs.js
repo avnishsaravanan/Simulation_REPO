@@ -126,10 +126,10 @@ if (input.dp_P == null && (input.dp_Q.total == 0 || input.dp_Q.total >= 1)) { re
 
 result.en();
 
-let dt = document.querySelector("#deltafx > #deltat");   dt.setAttribute('value', result.content.dt_P);
-let dt1 = document.querySelector("#deltafx > #deltat1"); dt1.setAttribute('value', result.content.dt_Q);
-let dx = document.querySelector("#deltafx > #deltax");   dx.setAttribute('value', result.content.dp_P);
-let dx1 = document.querySelector("#deltafx > #deltax1"); dx1.setAttribute('value', result.content.dp_Q);
+let dt = document.querySelector("#deltafx > #deltat1");   dt.setAttribute('value', result.content.dt_P);
+let dt1 = document.querySelector("#deltafx > #deltat"); dt1.setAttribute('value', result.content.dt_Q);
+let dx = document.querySelector("#deltafx > #deltax1");   dx.setAttribute('value', result.content.dp_P);
+let dx1 = document.querySelector("#deltafx > #deltax"); dx1.setAttribute('value', result.content.dp_Q);
 let e1 = document.querySelector("#deltafx > #energy1");   e1.setAttribute('value', result.content.energy1);
 let e2 = document.querySelector("#deltafx > #energy");  e2.setAttribute('value', result.content.energy2);
 
